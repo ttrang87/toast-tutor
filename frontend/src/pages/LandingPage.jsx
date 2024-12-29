@@ -5,9 +5,9 @@ import FeaturesSection from "../components/landing/FeaturesSetion";
 
 const LandingPage = () => {
   return (
-    <div className="h-screen flex flex-col pt-4"
+    <div className="h-screen flex flex-col pt-8"
       style={{ backgroundColor: '#FFFDE7' }}>
-      <div className="flex pb-6">
+      <div className="flex pb-8">
         <div className="w-1/2 h-full flex items-center justify-center pl-4">
           <HeroSection />
         </div>
