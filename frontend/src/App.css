@@ -55,3 +55,17 @@ html {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+.modal-container {
+  overflow-y: auto;
+  max-height: 90vh; /* Adjust height to prevent content from overflowing */
+}
+
+.modal-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Webkit-based browsers */
+}
+
+.modal-container {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

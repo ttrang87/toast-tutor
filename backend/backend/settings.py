@@ -19,10 +19,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Database configuration
 DATABASES = {
-    'default': dj_database_url.parse(
-        config('DATABASE_URL'), conn_max_age=600, ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres.meqyrknhsgagvwkjotfh',
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': 'aws-0-us-west-1.pooler.supabase.com',
+        'PORT': '6543',
+        'OPTIONS': {'gssencmode': 'disable'},
+        'CONN_MAX_AGE': 500,
+    }
 }
+
 
 
 
