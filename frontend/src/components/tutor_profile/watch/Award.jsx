@@ -1,10 +1,10 @@
 import React from 'react';
-import { AwardIcon } from '../../assets/icon';
+import { AwardIcon } from '../../../assets/icon';
 
 const Awards = ({ data }) => {
     return (
-        <div className='flex flex-col gap-6'>
-            <h1 className='text-2xl text-yellow-800 font-bold'>CERTIFICATION AND AWARDS</h1>
+        <div className='flex flex-col gap-6 py-2'>
+            <h1 className='text-2xl text-yellow-800 font-bold'>CERTIFICATION & AWARD</h1>
             <div className='flex flex-col gap-4'>
                 {data?.map((award, index) => (
                     <div key={index} className='flex gap-2'>

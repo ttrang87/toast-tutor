@@ -1,13 +1,14 @@
 import React from 'react';
-import { HomeIcon } from '../../assets/icon';
+import { HomeIcon } from '../../../assets/icon';
+
 
 const Education = ({ data }) => {
     return (
-        <div className='flex flex-col gap-6'>
+        <div className='relative flex flex-col gap-6 py-2'>
             <h1 className='text-2xl text-yellow-800 font-bold'>EDUCATION</h1>
             <div className='flex flex-col gap-4'>
-                {data?.map((edu, index) => (
-                    <div key={index} className='flex gap-2'>
+                {data?.map((edu) => (
+                    <div key={edu.id} className='flex gap-2'>
                         {HomeIcon}
                         <div className='flex flex-col gap-2'>
                             <div className='text-xl font-semibold'>{edu.school_name}</div>

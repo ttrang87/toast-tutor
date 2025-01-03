@@ -12,7 +12,7 @@ function App() {
         <Header/>
         <Routes>
           <Route path="/" element={<LandingPage />} />
-          <Route path="/tutor/profile" element={<TutorProfile />} />
+          <Route path="/tutor/profile/8" element={<TutorProfile />} />
         </Routes>
       </Router>
   );
