@@ -6,3 +6,9 @@ python-dotenv
 python-decouple
 dj-database-url
 django-cors-headers
+asgiref
+djangorestframework-simplejwt
+PyJWT
+pytz
+sqlparse
+psycopg2-binary
