@@ -1,5 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils.timezone import now, timedelta
+from django.core.exceptions import ValidationError
+import hashlib
+import os
+
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -55,3 +62,48 @@ class Award(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.year})"
+    
+class ResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_tokens')
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiry_at = models.DateTimeField()
+    last_sent_at = models.DateTimeField(auto_now=True)
+
+    @classmethod
+    def generate_for_user(cls, user):
+        print(f"Generating/retrieving token for user: {user.email}")
+        
+        # Check for existing valid token
+        existing_token = cls.objects.filter(
+            user=user,
+            expiry_at__gt=now()
+        ).first()
+        
+        print(f"Existing valid token found: {existing_token is not None}")
+        
+        if existing_token:
+            print(f"Using existing token: {existing_token.token}")
+            print(f"Token expiry: {existing_token.expiry_at}")
+            # Update last_sent_at and return existing token
+            existing_token.last_sent_at = now()
+            existing_token.save()
+            return existing_token.token
+        
+        print("No valid token found, creating new one")
+        # If no valid token exists, create new one
+        token = hashlib.sha256(os.urandom(32)).hexdigest()
+        while cls.objects.filter(token=token).exists():
+            token = hashlib.sha256(os.urandom(32)).hexdigest()
+            
+        expiry_at = now() + timedelta(minutes=15)
+        reset_token = cls.objects.create(
+            user=user,
+            token=token,
+            expiry_at=expiry_at
+        )
+        print(f"Created new token: {token}")
+        print(f"New token expiry: {expiry_at}")
+        return reset_token.token
+
+

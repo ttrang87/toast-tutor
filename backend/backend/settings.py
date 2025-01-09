@@ -19,13 +19,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Database configuration
 DATABASES = {
-    'default': dj_database_url.parse(
-        config('DATABASE_URL'), conn_max_age=600, ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres.meqyrknhsgagvwkjotfh',
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': 'aws-0-us-west-1.pooler.supabase.com',
+        'PORT': '6543',
+        'OPTIONS': {'gssencmode': 'disable'},
+        'CONN_MAX_AGE': 500,
+    }
 }
-
-
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -68,6 +72,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # If using Vite
     "http://127.0.0.1:5173",  # Alternative localhost format
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -126,7 +132,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+DEBUG = True
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True 
+EMAIL_HOST_USER = 'toasttutorreach@gmail.com'
+EMAIL_HOST_PASSWORD = 'wupofgoejcngvwob'
+
+FRONTEND_BASE_URL = 'http://localhost:5173'
