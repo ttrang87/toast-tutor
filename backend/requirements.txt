@@ -1,0 +1,8 @@
+django
+supabase-py
+psycopg[binary]
+djangorestframework
+python-dotenv
+python-decouple
+dj-database-url
+django-cors-headers
