@@ -7,6 +7,7 @@ const TeachingStyleSelector = ({ selectedStyles, onStyleChange }) => {
     "Gamification", "Visual Learners", "Learn By Doing", "Auditory Learners"
   ];
 
+  /* If a style is selected, it is removed from the selectedStyles, and vice versa */
   const handleStyleClick = (style) => {
     if (selectedStyles.includes(style)) {
       onStyleChange(selectedStyles.filter(s => s !== style));

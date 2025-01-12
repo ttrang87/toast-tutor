@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
+  const navigate = useNavigate()
   return (
     <div className="max-w-4xl mx-auto pl-4 py-16">
       <div className="text-left space-y-8">
@@ -19,6 +21,7 @@ const HeroSection = () => {
           <button
             className="w-full text-white px-6 py-4 rounded-xl font-semibold transform hover:scale-105 transition-transform duration-200 shadow-lg"
             style={{ backgroundColor: '#d46c47' }}
+            onClick={()=>navigate("/booking/8")}
           >
             Find Your Perfect Tutor
           </button>
