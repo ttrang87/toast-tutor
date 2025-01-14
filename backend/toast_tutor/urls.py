@@ -1,8 +1,14 @@
 from django.urls import path
 from .controller import profile
+from .views import register_user, login_user, logout_user
 
 urlpatterns = [
     # Specific
+
+    #AUTHENTICATION
+    path('auth/register/', register_user, name='register'),
+    path('auth/login/', login_user, name='login'),
+    path('auth/logout/', logout_user, name='logout'),
 
     #AWARD SECTION
     path('tutor/profile/addaward/<int:userId>/', profile.add_award, name='add_award'),

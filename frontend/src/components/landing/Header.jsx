@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import logo from '../../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../services/authService';
 
 const Header = () => {
   localStorage.setItem('userId', 8);
@@ -17,6 +18,7 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem("userId");
     setIsLog(false);
+    logout();
     navigate("/");
   };
 
