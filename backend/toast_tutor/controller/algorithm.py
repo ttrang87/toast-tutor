@@ -1,9 +1,12 @@
+import math
+
 class TutorMatcher:
     def __init__(self, tutor_data, request_data):
         self.weights = {
             'aim_match': 1.0,
-            'experience': 1.0,
-            'teaching_styles': 0.1
+            'experience': 1.6,
+            'teaching_styles': 0.1,
+            'price': 0.4
         }
 
         self.tutor_data = tutor_data
@@ -15,6 +18,8 @@ class TutorMatcher:
         self.tutor_exp = tutor_data['experience']
         self.tutor_styles = tutor_data['teaching_styles']
         self.request_styles = request_data['teaching_styles']
+        self.tutor_rate = tutor_data['hourly_rate']
+        self.min_pay = request_data['min_pay']
 
     def is_qualified(self):
         if self.type == 'subject':
@@ -28,20 +33,22 @@ class TutorMatcher:
             diff = round((float(self.tutor_score) - float(self.request_aim)) / self.request_max_score * 100, 2)
         else:
             level_map = {'Beginner': 1, 'Intermediate': 2, 'Advanced': 3, 'Expert':4}
-            diff = level_map[self.tutor_score] - level_map[self.request_aim]
+            diff = level_map[self.tutor_score] - level_map[self.request_aim] + 1
         return diff * self.weights['aim_match']
     
     def calculate_experience(self):
         if self.tutor_exp == "<1":
-            diff = 0.5
-        elif self.tutor_exp == ">6":
-            if self.type == "exam":
-                diff = 7 
-            else:
-                diff = 6 - (self.tutor_grade - self.request_grade)*self.weights['grade_match']
+            score = 0.5
+        elif self.tutor_exp == ">5":
+            score = 6
         else:
-            diff = int(self.tutor_exp)
+            score = int(self.tutor_exp)
+        diff = math.log(score)
         return diff * self.weights['experience']
+    
+    def calculate_price(self):
+        diff = float((self.min_pay - self.tutor_rate) / 20)
+        return diff * self.weights['price']
     
     def calculate_teaching_styles(self):
         score = 0
@@ -56,5 +63,6 @@ class TutorMatcher:
         return (
             self.calculate_aim() +
             self.calculate_experience() +
-            self.calculate_teaching_styles()
+            self.calculate_teaching_styles() +
+            self.calculate_price()
         )

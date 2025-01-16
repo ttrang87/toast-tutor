@@ -68,7 +68,8 @@ def find_tutors(request):
         'grade': grade,
         'aim': aim,
         'max_score': max_score,
-        'teaching_styles': teaching_styles
+        'teaching_styles': teaching_styles,
+        'min_pay': min_pay
     }
     
     for tutor in tutors:
@@ -85,7 +86,8 @@ def find_tutors(request):
                     tutor_data = {
                         'score': matching_course.level,
                         'experience': matching_course.experience,
-                        'teaching_styles': tutor.tutor_profile.teaching_style
+                        'teaching_styles': tutor.tutor_profile.teaching_style,
+                        'hourly_rate': tutor.tutor_profile.hourly_rate
                     }
                     
                     matcher = TutorMatcher(tutor_data, request_data)
@@ -120,7 +122,8 @@ def find_tutors(request):
                     tutor_data = {
                         'score': matching_exam.score,
                         'experience': matching_exam.experience,
-                        'teaching_styles': tutor.tutor_profile.teaching_style
+                        'teaching_styles': tutor.tutor_profile.teaching_style,
+                        'hourly_rate': tutor.tutor_profile.hourly_rate
                     }
                     
                     matcher = TutorMatcher(tutor_data, request_data)

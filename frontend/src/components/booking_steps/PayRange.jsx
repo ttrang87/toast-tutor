@@ -1,9 +1,14 @@
 import React from 'react';
 
-const PAY_OPTIONS = ["Less than 20$", "20-40$", "40-60$", "60-80$", "Best match at any cost"];
+const PAY_OPTIONS = [
+    { label: "Less than 20$", value: "0-20$" },
+    { label: "20-40$", value: "20-40$" },
+    { label: "40-60$", value: "40-60$" },
+    { label: "60-80$", value: "60-80$" },
+    { label: "Best match at any cost", value: "0-1000$" }
+];
 
 const PayRangeSelection = ({ selectRange, setSelectRange }) => {
-    const options = PAY_OPTIONS
     return (
         <div className='relative mb-32'>
             <select
@@ -17,8 +22,8 @@ const PayRangeSelection = ({ selectRange, setSelectRange }) => {
                 required
             >
                 <option value="" disabled>Select a price</option>
-                {options.map((option, index) => (
-                    <option key={index} value={option}>{option}</option>
+                {PAY_OPTIONS.map((option, index) => (
+                    <option key={index} value={option.value}>{option.label}</option>
                 ))}
             </select>
         </div>
