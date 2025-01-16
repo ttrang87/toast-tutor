@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { API_ROUTES } from "../constant/APIRoutes";
-import { toast, Toaster } from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast';
 
 import BasicInfor from "../components/tutor_profile/watch/BasicInfor";
 import BasicInforEdit from "../components/tutor_profile/edit/BasicInforEdit";
@@ -16,28 +16,29 @@ import Awards from "../components/tutor_profile/watch/Award";
 import AwardsEdit from "../components/tutor_profile/edit/AwardEdit";
 
 const TutorProfile = () => {
-  const userId = 8; // fix later
-  const [loggedInUserId, setLoggedInUserId] = useState(null); // Store logged-in user's ID
+  const { id } = useParams(); // Get the tutor ID from URL params
+  const [loggedInUserId, setLoggedInUserId] = useState(null);
   const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
-    // Get logged-in user's ID from localStorage or your auth provider
+    // Get logged-in user's ID from localStorage
     const storedUserId = localStorage.getItem("userId");
     setLoggedInUserId(storedUserId);
   }, []);
 
   useEffect(() => {
     const fetchProfileData = async () => {
-      if (!userId) return;
+      if (!id) return;
       try {
-        const response = await axios.get(API_ROUTES.GET_TUTOR_PROFILE(userId));
+        const response = await axios.get(API_ROUTES.GET_TUTOR_PROFILE(id));
         setProfileData(response.data);
       } catch (error) {
         console.error("Error fetching tutor profile:", error);
+        toast.error("Error loading profile. Please try again later.");
       }
     };
     fetchProfileData();
-  }, [userId]);
+  }, [id]); // Depend on URL param instead of userId
 
   // Return loading state if data isn't loaded yet
   if (!profileData) {
@@ -48,11 +49,10 @@ const TutorProfile = () => {
     );
   }
 
-
   // Determine if the logged-in user is the profile owner
-  const isOwner = String(loggedInUserId) === String(userId);
+  const isOwner = String(loggedInUserId) === String(id);
 
-  const basicprofileData = profileData.profile
+  const basicprofileData = profileData.profile;
   const educationData = profileData.education;
   const coursesData = profileData.course;
   const examsData = profileData.exam;
@@ -60,15 +60,15 @@ const TutorProfile = () => {
 
   const showToast = (status) => {
     if (status === 'success') {
-      toast.success('Updated Successfully', { duration: 1500 })
+      toast.success('Updated Successfully', { duration: 1500 });
     } else if (status === 'username_exists') {
-      toast.error('This username already exists. Please try a different one.', { duration: 1500 })
+      toast.error('This username already exists. Please try a different one.', { duration: 1500 });
     } else if (status === 'email_exists') {
-      toast.error('This email already exists. Please try a different one.', { duration: 1500 })
+      toast.error('This email already exists. Please try a different one.', { duration: 1500 });
     } else {
-      toast.error('Failed to save changes. Please try again.', { duration: 1500 })
+      toast.error('Failed to save changes. Please try again.', { duration: 1500 });
     }
-  }
+  };
 
   return (
     <div className="bg-yellow-50 h-auto px-24 py-1 space-y-6 pb-8">
@@ -76,7 +76,7 @@ const TutorProfile = () => {
       {/* Basic Information */}
       <div className="rounded-xl h-auto bg-white">
         {isOwner ? (
-          <BasicInforEdit data={basicprofileData} userId={userId} showToast={showToast} />
+          <BasicInforEdit data={basicprofileData} userId={id} showToast={showToast} />
         ) : (
           <BasicInfor data={basicprofileData} />
         )}
@@ -85,7 +85,7 @@ const TutorProfile = () => {
       {/* Education Section */}
       <div className="rounded-xl h-auto bg-white px-10 py-8">
         {isOwner ? (
-          <EducationEdit data={educationData} userId={userId} showToast={showToast} />
+          <EducationEdit data={educationData} userId={id} showToast={showToast} />
         ) : (
           <Education data={educationData} />
         )}
@@ -94,7 +94,7 @@ const TutorProfile = () => {
       {/* Courses Section */}
       <div className="rounded-xl h-auto bg-white px-10 py-8">
         {isOwner ? (
-          <CoursesEdit data={coursesData} userId={userId} showToast={showToast} />
+          <CoursesEdit data={coursesData} userId={id} showToast={showToast} />
         ) : (
           <Courses data={coursesData} />
         )}
@@ -103,7 +103,7 @@ const TutorProfile = () => {
       {/* Exams Section */}
       <div className="rounded-xl h-auto bg-white px-10 py-8">
         {isOwner ? (
-          <ExamsEdit data={examsData} userId={userId} showToast={showToast} />
+          <ExamsEdit data={examsData} userId={id} showToast={showToast} />
         ) : (
           <Exams data={examsData} />
         )}
@@ -112,7 +112,7 @@ const TutorProfile = () => {
       {/* Awards Section */}
       <div className="rounded-xl h-auto bg-white px-10 py-8">
         {isOwner ? (
-          <AwardsEdit data={awardsData} userId={userId} showToast={showToast} />
+          <AwardsEdit data={awardsData} userId={id} showToast={showToast} />
         ) : (
           <Awards data={awardsData} />
         )}

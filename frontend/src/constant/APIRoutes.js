@@ -27,5 +27,6 @@ export const API_ROUTES = {
     DELETE_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/deleteaward/${awardId}/`,
     ADD_AWARD: (userId) => `${API_BASE_URL}/tutor/profile/addaward/${userId}/`,
 
+    FIND_TUTORS: `${API_BASE_URL}/find_tutors/`
 
 }

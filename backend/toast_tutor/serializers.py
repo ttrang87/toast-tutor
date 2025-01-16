@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, TutorProfile, Education, Course, Exam, Award
+from .models import User, TutorProfile, Education, Course, Exam, Award, TutorRequest
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,6 +61,12 @@ class TutorProfileSerializer(serializers.ModelSerializer):
         instance.save()
         
         return instance
+
+class TutorRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TutorRequest
+        fields = ['id', 'user', 'description', 'status', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
 class UserSerializer(serializers.ModelSerializer):
     profile = TutorProfileSerializer(source='tutor_profile', required=False)

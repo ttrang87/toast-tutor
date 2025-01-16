@@ -46,12 +46,12 @@ class Education(models.Model):
 class Course(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='course_list')
     name = models.CharField(max_length=200)
-    grade = models.CharField(max_length=200)
+    grade = models.IntegerField()
     level = models.CharField(max_length=50)  
     experience = models.CharField(max_length=20)
     
     def __str__(self):
-        return f"{self.name} - {self.teach_grade} - {self.level} - {self.experience}"
+        return f"{self.name} - {self.grade} - {self.level} - {self.experience}"
 
 class Exam(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='exam_list')
@@ -70,3 +70,26 @@ class Award(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.year})"
+
+class TutorRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('matched', 'Matched'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_requests')
+    # service = models.CharField(max_length=10)
+    # request_type = models.CharField(max_length=10)
+    # subject_name = models.CharField(max_length=200)  # Name of exam or course
+    # min_pay = models.IntegerField()
+    # max_pay = models.IntegerField()
+    # grade = models.CharField(max_length=20)
+    # aim = models.CharField(max_length=40)
+    # teaching_styles = models.CharField(max_length=200)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    
+    class Meta:
+        ordering = ['-created_at']

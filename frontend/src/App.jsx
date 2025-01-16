@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./components/landing/Header";
@@ -6,21 +6,28 @@ import LandingPage from "./pages/LandingPage";
 import TutorProfile from "./pages/TutorProfile";
 import Booking from "./pages/features/booking_tutor/CombineBookingSteps";
 import Waiting from "./pages/features/booking_tutor/Waiting";
-
+import MatchedTutors from "./pages/features/booking_tutor/MatchedTutors";
 
 function App() {
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    // Get the user ID from localStorage
+    const storedUserId = localStorage.getItem("userId");
+    setUserId(storedUserId);
+  }, []);
+
   return (
-      <Router>
-        <Header/>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/tutor/profile/8" element={<TutorProfile />} />
-          <Route path="/booking/8" element={<Booking/>} />
-          <Route path="/waiting/8" element={<Waiting/>} />
-
-
-        </Routes>
-      </Router>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/tutor/profile/:id" element={<TutorProfile />} />
+        <Route path="/booking/:id" element={<Booking />} />
+        <Route path="/waiting" element={<Waiting />} />
+        <Route path="/matched_tutors/:id" element={<MatchedTutors />} />
+      </Routes>
+    </Router>
   );
 }
 

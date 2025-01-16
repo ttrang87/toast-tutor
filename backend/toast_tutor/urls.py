@@ -1,8 +1,9 @@
 from django.urls import path
-from .controller import profile
+from .controller import profile, matching
 
 urlpatterns = [
     # Specific
+    path('find_tutors/', matching.find_tutors, name='find_tutors'),
 
     #AWARD SECTION
     path('tutor/profile/addaward/<int:userId>/', profile.add_award, name='add_award'),

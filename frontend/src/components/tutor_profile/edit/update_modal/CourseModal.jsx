@@ -172,13 +172,13 @@ const CourseModal = ({ isOpen, onClose, userId, courseData, mode, onCourseUpdate
                         required
                     >
                         <option value="" disabled>Select your experience</option>
-                        <option value="<1">Less than 1 year</option>
+                        <option value="0">Less than 1 year</option>
                         <option value="1">1 year</option>
                         <option value="2">2 years</option>
                         <option value="3">3 years</option>
                         <option value="4">4 years</option>
                         <option value="5">5 years</option>
-                        <option value=">5">More than 5 years</option>
+                        <option value="6">More than 5 years</option>
                         </select>
                     </div>
 

@@ -3,6 +3,20 @@ import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
   const navigate = useNavigate()
+  const handleClick = () => {
+    const userId = localStorage.getItem("userId");
+
+    // Clear all items in localStorage
+    localStorage.clear();
+
+    // Set userId back into localStorage
+    if (userId) {
+        localStorage.setItem("userId", userId);
+    }
+
+    // Navigate to the desired route
+    navigate(`/booking/${userId}`)
+  }
   return (
     <div className="max-w-4xl mx-auto pl-4 py-16">
       <div className="text-left space-y-8">
@@ -21,7 +35,7 @@ const HeroSection = () => {
           <button
             className="w-full text-white px-6 py-4 rounded-xl font-semibold transform hover:scale-105 transition-transform duration-200 shadow-lg"
             style={{ backgroundColor: '#d46c47' }}
-            onClick={()=>navigate("/booking/8")}
+            onClick={handleClick}
           >
             Find Your Perfect Tutor
           </button>

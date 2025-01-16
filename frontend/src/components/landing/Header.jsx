@@ -3,7 +3,7 @@ import logo from '../../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  localStorage.setItem('userId', 8);
+  localStorage.setItem('userId', 12);
 
   const [isLog, setIsLog] = useState(false);
   const navigate = useNavigate();

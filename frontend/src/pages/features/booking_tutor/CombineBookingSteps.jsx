@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { API_ROUTES } from '../../../constant/APIRoutes';
 import ProgressBar from '../../../components/booking_steps/ProgressBar';
 import TimeService from '../../../components/booking_steps/TimeService';
 import TypeSelection from '../../../components/booking_steps/TypeSelection';
@@ -20,31 +22,67 @@ const Booking = () => {
   const [selectLevel, setSelectLevel] = useState('')
   const [selectGrade, setSelectGrade] = useState('')
   const [aimScore, setAimScore] = useState('')
+  const [maxScore, setMaxScore] = useState('')
   const [note, setNote] = useState(null)
   const [teachingStyles, setTeachingStyles] = useState([])
 
   const navigate = useNavigate()
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    // Validation logic remains the same
     if (
       (currentStep === 1 && !selectOption) ||
       (currentStep === 2 && !selectType) ||
       (currentStep === 3 && !selectExam) ||
       (currentStep === 4 && !selectRange) ||
-      (currentStep === 5 && selectType === "exam" && !aimScore) ||
-      (currentStep === 5 && selectType === "subject" && !selectGrade && !selectLevel)
+      (currentStep === 5 && selectType === "exam" && (!aimScore || !maxScore)) ||
+      (currentStep === 5 && selectType === "subject" && (!selectGrade || !selectLevel))
     ) {
-      toast.error("Please fill in required information", { duration: 1500 })
+      toast.error("Please fill in required information", { duration: 1500 });
       return;
     }
 
     if (currentStep < 5) {
       setCurrentStep(prev => prev + 1);
-    } else if (currentStep == 5) {
-      navigate('/waiting/8')
+    } else {
+      try {
+        // Extract min and max pay from selectRange
+        const [minPay, maxPay] = selectRange.split('-').map(num => parseInt(num.trim()));
+
+        const requestData = {
+          userId: localStorage.getItem('userId'),
+          request_type: selectType,
+          subject_name: selectExam,
+          grade: selectType === 'subject' ? parseInt(selectGrade) : 0,
+          aim: selectType === 'exam' ? parseFloat(aimScore) : selectLevel,
+          max_score: selectType === 'exam' ? parseFloat(maxScore) : 0,
+          description: note || 'No note',
+          min_pay: minPay,
+          max_pay: maxPay,
+          teaching_styles: teachingStyles,
+          date: selectOption
+        };
+
+        // Store search parameters in localStorage for the matched tutors page
+        localStorage.setItem('selectedSubject', selectExam);
+
+        // Navigate to waiting page first
+        navigate('/waiting');
+
+        const response = await axios.post(API_ROUTES.FIND_TUTORS, requestData);
+
+        if (response.data && Array.isArray(response.data)) {
+          // Store the response data
+          localStorage.setItem('matchedTutorsResponse', JSON.stringify(response.data));
+        } else {
+          toast.error('Invalid response from server');
+        }
+      } catch (error) {
+        console.error('Error finding tutors:', error);
+        toast.error('Error finding tutors. Please try again.');
+      }
     }
   };
-
   const handleBack = () => {
     if (currentStep > 1) {
       setCurrentStep(prev => prev - 1);
@@ -72,6 +110,8 @@ const Booking = () => {
           return <ExamPreferences
             aimScore={aimScore}
             setAimScore={setAimScore}
+            maxScore={maxScore}
+            setMaxScore={setMaxScore}
             teachingStyles={teachingStyles}
             setTeachingStyles={setTeachingStyles}
             note={note}
