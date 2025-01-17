@@ -1,6 +1,7 @@
 from django.urls import path
 from .controller import profile
-from .views import register_user, login_user, logout_user
+# from .views import register_user, login_user, logout_user
+from .controller.userauth import register_user, login_user, logout_user
 
 urlpatterns = [
     # Specific

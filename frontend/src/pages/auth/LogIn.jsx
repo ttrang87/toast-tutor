@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { login } from "../../services/authService";
 import toastpic from "../../assets/landingpic.jpg";
+import { useNavigate } from "react-router-dom";
 
 const LogIn = () => {
   const [formData, setFormData] = useState({
@@ -16,11 +17,13 @@ const LogIn = () => {
     e.preventDefault();
     try {
       const response = await login(formData);
-      alert("Login successful!");
+      navigate("/")
     } catch (err) {
       alert("Error: " + err.response.data.error);
     }
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className="flex items-center justify-center h-screen bg-yellow-50">
@@ -100,7 +103,7 @@ const LogIn = () => {
             Don’t have an account?{" "}
             <button
               className="text-yellow-600 font-medium hover:underline focus:outline-none"
-              onClick={() => alert("Redirect to Sign Up!")}
+              onClick={() => navigate("/signup")}
             >
               Sign Up
             </button>

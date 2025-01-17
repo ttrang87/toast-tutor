@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../../services/authService';
 
 const Header = () => {
-  localStorage.setItem('userId', 8);
-
   const [isLog, setIsLog] = useState(false);
   const navigate = useNavigate();
 
@@ -16,7 +14,7 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("userId");
+    // localStorage.removeItem("userId");
     setIsLog(false);
     logout();
     navigate("/");

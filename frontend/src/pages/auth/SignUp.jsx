@@ -35,9 +35,9 @@ const SignUp = () => {
       profile: {
         email: email,
         username: username,
-        bio: "Short bio", // Get these from form inputs
+        bio: "Short bio",
         hourly_rate: 30,
-        teaching_style: "Friendly",
+        teaching_style: ["Friendly"],
         avatar: 1,
         cover: 1,
       },
@@ -75,7 +75,7 @@ const SignUp = () => {
 
     try {
       const response = await register(dataToSend);
-      alert(response.message);
+      navigate("/login");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
         const errors = err.response.data.errors;
@@ -89,12 +89,6 @@ const SignUp = () => {
         alert("An unexpected error occurred. Please try again.");
       }
     }
-    // try {
-    //   const response = await register(formData);
-    //   alert(response.message);
-    // } catch (err) {
-    //   alert("Error: " + err.message);
-    // }
   };
 
   const navigate = useNavigate();
@@ -211,62 +205,6 @@ const SignUp = () => {
           </p>
         </div>
       </div>
-      {/* <div className="w-full max-w-md">
-        <div className="bg-white border border-yellow-200 rounded-[50px] shadow-2xl px-8 py-12">
-          <h2 className="text-3xl font-bold text-center text-yellow-800 mb-4">
-            Create Your Account
-          </h2>
-          <p className="text-center text-gray-600 mb-6">
-            Sign up to start using our platform.
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              name="username"
-              placeholder="Username"
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            />
-            <input
-              name="email"
-              type="email"
-              placeholder="Email"
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            />
-            <input
-              name="password"
-              type="password"
-              placeholder="Password"
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            />
-            <input
-              name="password2"
-              type="password"
-              placeholder="Confirm Password"
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="w-full bg-yellow-500 text-white font-medium py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            >
-              Sign Up
-            </button>
-          </form>
-
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Already have an account?{" "}
-            <button
-              className="text-yellow-600 font-medium hover:underline focus:outline-none"
-              onClick={() => navigate("/login")}
-            >
-              Log In
-            </button>
-          </p>
-        </div>
-      </div> */}
     </div>
   );
 };
