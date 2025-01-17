@@ -9,6 +9,7 @@ const BasicInfor = ({ data }) => {
 
     const [Star, setStar] = useState(5)
     const teachingStyle = JSON.parse(teaching_style)
+    // const teachingStyle = teaching_style
     const fetchAvatar = avatars.find((ava) => ava.id === avatar)
     const fetchCover = covers.find((cov) => cov.id === cover)
 

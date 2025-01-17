@@ -13,6 +13,7 @@ const BasicInforEdit = ({ data, showToast }) => {
     const [tutorBio, setTutorBio] = useState(bio)
     const [tutorHourlyRate, setTutorHourlyRate] = useState(hourly_rate)
     const [tutorTeachingStyle, setTeachingStyle] = useState(JSON.parse(teaching_style))
+    // const [tutorTeachingStyle, setTeachingStyle] = useState(teaching_style)
     const [tutorAvatar, setAvatar] = useState(avatar)
     const [tutorCover, setCover] = useState(cover)
     const [Star, setStar] = useState(5)

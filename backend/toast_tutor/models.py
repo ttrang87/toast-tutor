@@ -26,7 +26,7 @@ class TutorProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='tutor_profile')
     bio = models.TextField(blank=True)
     hourly_rate = models.IntegerField()
-    teaching_style = models.CharField(max_length=200)  # Brief description of teaching style
+    teaching_style = models.JSONField(max_length=200)  # Brief description of teaching style
     avatar = models.IntegerField()
     cover = models.IntegerField()
 
