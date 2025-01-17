@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.timezone import now, timedelta
 from django.core.exceptions import ValidationError
 import hashlib
 import os
-
+from datetime import date
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -29,16 +28,18 @@ class User(AbstractUser):
         return self.username
 
 class TutorProfile(models.Model):
-    tutor = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='tutor_profile')
     bio = models.TextField(blank=True)
-    hourly_rate = models.DecimalField(max_digits=6, decimal_places=2)
+    hourly_rate = models.IntegerField()
     teaching_style = models.CharField(max_length=200)  # Brief description of teaching style
+    avatar = models.IntegerField()
+    cover = models.IntegerField()
 
     def __str__(self):
-        return f"{self.tutor.username}'s Profile"
+        return f"{self.user.username}'s Tutor Profile"
 
 class Education(models.Model):
-    tutor_profile = models.ForeignKey(TutorProfile, on_delete=models.CASCADE, related_name='education_records')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='education_records')
     school_name = models.CharField(max_length=200)
     degree = models.CharField(max_length=200)
     start_year = models.IntegerField()
@@ -48,15 +49,27 @@ class Education(models.Model):
         return f"{self.degree} from {self.school_name}"
 
 class Course(models.Model):
-    tutor_profile = models.ForeignKey(TutorProfile, on_delete=models.CASCADE, related_name='course_list')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='course_list')
     name = models.CharField(max_length=200)
-    level = models.CharField(max_length=50)  # e.g., Beginner, Intermediate, Advanced
+    grade = models.IntegerField()
+    level = models.CharField(max_length=50)  
+    experience = models.CharField(max_length=20)
     
     def __str__(self):
-        return f"{self.name} - {self.level}"
+        return f"{self.name} - {self.grade} - {self.level} - {self.experience}"
+
+class Exam(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='exam_list')
+    name = models.CharField(max_length=200)
+    score = models.CharField(max_length=20)
+    date = models.DateField(default=date.today)
+    experience = models.CharField(max_length=20)
+    
+    def __str__(self):
+        return f"{self.name} - {self.score} - {self.date} - {self.experience}"
 
 class Award(models.Model):
-    tutor_profile = models.ForeignKey(TutorProfile, on_delete=models.CASCADE, related_name='awards')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='awards')
     name = models.CharField(max_length=200)
     year = models.IntegerField()
 

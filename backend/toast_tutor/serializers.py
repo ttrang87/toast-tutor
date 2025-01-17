@@ -1,3 +1,4 @@
+# tutors/serializers.py
 from rest_framework import serializers
 from .models import User, TutorProfile, Education, Course, Award, ResetToken
 
@@ -25,8 +26,15 @@ class TutorProfileSerializer(serializers.ModelSerializer):
         model = TutorProfile
         fields = ['bio', 'hourly_rate', 'teaching_style', 'education_records', 'course_list', 'awards']
 
+class TutorSerializer(serializers.ModelSerializer):
+    profile = TutorProfileSerializer(read_only=True)  # Remove the source='tutorprofile'
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'profile']
+
 class UserSerializer(serializers.ModelSerializer):
-    profile = TutorProfileSerializer(read_only=True)
+    profile = TutorProfileSerializer(source='tutorprofile', read_only=True)
 
     class Meta:
         model = User
