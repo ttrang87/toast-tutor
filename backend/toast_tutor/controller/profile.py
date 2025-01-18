@@ -23,6 +23,7 @@ def get_tutor_profile(request, userId):
 def update_tutor_profile(request, profileId):
     try:
         profile = get_object_or_404(TutorProfile, id=profileId)
+        print(profile.teaching_style)
         serializer = TutorProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
