@@ -67,7 +67,7 @@ const Booking = () => {
         localStorage.setItem('selectedSubject', selectExam);
 
         // Navigate to waiting page first
-        navigate('/waiting');
+        navigate('/waiting_match');
 
         const response = await axios.post(API_ROUTES.FIND_TUTORS, requestData);
 

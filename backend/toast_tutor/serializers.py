@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, TutorProfile, Education, Course, Exam, Award, TutorRequest
+from .models import User, TutorProfile, Education, Course, Exam, Award, TutorRequest, ResetToken
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,5 +78,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', "username", "email", "password", 'profile', 'education','course','exam','award']
-        
-    
+
+class ResetTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResetToken
+        fields = ['token', 'created_at', 'expiry_at']
+        read_only_fields = ['token', 'created_at', 'expiry_at']

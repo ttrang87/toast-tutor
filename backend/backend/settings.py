@@ -85,6 +85,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",  # Alternative localhost format
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -157,7 +159,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+DEBUG = True
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True 
+EMAIL_HOST_USER = 'toasttutorreach@gmail.com'
+EMAIL_HOST_PASSWORD = 'wupofgoejcngvwob'
+
+FRONTEND_BASE_URL = 'http://localhost:5173'

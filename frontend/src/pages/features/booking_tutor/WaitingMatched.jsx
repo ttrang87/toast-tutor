@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import waiting from '../../../assets/waiting.png'
 import { useNavigate } from 'react-router-dom'
-const Waiting = () => {
+const WaitingMatched = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const userId = localStorage.getItem('userId')
@@ -60,4 +60,4 @@ const Waiting = () => {
     )
 }
 
-export default Waiting
+export default WaitingMatched
