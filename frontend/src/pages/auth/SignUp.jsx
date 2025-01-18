@@ -52,7 +52,7 @@ const SignUp = () => {
       course: [
         {
           name: "Math 101",
-          grade: "A",
+          grade: 12 ,
           level: "Undergraduate",
           experience: "Completed",
         },

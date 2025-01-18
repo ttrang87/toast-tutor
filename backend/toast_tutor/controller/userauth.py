@@ -11,6 +11,8 @@ from django.utils import timezone
 @api_view(['POST'])
 def register_user(request):
     serializer = UserSerializer(data=request.data)
+    print(serializer.is_valid())
+    print(serializer.errors)
     if serializer.is_valid():
         # Create the User instance
         user = User.objects.create_user(

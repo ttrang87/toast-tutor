@@ -108,6 +108,10 @@ const LogIn = () => {
               Sign Up
             </button>
           </p>
+          <div className="text-center">
+            <button className="text-yellow-600 text-sm hover:underline mt-2"
+            onClick={() => navigate('/auth/enteremail')}>Forget Password?</button>
+          </div>
         </div>
       </div>
     </div>

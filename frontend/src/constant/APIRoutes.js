@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://127.0.0.1:8000/';
+const API_BASE_URL = 'http://127.0.0.1:8000';
+
 
 export const API_ROUTES = {
     /*PROFILE SECTION*/
@@ -27,5 +28,8 @@ export const API_ROUTES = {
     DELETE_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/deleteaward/${awardId}/`,
     ADD_AWARD: (userId) => `${API_BASE_URL}/tutor/profile/addaward/${userId}/`,
 
+    FIND_TUTORS: `${API_BASE_URL}/find_tutors/`,
 
+    FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
+    RESET_PASSWORD: () => `${API_BASE_URL}/api/reset-password/`
 }
