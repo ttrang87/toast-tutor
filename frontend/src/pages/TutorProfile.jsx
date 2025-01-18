@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { API_ROUTES } from "../constant/APIRoutes";
 import { toast, Toaster } from 'react-hot-toast';
-
 import BasicInfor from "../components/tutor_profile/watch/BasicInfor";
 import BasicInforEdit from "../components/tutor_profile/edit/BasicInforEdit";
 import Education from "../components/tutor_profile/watch/Education";

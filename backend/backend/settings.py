@@ -124,6 +124,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  # Example: 15 minutes
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),     # Example: 7 days
+}
+
+AUTH_USER_MODEL = 'toast_tutor.User' 
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

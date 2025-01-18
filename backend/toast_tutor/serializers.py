@@ -30,17 +30,17 @@ class TutorProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'username', 'bio', 'hourly_rate', 'teaching_style', 'avatar', 'cover']
         read_only_fields = ['id']
 
-    def validate_email(self, value):
-        user_id = self.instance.user.id if self.instance else None
-        if User.objects.exclude(id=user_id).filter(email=value).exists():
-            raise serializers.ValidationError("This email is already in use.")
-        return value
+    # def validate_email(self, value):
+    #     user_id = self.instance.user.id if self.instance else None
+    #     if User.objects.exclude(id=user_id).filter(email=value).exists():
+    #         raise serializers.ValidationError("This email is already in use.")
+    #     return value
     
-    def validate_username(self, value):
-        user_id = self.instance.user.id if self.instance else None
-        if User.objects.exclude(id=user_id).filter(username=value).exists():
-            raise serializers.ValidationError("This username is already in use.")
-        return value
+    # def validate_username(self, value):
+    #     user_id = self.instance.user.id if self.instance else None
+    #     if User.objects.exclude(id=user_id).filter(username=value).exists():
+    #         raise serializers.ValidationError("This username is already in use.")
+    #     return value
 
     def update(self, instance, validated_data):
         # Get user data if provided
@@ -77,6 +77,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'profile', 'education','course','exam','award']
+        fields = ['id', "username", "email", "password", 'profile', 'education','course','exam','award']
         
     

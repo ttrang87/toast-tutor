@@ -7,8 +7,24 @@ import covers from '../CoverList'
 const BasicInfor = ({ data }) => {
     const { id, username, email, bio, teaching_style, hourly_rate, avatar, cover } = data
 
+    const parseTeachingStyle = (styleData) => {
+        if (Array.isArray(styleData)) {
+            return styleData;
+        }
+        if (typeof styleData === 'string') {
+            try {
+                return JSON.parse(styleData);
+            } catch (error) {
+                console.warn('Failed to parse teaching_style:', error);
+                return [];
+            }
+        }
+        return [];
+    };
+
     const [Star, setStar] = useState(5)
-    const teachingStyle = JSON.parse(teaching_style)
+    const teachingStyle = parseTeachingStyle(teaching_style)
+    // const teachingStyle = teaching_style
     const fetchAvatar = avatars.find((ava) => ava.id === avatar)
     const fetchCover = covers.find((cov) => cov.id === cover)
 

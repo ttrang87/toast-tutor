@@ -1,9 +1,16 @@
 from django.urls import path
 from .controller import profile, matching
+# from .views import register_user, login_user, logout_user
+from .controller.userauth import register_user, login_user, logout_user
 
 urlpatterns = [
     # Specific
     path('find_tutors/', matching.find_tutors, name='find_tutors'),
+
+    #AUTHENTICATION
+    path('auth/register/', register_user, name='register'),
+    path('auth/login/', login_user, name='login'),
+    path('auth/logout/', logout_user, name='logout'),
 
     #AWARD SECTION
     path('tutor/profile/addaward/<int:userId>/', profile.add_award, name='add_award'),

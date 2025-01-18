@@ -9,7 +9,16 @@ const TutorCard = ({ tutor, subjectName, isBestChoice }) => {
   const fetchAvatar = avatars.find((ava) => ava.id === tutor.avatar);
 
   // Convert teaching styles from array to comma-separated string if needed
-  const teachingStylesArray = JSON.parse(tutor.teachingStyles)
+  let teachingStylesArray = [];
+  try {
+    teachingStylesArray = Array.isArray(tutor.teachingStyles)
+      ? tutor.teachingStyles
+      : JSON.parse(tutor.teachingStyles);
+  } catch (error) {
+    console.error("Error parsing teachingStyles:", error);
+    teachingStylesArray = [];
+  }
+
 
   return (
     <div className={` relative flex flex-col gap-3 bg-white rounded-lg shadow-lg p-5 mb-4 ${isBestChoice ? 'border-4 border-yellow-500' : ''} hover:scale-105 transition duration-200`}>
