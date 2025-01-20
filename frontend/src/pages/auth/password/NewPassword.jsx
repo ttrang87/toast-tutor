@@ -122,7 +122,7 @@ const NewPassword = () => {
                                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                 onClick={() => setShowPassword1(!showPassword1)}
                             >
-                                {showPassword1 ? EyeCloseIcon : EyeOpenIcon}
+                                {showPassword1 ? EyeOpenIcon : EyeCloseIcon}
                             </button>
                         </div>
                         <label htmlFor="password_again2" className="text-yellow-700 font-semibold">Confirm Password <span className="text-red-600">*</span></label>
@@ -141,7 +141,7 @@ const NewPassword = () => {
                                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                                 onClick={() => setShowPassword2(!showPassword2)}
                             >
-                                {showPassword2 ? EyeCloseIcon : EyeOpenIcon}
+                                {showPassword2 ? EyeOpenIcon :  EyeCloseIcon}
                             </button>
                         </div>
                         {errorMessage && <p className="text-red-600 font-semibold text-center text-md mt-1">{errorMessage}</p>}
