@@ -13,6 +13,21 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+FRONTEND_BASE_URL = os.getenv('FRONTEND_BASE_URL')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -166,11 +181,11 @@ DEBUG = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True 
-EMAIL_HOST_USER = 'toasttutorreach@gmail.com'
-EMAIL_HOST_PASSWORD = 'wupofgoejcngvwob'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True 
+# EMAIL_HOST_USER = 'toasttutorreach@gmail.com'
+# EMAIL_HOST_PASSWORD = 'wupofgoejcngvwob'
 
-FRONTEND_BASE_URL = 'http://localhost:5173'
+# FRONTEND_BASE_URL = 'http://localhost:5173'

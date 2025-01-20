@@ -31,5 +31,5 @@ export const API_ROUTES = {
     FIND_TUTORS: `${API_BASE_URL}/find_tutors/`,
 
     FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
-    RESET_PASSWORD: () => `${API_BASE_URL}/api/reset-password/`
+    RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`
 }
