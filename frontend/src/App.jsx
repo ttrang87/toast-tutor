@@ -13,9 +13,12 @@ import NewPassword from "./pages/auth/password/NewPassword";
 import RedirectPage from "./pages/auth/password/RedirectPage";
 import Waiting from "./pages/auth/password/Waiting";
 import LogIn from "./pages/auth/LogIn";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const [userId, setUserId] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     // Get the user ID from localStorage
@@ -25,20 +28,60 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Header />
+      <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/tutor/profile/:id" element={<TutorProfile />} />
-        <Route path="/booking/:id" element={<Booking />} />
-        <Route path="/waiting_match" element={<WaitingMatched />} />
-        <Route path="/matched_tutors/:id" element={<MatchedTutors />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<LogIn />} />
+        <Route
+          path="/tutor/profile/:id"
+          element={
+            <ProtectedRoute>
+              <TutorProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/booking/:id"
+          element={
+            <ProtectedRoute>
+              <Booking />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/waiting_match"
+          element={
+            <ProtectedRoute>
+              <WaitingMatched />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/matched_tutors/:id"
+          element={
+            <ProtectedRoute>
+              <MatchedTutors />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <SignUp isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <LogIn isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+          }
+        />
 
         <Route path="/auth/enteremail" element={<EnterEmail />} />
         <Route path="/reset-password/:token" element={<NewPassword />} />
         <Route path="/auth/waiting" element={<Waiting />} />
         <Route path="/auth/redirect" element={<RedirectPage />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

@@ -2,12 +2,15 @@ import React, { useState } from "react";
 import { login } from "../../services/authService";
 import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
 
-const LogIn = () => {
+const LogIn = (props) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,43 +19,54 @@ const LogIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await login(formData);
-      navigate("/")
+      const response = await login(formData); // Replace with your API logic
+      props.setIsLoggedIn(true);
+
+      // Show success toast
+      toast.success("Logged in successfully!", {
+        duration: 4000, // Optional: duration for the toast
+        position: "top-center", // Position of the toast
+      });
+
+      navigate(`/tutor/profile/${localStorage.getItem("userId")}`);
     } catch (err) {
-      alert("Error: " + err.response.data.error);
+      // Show error toast
+      toast.error(
+        `Login failed: ${err.response?.data?.error || "Unknown error"}`,
+        {
+          duration: 4000,
+          position: "top-center",
+        }
+      );
     }
   };
 
-  const navigate = useNavigate();
-
   return (
-    <div className="flex items-center justify-center h-screen bg-yellow-50">
-      <div className="relative w-full max-w-lg">
+    <div className="flex items-center justify-center h-screen bg-yellow-50 -mt-6">
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="relative w-full max-w-md">
         {/* Image Block */}
         <div
-          className="absolute -top-14 left-1/2 transform -translate-x-1/2 z-50"
+          className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-50"
           style={{ zIndex: 50 }}
         >
           <img
             src={toastpic}
             alt="Toast"
-            className="w-28 h-28 object-cover rounded-full ring-4 ring-yellow-400 shadow-xl"
+            className="w-24 h-24 object-cover rounded-full ring-4 ring-yellow-400 shadow-xl"
           />
         </div>
 
         {/* Card Container */}
-        <div className="bg-white border-yellow-200 border rounded-[50px] shadow-2xl px-10 py-16 relative z-10">
-          {/* Title */}
-          <h2 className="text-3xl font-bold text-center text-yellow-800 mb-4">
+        <div className="bg-white border-yellow-200 border rounded-3xl shadow-lg px-8 py-12 relative z-10">
+          <h2 className="text-2xl font-bold text-center text-yellow-800 mb-3">
             Welcome Back!
           </h2>
-          <p className="text-center text-gray-600 mb-6">
+          <p className="text-center text-sm text-gray-600 mb-4">
             Log in to your account to continue.
           </p>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Username Input */}
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 htmlFor="username"
@@ -65,12 +79,11 @@ const LogIn = () => {
                 id="username"
                 placeholder="Enter your username"
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-full text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
                 required
               />
             </div>
 
-            {/* Password Input */}
             <div>
               <label
                 htmlFor="password"
@@ -84,22 +97,20 @@ const LogIn = () => {
                 id="password"
                 placeholder="Enter your password"
                 onChange={handleChange}
-                className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-full text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
                 required
               />
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3 rounded-full bg-yellow-600 text-white font-semibold shadow-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full py-2 rounded-md bg-yellow-600 text-white font-semibold shadow hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             >
               Log In
             </button>
           </form>
 
-          {/* Sign Up Redirect */}
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-xs text-gray-600 mt-4">
             Don’t have an account?{" "}
             <button
               className="text-yellow-600 font-medium hover:underline focus:outline-none"
@@ -109,8 +120,12 @@ const LogIn = () => {
             </button>
           </p>
           <div className="text-center">
-            <button className="text-yellow-600 text-sm hover:underline mt-2"
-            onClick={() => navigate('/auth/enteremail')}>Forget Password?</button>
+            <button
+              className="text-yellow-600 text-xs hover:underline mt-2"
+              onClick={() => navigate("/auth/enteremail")}
+            >
+              Forget Password?
+            </button>
           </div>
         </div>
       </div>
