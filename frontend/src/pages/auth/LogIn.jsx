@@ -3,12 +3,19 @@ import { login } from "../../services/authService";
 import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
 
 const LogIn = (props) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const renderEyeIcon = (isOpen) => {
+    return React.cloneElement(isOpen ? EyeOpenIcon : EyeCloseIcon);
+  };
+
 
   const navigate = useNavigate();
 
@@ -24,8 +31,7 @@ const LogIn = (props) => {
 
       // Show success toast
       toast.success("Logged in successfully!", {
-        duration: 4000, // Optional: duration for the toast
-        position: "top-center", // Position of the toast
+        duration: 2000, // Optional: duration for the toast
       });
 
       navigate(`/tutor/profile/${localStorage.getItem("userId")}`);
@@ -34,8 +40,7 @@ const LogIn = (props) => {
       toast.error(
         `Login failed: ${err.response?.data?.error || "Unknown error"}`,
         {
-          duration: 4000,
-          position: "top-center",
+          duration: 2000,
         }
       );
     }
@@ -91,15 +96,24 @@ const LogIn = (props) => {
               >
                 Password
               </label>
-              <input
-                name="password"
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-                required
-              />
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter your password"
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {renderEyeIcon(showPassword)}
+                </button>
+              </div>
             </div>
 
             <button
@@ -111,7 +125,7 @@ const LogIn = (props) => {
           </form>
 
           <p className="text-center text-xs text-gray-600 mt-4">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <button
               className="text-yellow-600 font-medium hover:underline focus:outline-none"
               onClick={() => navigate("/signup")}

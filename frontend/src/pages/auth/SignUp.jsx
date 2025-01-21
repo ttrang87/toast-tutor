@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import { register } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const renderEyeIcon = (isOpen) => {
+    return React.cloneElement(isOpen ? EyeOpenIcon : EyeCloseIcon);
+  };
 
   const [formData, setFormData] = useState({
     username: "",
@@ -27,7 +33,9 @@ const SignUp = () => {
     e.preventDefault();
 
     if (confirmPassword !== formData.password) {
-      alert("Confirm password does not match.");
+      toast.error("Confirm password does not match.", {
+        duration: 2000, // Optional: duration for the toast
+      });
       return;
     }
 
@@ -77,21 +85,26 @@ const SignUp = () => {
     try {
       const response = await register(dataToSend);
       toast.success("Signed up successfully!", {
-        duration: 4000, // Optional: duration for the toast
-        position: "top-center", // Position of the toast
+        duration: 2000, // Optional: duration for the toast
       });
       navigate("/login");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.errors) {
         const errors = err.response.data.errors;
         if (errors.username) {
-          alert(`Username: ${errors.username.join(", ")}`);
+          toast.error(`${errors.username.join(", ")}`, {
+            duration: 2000, // Optional: duration for the toast
+          });
         }
         if (errors.email) {
-          alert(`Email: ${errors.email.join(", ")}`);
+          toast.error(`${errors.email.join(", ")}`, {
+            duration: 2000, // Optional: duration for the toast
+          });
         }
       } else {
-        alert("An unexpected error occurred. Please try again.");
+        toast.error("An unexpected error occurred. Please try again.", {
+          duration: 2000, // Optional: duration for the toast
+        });
       }
     }
   };
@@ -158,15 +171,24 @@ const SignUp = () => {
               >
                 Password
               </label>
-              <input
-                name="password"
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-                required
-              />
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter your password"
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {renderEyeIcon(showPassword)}
+                </button>
+              </div>
             </div>
 
             {/* Confirm Password Input */}
