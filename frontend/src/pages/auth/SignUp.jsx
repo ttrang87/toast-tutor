@@ -27,7 +27,11 @@ const SignUp = () => {
     e.preventDefault();
 
     if (confirmPassword !== formData.password) {
-      alert("Confirm password does not match.");
+      // alert("Confirm password does not match.");
+      toast.error("Confirm password does not match.", {
+        duration: 4000, // Optional: duration for the toast
+        position: "top-center", // Position of the toast
+      });
       return;
     }
 
@@ -85,13 +89,25 @@ const SignUp = () => {
       if (err.response && err.response.data && err.response.data.errors) {
         const errors = err.response.data.errors;
         if (errors.username) {
-          alert(`Username: ${errors.username.join(", ")}`);
+          // alert(`Username: ${errors.username.join(", ")}`);
+          toast.error(`Username: ${errors.username.join(", ")}`, {
+            duration: 4000, // Optional: duration for the toast
+            position: "top-center", // Position of the toast
+          });
         }
         if (errors.email) {
-          alert(`Email: ${errors.email.join(", ")}`);
+          // alert(`Email: ${errors.email.join(", ")}`);
+          toast.error(`Email: ${errors.email.join(", ")}`, {
+            duration: 4000, // Optional: duration for the toast
+            position: "top-center", // Position of the toast
+          });
         }
       } else {
-        alert("An unexpected error occurred. Please try again.");
+        // alert("An unexpected error occurred. Please try again.");
+        toast.error("An unexpected error occurred. Please try again.", {
+          duration: 4000, // Optional: duration for the toast
+          position: "top-center", // Position of the toast
+        });
       }
     }
   };
