@@ -1,17 +1,27 @@
 import React, { useState } from "react";
 import { register } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
+import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
+
+  // Create React elements from the imported JSX
+  const renderEyeIcon = (isOpen) => {
+    return React.cloneElement(isOpen ? EyeOpenIcon : EyeCloseIcon, {
+      className: "w-5 h-5"
+    });
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -52,7 +62,7 @@ const SignUp = () => {
       course: [
         {
           name: "Math 101",
-          grade: 12 ,
+          grade: 12,
           level: "Undergraduate",
           experience: "Completed",
         },
@@ -152,34 +162,52 @@ const SignUp = () => {
               >
                 Password
               </label>
-              <input
-                name="password"
-                type="password"
-                id="password"
-                placeholder="Enter your password"
-                onChange={handleChange}
-                className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-full text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-                required
-              />
+              <div className="relative">
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter your password"
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-full text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {renderEyeIcon(showPassword)}
+                </button>
+              </div>
             </div>
 
             {/* Confirm Password Input */}
             <div>
               <label
-                htmlFor="password"
+                htmlFor="confirmPassword"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Confirm Password
               </label>
-              <input
-                name="password2"
-                type="password"
-                id="confirmPassword"
-                placeholder="Confirm your password"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-full text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
-                required
-              />
+              <div className="relative">
+                <input
+                  name="password2"
+                  type={showConfirmPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  placeholder="Confirm your password"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-full text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {renderEyeIcon(showConfirmPassword)}
+                </button>
+              </div>
             </div>
 
             {/* Submit Button */}
