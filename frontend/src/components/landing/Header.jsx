@@ -1,21 +1,21 @@
-import { React, useState, useEffect } from 'react';
-import logo from '../../assets/logo.png';
-import { useNavigate } from 'react-router-dom';
-import { logout } from '../../services/authService';
+import { React, useState, useEffect } from "react";
+import logo from "../../assets/logo.png";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../services/authService";
 
-const Header = () => {
-  const [isLog, setIsLog] = useState(false);
+const Header = (props) => {
   const navigate = useNavigate();
 
   // Check login status
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    setIsLog(!!userId);
+    if (userId) {
+      props.setIsLoggedIn(true);
+    }
   }, []);
 
   const handleLogout = () => {
-    // localStorage.removeItem("userId");
-    setIsLog(false);
+    props.setIsLoggedIn(false);
     logout();
     navigate("/");
   };
@@ -24,11 +24,7 @@ const Header = () => {
     <div className="flex items-center px-8 bg-yellow-50 text-yellow-700 py-2">
       {/* Left - Logo */}
       <div className="w-1/3">
-        <img
-          src={logo}
-          alt="Logo"
-          className="w-48 h-auto object-cover"
-        />
+        <img src={logo} alt="Logo" className="w-48 h-auto object-cover" />
       </div>
 
       {/* Center - Navigation */}
@@ -39,29 +35,27 @@ const Header = () => {
         >
           Home
         </button>
-        {isLog && (
+        {props.isLoggedIn && (
           <button
             className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-            onClick={() => navigate(`/tutor/profile/${localStorage.getItem("userId")}`)}
+            onClick={() =>
+              navigate(`/tutor/profile/${localStorage.getItem("userId")}`)
+            }
           >
             Profile
           </button>
         )}
-        <button
-          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-        >
+        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
           Tutors
         </button>
-        <button
-          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-        >
+        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
           Contact
         </button>
       </div>
 
       {/* Right - Log In/Log Out */}
       <div className="flex justify-end w-1/3">
-        {isLog ? (
+        {props.isLoggedIn ? (
           <button
             className="py-1 px-4 text-sm font-semibold rounded-full bg-yellow-800 text-white hover:bg-yellow-900 transition-color duration-200"
             onClick={handleLogout}
