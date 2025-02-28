@@ -1,0 +1,149 @@
+name: CI/CD Workflow
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    test-backend:
+        defaults:
+          run:
+            working-directory: ./backend
+        strategy:
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+                python-version: [3.9, 3.10, 3.11]
+        runs-on: ${{matrix.os}}
+
+        env:
+          DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          EMAIL_HOST: localhost
+          EMAIL_PORT: 1025
+          EMAIL_HOST_USER: ''
+          EMAIL_HOST_PASSWORD: ''
+
+        services:
+          redis: 
+            image: redis
+            ports: 
+              - 6379:6379
+            options: >-   #verify the service is up and running properly before your tests begin.
+              --health-cmd "redis-cli ping" 
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+          
+          postgres:
+            image: postgres
+            env:
+              POSTGRES_DB: test_db
+              POSTGRES_USER: test_user
+              POSTGRES_PASSWORD: test_password
+            ports:
+              - 5432:5432
+            options: >-
+              --health-cmd pg_isready
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+          
+          mailhog:
+            image: mailhog/mailhog
+            ports:
+              - 1025:1025
+              - 8025:8025
+
+            
+        steps:
+            - uses: actions/checkout@v4  #Clones repo into the GitHub Actions runner => without it => cannot access code
+            
+            - name: Set Up Python
+              uses: actions/setup-python@v5 
+              with: 
+                python-version: ${{matrix.python-version}}
+            
+            - name: Cache Dependencies
+              uses: actions/cache@v4
+              with: 
+                path: ~/.cache/pip #~ is home directory of virtual environment (runner) where this code is executed => path by default
+                key: ${{ runner.os }}-pip-${{ hashFiles('./backend/requirements.txt') }} #hashFiles: Changes if dependencies change
+                restore-keys: |  #Fallback keys to use if exact match isn't found
+                  ${{ runner.os }}-pip-
+
+            
+            - name: Install Python Dependencies
+              run: pip install -r backend/requirements.txt
+
+            - name: Check Migration
+              run: python manage.py makemigrations --check --dry-run  #Prevents forgetting to create or commit migration files => especially when Supabase require consistent schema
+              #checking if you have any pending model changes that require migrations, but not actually applying those migrations to any database => can use with test database
+            
+            - name: Run Django Test
+              run: python manage.py test
+            
+            - name: Run Django Linting
+              run: |  # | symbol allows multiple commands to be run
+                pip install flake8
+                flake8 .
+
+            - name: Performance Testing Backend (Locust)
+              run: | #simulate 12 concurrent users (but gradually add 3 users/sec until reach 12 (then stop) or stop when reach 1 minutes (note: users always <= 12))
+                pip install locust
+                locust --headless -u 12 -r 3 -t 1m --host=http://localhost:8000  
+              continue-on-error: true  # performance failures should not block deployment
+      
+    test-frontend:
+        defaults:
+          run:
+            working-directory: ./frontend
+        strategy:
+          matrix:
+            os: [ubuntu-latest, windows-latest, macos-latest]
+            node-version: [18]
+        runs-on: ${{matrix.os}}
+        
+        steps:
+          - uses: actions/checkout@v4
+          - name: Set Up Node.js
+            uses: actions/setup-node@v4
+            with:
+              node-version: ${{matrix.node-version}}
+              cache: 'npm'  #caching is already integrated directly into the actions/setup-node action => dont need separate cache step like Django
+              cache-dependency-path: ./frontend/package-lock.json
+          
+          - name: Install dependencies
+            run: npm ci    #clean unecessary dependencies, look at package-locj.json and install exactly what we need
+          
+          - name: Run React test
+            run: npm test -- --watchAll=false  #allow Jest (React testing framework run once, not need to wait until file change/ CI hang indefinitely (may leads to timeout))
+          
+          - name: Check TypeScript Types
+            run: npm run type-check
+          
+          - name: Check Linting
+            run: npm run lint
+
+          - name: Run Vite
+            run: npm run dev & sleep 5 #Vite takes a second to initialize, so Lighthouse might run before the server starts.
+          
+          - name: Performance Checking Frontend (Lighthouse)
+            run: |  #analyzes page load speed, accessibility, and performance score, generates a JSON report
+              npm ci --prefix ./frontend
+              lighthouse http://localhost:5173 --output=json --output-path=./lighthouse-report.json  
+            continue-on-error: true
+
+
+
+
+
+
+              
+
+
+        
+
+
