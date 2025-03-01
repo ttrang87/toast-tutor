@@ -63,7 +63,7 @@ jobs:
 
             - name: Set up Docker for macOS
               if: runner.os == 'macOS'
-              uses: docker/setup-buildx-action@v2
+              uses: docker/setup-buildx-action@v3
             
             - name: Set Up Python
               uses: actions/setup-python@v5 
