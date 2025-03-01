@@ -13,7 +13,7 @@ jobs:
             working-directory: ./backend
         strategy:
             matrix:
-                os: [ubuntu-latest, windows-latest, macos-latest]
+                os: [ubuntu-latest, windows-latest]
                 python-version: ["3.9", "3.10", "3.11"]
         runs-on: ${{matrix.os}}
 
@@ -61,9 +61,9 @@ jobs:
         steps:
             - uses: actions/checkout@v4  #Clones repo into the GitHub Actions runner => without it => cannot access code
 
-            - name: Install Docker
-              if: matrix.os == 'macos-latest'
-              uses: docker/setup-buildx-action@v3
+            # - name: Install Docker
+            #   if: matrix.os == 'macos-latest'
+            #   uses: docker/setup-buildx-action@v3
 
             
             - name: Set Up Python
@@ -110,7 +110,7 @@ jobs:
             working-directory: ./frontend
         strategy:
           matrix:
-            os: [ubuntu-latest, windows-latest, macos-latest]
+            os: [ubuntu-latest, windows-latest]
             node-version: ["18", "20"]
         runs-on: ${{matrix.os}}
         
