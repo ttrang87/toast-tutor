@@ -62,11 +62,8 @@ jobs:
             - uses: actions/checkout@v4  #Clones repo into the GitHub Actions runner => without it => cannot access code
 
             - name: Install Docker
-              if: runner.os == 'macOS'
-              run: |
-                brew install --cask docker
-                open -a Docker
-                sleep 20  # Give it time to start up
+              if: matrix.os == 'macos-latest'
+              uses: docker/setup-buildx-action@v3
 
             
             - name: Set Up Python
