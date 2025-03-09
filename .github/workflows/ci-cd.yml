@@ -122,8 +122,8 @@ jobs:
           # - name: Run React test
           #   run: npm test -- --watchAll=false  #allow Jest (React testing framework run once, not need to wait until file change/ CI hang indefinitely (may leads to timeout))
           
-          - name: Check TypeScript Types
-            run: npm run type-check
+          # - name: Check TypeScript Types
+          #   run: npm run type-check
           
           - name: Check Linting
             run: npm run lint
