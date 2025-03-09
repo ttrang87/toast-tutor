@@ -40,8 +40,8 @@ DATABASES = {
         'USER': config('DATABASE_USER'),
         'PASSWORD': config('DATABASE_PASSWORD'),
         'HOST': config('DATABASE_HOST'),
-        'PORT': config('DATABASE_HOST'),
-        'OPTIONS': config('DATABASE_OPTIONS'),
+        'PORT': config('DATABASE_PORT'),
+        'OPTIONS': {'gssencmode': 'disable'},
         'CONN_MAX_AGE': 500,
     }
 }
