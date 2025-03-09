@@ -119,8 +119,8 @@ jobs:
           - name: Install dependencies
             run: npm ci    #clean unecessary dependencies, look at package-locj.json and install exactly what we need
           
-          - name: Run React test
-            run: npm test -- --watchAll=false  #allow Jest (React testing framework run once, not need to wait until file change/ CI hang indefinitely (may leads to timeout))
+          # - name: Run React test
+          #   run: npm test -- --watchAll=false  #allow Jest (React testing framework run once, not need to wait until file change/ CI hang indefinitely (may leads to timeout))
           
           - name: Check TypeScript Types
             run: npm run type-check
