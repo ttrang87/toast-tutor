@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { login } from "../../services/authService";
 import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,7 @@ const LogIn = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await login(formData); // Replace with your API logic
+      await login(formData); // Replace with your API logic
       props.setIsLoggedIn(true);
 
       // Show success toast

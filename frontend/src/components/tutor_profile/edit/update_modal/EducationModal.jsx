@@ -50,6 +50,7 @@ const EducationModal = ({ isOpen, onClose, userId, eduData, mode, onEducationUpd
       }
     } catch (error) {
       showToast('error')
+      console.log(error)
     } finally {
       setIsLoading(false);
     }
@@ -66,6 +67,7 @@ const EducationModal = ({ isOpen, onClose, userId, eduData, mode, onEducationUpd
       onClose()
     } catch (error) {
       showToast('error')
+      console.log(error)
     } finally {
       setIsLoading(false);
     }

@@ -50,6 +50,7 @@ const ExamModal = ({ isOpen, onClose, userId, examData, mode, onExamUpdate, show
             }
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }
@@ -66,6 +67,7 @@ const ExamModal = ({ isOpen, onClose, userId, examData, mode, onExamUpdate, show
             onClose()
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }

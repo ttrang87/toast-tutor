@@ -36,7 +36,6 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
                 });
 
             }
-
             if (response.data) {
                 onAwardUpdate(response.data);
                 showToast('success')
@@ -44,6 +43,7 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
             }
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }
@@ -60,6 +60,7 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
             onClose()
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }

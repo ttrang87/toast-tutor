@@ -4,7 +4,7 @@ import avatars from '../AvatarList'
 import covers from '../CoverList'
 
 const BasicInfor = ({ data }) => {
-    const { id, username, email, bio, teaching_style, hourly_rate, avatar, cover } = data
+    const { username, email, bio, teaching_style, hourly_rate, avatar, cover } = data
 
     const parseTeachingStyle = (styleData) => {
         if (Array.isArray(styleData)) {

@@ -28,7 +28,7 @@ const AvatarModal = ({ onClose, profileId, avatar, setAvatar, cover, setCover, s
     const handleSave = async () => {
         setIsLoading(true)
         try {
-            const response = await axios.put(API_ROUTES.FIX_BASIC_INFOR(profileId), data, {
+            await axios.put(API_ROUTES.FIX_BASIC_INFOR(profileId), data, {
                 headers: { 'Content-Type': 'application/json' },
             });
             if (data.avatar) { setAvatar(selectedAvatar) }
@@ -38,6 +38,7 @@ const AvatarModal = ({ onClose, profileId, avatar, setAvatar, cover, setCover, s
 
         } catch (error) {
             showToast('error')
+            console.error(error);
         } finally {
             setIsLoading(false);
         }

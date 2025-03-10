@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { register } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
@@ -83,7 +83,7 @@ const SignUp = () => {
     };
 
     try {
-      const response = await register(dataToSend);
+      await register(dataToSend);
       toast.success("Signed up successfully!", {
         duration: 2000, // Optional: duration for the toast
       });

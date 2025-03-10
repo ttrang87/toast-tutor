@@ -52,7 +52,7 @@ const BasicInforModal = ({
         }
 
         try {
-            const response = await axios.put(API_ROUTES.FIX_BASIC_INFOR(profileId), data, {
+            await axios.put(API_ROUTES.FIX_BASIC_INFOR(profileId), data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

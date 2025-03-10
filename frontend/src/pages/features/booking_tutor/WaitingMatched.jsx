@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import waiting from '../../../assets/waiting.png'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 const WaitingMatched = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
