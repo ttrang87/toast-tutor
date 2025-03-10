@@ -85,10 +85,11 @@ jobs:
             # - name: Run Django Test
             #   run: python manage.py test
             
-            - name: Run Django Linting
-              run: |  # | symbol allows multiple commands to be run
-                  pip install flake8 autopep8 
-                  autopep8 --in-place --aggressive --aggressive .
+            - name: Run Django Linting with auto-fix
+              run: |
+                  pip install flake8 autopep8
+                  autopep8 --in-place --aggressive --aggressive ./toast_tutor/views.py
+                  flake8 .
             
             - name: Start Django Server
               run: python manage.py runserver & sleep 10
