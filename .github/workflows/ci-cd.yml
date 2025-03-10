@@ -18,6 +18,7 @@ jobs:
 
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+          DATABASE_ENGINE: django.db.backends.postgresql
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           EMAIL_HOST: localhost
