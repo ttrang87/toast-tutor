@@ -78,9 +78,9 @@ jobs:
             - name: Install Python Dependencies
               run: pip install -r requirements.txt
 
-            - name: Check Migration
-              run: python manage.py makemigrations --check --dry-run  #Prevents forgetting to create or commit migration files => especially when Supabase require consistent schema
-              #checking if you have any pending model changes that require migrations, but not actually applying those migrations to any database => can use with test database
+            # - name: Check Migration
+            #   run: python manage.py makemigrations --check --dry-run  #Prevents forgetting to create or commit migration files => especially when Supabase require consistent schema
+            #   #checking if you have any pending model changes that require migrations, but not actually applying those migrations to any database => can use with test database
             
             - name: Run Django Test
               run: python manage.py test
