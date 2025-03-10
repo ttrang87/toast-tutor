@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
 import { API_ROUTES } from '../../../../constant/APIRoutes'
 import avatars from '../../AvatarList'

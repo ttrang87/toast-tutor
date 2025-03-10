@@ -1,5 +1,3 @@
-import React from 'react';
-
 const TeachingStyleSelector = ({ selectedStyles, onStyleChange }) => {
   const TEACHING_STYLES = [
     "Strict but Fair", "Motivational", "Caring", "Creative", "Logical",

@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import { useState } from "react";
 import resetBg from '../../../assets/resetBg.jpg';
 import { LockIcon } from "../../../assets/icon";
 import { Link } from 'react-router-dom';

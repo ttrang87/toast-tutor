@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from '../../assets/icon';
 
 const NavigationButtons = ({ currentStep, handleBack, handleNext }) => {

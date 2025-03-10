@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { API_ROUTES } from '../../../../constant/APIRoutes'
 import axios from 'axios'
 import TeachingStyleSelector from './StyleUpdate'

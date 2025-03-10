@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { useState } from 'react'
 import { EmailIcon, StarIcon, EditIcon, CameraIcon } from '../../../assets/icon'
 import BasicInforModal from './update_modal/BasicInforModal'
 import AvatarModal from './update_modal/AvatarModal'

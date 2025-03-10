@@ -1,4 +1,3 @@
-import React from 'react';
 import TeachingStyleSelector from '../tutor_profile/edit/update_modal/StyleUpdate';
 
 const ExamPreferences = ({ aimScore, setAimScore, maxScore, setMaxScore, teachingStyles, setTeachingStyles, note, setNote }) => {

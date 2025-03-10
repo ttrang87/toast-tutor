@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import resetBg from '../../../assets/resetBg.jpg';
 import { UnlockIcon, EyeCloseIcon, EyeOpenIcon } from "../../../assets/icon";
 import axios from "axios";

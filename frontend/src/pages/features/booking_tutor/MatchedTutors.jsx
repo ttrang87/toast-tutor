@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import avatars from '../../../components/tutor_profile/AvatarList';
 import { TransparentStarIcon, EducationIcon, SmallClockIcon, SmallBookIcon } from '../../../assets/icon';

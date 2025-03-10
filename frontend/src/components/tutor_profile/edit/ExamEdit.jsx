@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { useState } from 'react';
 import { PlusIcon, SmallEditIcon, ExamIcon } from '../../../assets/icon';
 import ExamModal from './update_modal/ExamModal';
 

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_ROUTES } from '../../../../constant/APIRoutes';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, showToast }) => {
 

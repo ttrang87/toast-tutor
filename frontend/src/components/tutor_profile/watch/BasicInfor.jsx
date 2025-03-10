@@ -1,8 +1,7 @@
-import { React, useState } from 'react'
+import { useState } from 'react'
 import { EmailIcon, StarIcon } from '../../../assets/icon'
 import avatars from '../AvatarList'
 import covers from '../CoverList'
-
 
 const BasicInfor = ({ data }) => {
     const { id, username, email, bio, teaching_style, hourly_rate, avatar, cover } = data

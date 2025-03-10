@@ -1,5 +1,3 @@
-import React from 'react';
-
 const EXAM_OPTIONS = [
   "SAT", "ACT", "AP Calculus AB", "AP Calculus BC", "AP Statistics",
   "AP Biology", "AP Chemistry", "AP Physics 1", "AP Physics 2", "AP English Literature and Composition",

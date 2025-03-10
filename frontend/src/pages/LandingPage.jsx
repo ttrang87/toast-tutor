@@ -1,4 +1,3 @@
-import React from "react";
 import landingpic from "../assets/landingpic.jpg";
 import HeroSection from "../components/landing/HeroSection";
 import FeaturesSection from "../components/landing/FeaturesSetion";
