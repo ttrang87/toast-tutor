@@ -23,7 +23,7 @@ const EducationModal = ({ isOpen, onClose, userId, eduData, mode, onEducationUpd
         });
       }
     }
-  }, [eduData, mode]);
+  }, [eduData, mode, isOpen]);
 
   // Create a wrapper for onClose to reset for
 

@@ -19,7 +19,7 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
                 });
             }
         }
-    }, [awardData, mode]);
+    }, [awardData, mode, isOpen]); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();

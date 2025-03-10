@@ -23,7 +23,7 @@ const CourseModal = ({ isOpen, onClose, userId, courseData, mode, onCourseUpdate
                 });
             }
         }
-    }, [courseData, mode]);
+    }, [courseData, mode, isOpen]);
 
     // Create a wrapper for onClose to reset for
 

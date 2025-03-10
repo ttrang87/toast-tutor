@@ -23,7 +23,7 @@ const ExamModal = ({ isOpen, onClose, userId, examData, mode, onExamUpdate, show
                 });
             }
         }
-    }, [examData, mode]);
+    }, [examData, mode, isOpen]);
 
     // Create a wrapper for onClose to reset for
 

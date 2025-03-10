@@ -42,7 +42,7 @@ const WaitingMatched = () => {
             clearTimeout(maxWaitTimer);
             clearInterval(checkResponseInterval);
         };
-    }, [navigate, isLoading]);
+    }, [navigate, isLoading, userId]);
     return (
         <div className='flex items-center justify-center bg-yellow-50 min-h-screen'>
             <div className='flex flex-col items-center justify-center gap-4 pb-24'>
@@ -53,7 +53,7 @@ const WaitingMatched = () => {
                 />
                 <div className="loading-spinner" /> {/* equivalent with <div></div> so dont need </div> */}
                 <div className='text-3xl text-yellow-700 font-bold text-center'>We are finding your perfect tutor</div>
-                <div className='text-md text-yellow-700 text-center'>Learning is a lifelong journey! Don't give up</div>
+                <div className='text-md text-yellow-700 text-center'>Learning is a lifelong journey! Don&apos;t give up</div>
 
             </div>
 
