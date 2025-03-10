@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { EmailIcon, StarIcon } from '../../../assets/icon'
 import avatars from '../AvatarList'
 import covers from '../CoverList'
