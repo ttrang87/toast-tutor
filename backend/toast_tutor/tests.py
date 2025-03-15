@@ -1,6 +1,8 @@
 from django.test import TestCase
 
-from .controller.algorithm import TutorMatcher  # Replace with the correct module path
+# Replace with the correct module path
+from .controller.algorithm import TutorMatcher
+
 
 class TutorMatcherTestCase(TestCase):
     def setUp(self):
@@ -27,11 +29,13 @@ class TutorMatcherTestCase(TestCase):
 
     def test_calculate_experience(self):
         experience_score = self.matcher.calculate_experience()
-        self.assertEqual(experience_score, 3.0)  # Adjust based on expected output
+        # Adjust based on expected output
+        self.assertEqual(experience_score, 3.0)
 
     def test_calculate_teaching_styles(self):
         teaching_styles_score = self.matcher.calculate_teaching_styles()
-        self.assertEqual(teaching_styles_score, 0.1)  # Adjust based on expected output
+        # Adjust based on expected output
+        self.assertEqual(teaching_styles_score, 0.1)
 
     def test_calculate_overall_score(self):
         overall_score = self.matcher.calculate_overall_score()

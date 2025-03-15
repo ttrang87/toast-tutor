@@ -1,5 +1,6 @@
 import math
 
+
 class TutorMatcher:
     def __init__(self, tutor_data, request_data):
         self.weights = {
@@ -23,19 +24,35 @@ class TutorMatcher:
 
     def is_qualified(self):
         if self.type == 'subject':
-            level_map = {'Beginner': 1, 'Intermediate': 2, 'Advanced': 3, 'Expert':4}
+            level_map = {
+                'Beginner': 1,
+                'Intermediate': 2,
+                'Advanced': 3,
+                'Expert': 4}
             if level_map[self.tutor_score] < level_map[self.request_aim]:
                 return False
         return True
-    
+
     def calculate_aim(self):
         if self.type == 'exam':
-            diff = round((float(self.tutor_score) - float(self.request_aim)) / self.request_max_score * 100, 2)
+            diff = round(
+                (float(
+                    self.tutor_score) -
+                    float(
+                    self.request_aim)) /
+                self.request_max_score *
+                100,
+                2)
         else:
-            level_map = {'Beginner': 1, 'Intermediate': 2, 'Advanced': 3, 'Expert':4}
-            diff = level_map[self.tutor_score] - level_map[self.request_aim] + 1
+            level_map = {
+                'Beginner': 1,
+                'Intermediate': 2,
+                'Advanced': 3,
+                'Expert': 4}
+            diff = level_map[self.tutor_score] - \
+                level_map[self.request_aim] + 1
         return diff * self.weights['aim_match']
-    
+
     def calculate_experience(self):
         if self.tutor_exp == "<1":
             score = 0.5
@@ -45,18 +62,18 @@ class TutorMatcher:
             score = int(self.tutor_exp)
         diff = math.log(score)
         return diff * self.weights['experience']
-    
+
     def calculate_price(self):
         diff = float((self.min_pay - self.tutor_rate) / 20)
         return diff * self.weights['price']
-    
+
     def calculate_teaching_styles(self):
         score = 0
         for i in self.request_styles:
             if i in self.tutor_styles:
                 score += 1
         return score * self.weights['teaching_styles']
-    
+
     def calculate_overall_score(self):
         if not self.is_qualified():
             return 0

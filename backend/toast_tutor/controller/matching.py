@@ -4,19 +4,18 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from ..models import TutorRequest, TutorProfile, User, Exam, Course
-from ..serializers import TutorRequestSerializer, TutorProfileSerializer, ExamSerializer, CourseSerializer
 from .algorithm import TutorMatcher
+
 
 @api_view(['POST'])
 def find_tutors(request):
-    #create new request
+    # create new request
     req = request.data
     userId = req.get('userId')
     request_type = req.get('request_type')
     subject_name = req.get('subject_name')
     grade = int(req.get('grade'))
     aim = req.get('aim')
-    date = req.get('date')
     max_score = req.get('max_score')
     description = req.get('description')
     min_pay = req.get('min_pay')
@@ -26,13 +25,13 @@ def find_tutors(request):
     user = get_object_or_404(User, id=userId)
 
     try:
-        tutor_request = TutorRequest.objects.create(
+        TutorRequest.objects.create(
             user=user,
             description=description
         )
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     pay_range = f"{min_pay}-{max_pay}"
     cache_key = f'tutors:{subject_name}:{pay_range}'
 
@@ -40,13 +39,14 @@ def find_tutors(request):
 
     if not tutors:
         if request_type == 'exam':
-            matching_items = Exam.objects.filter(name = subject_name)
+            matching_items = Exam.objects.filter(name=subject_name)
 
-        elif request_type =='subject':
-            matching_items = Course.objects.filter(name = subject_name)
-        
-        matching_user_ids = matching_items.values_list('user_id', flat=True).distinct()
-    
+        elif request_type == 'subject':
+            matching_items = Course.objects.filter(name=subject_name)
+
+        matching_user_ids = matching_items.values_list(
+            'user_id', flat=True).distinct()
+
         tutors = []
         for user_id in matching_user_ids:
             try:
@@ -55,7 +55,7 @@ def find_tutors(request):
                     tutors.append(tutor)
             except (User.DoesNotExist, TutorProfile.DoesNotExist):
                 continue
-        
+
         if tutors:
             cache.set(cache_key, tutors, timeout=120)
         else:
@@ -71,7 +71,7 @@ def find_tutors(request):
         'teaching_styles': teaching_styles,
         'min_pay': min_pay
     }
-    
+
     for tutor in tutors:
         try:
             if request_type == 'subject':
@@ -81,7 +81,7 @@ def find_tutors(request):
                     name=subject_name,
                     grade=grade
                 ).first()
-                
+
                 if matching_course:
                     tutor_data = {
                         'score': matching_course.level,
@@ -89,13 +89,13 @@ def find_tutors(request):
                         'teaching_styles': tutor.tutor_profile.teaching_style,
                         'hourly_rate': tutor.tutor_profile.hourly_rate
                     }
-                    
+
                     matcher = TutorMatcher(tutor_data, request_data)
                     matchScore = matcher.calculate_overall_score()
-                    
+
                     if matchScore > 0:
                         first_school = None
-                        education_records = tutor.education_records.all() 
+                        education_records = tutor.education_records.all()
                         if education_records and len(education_records) > 0:
                             first_school = education_records.first().school_name
 
@@ -110,14 +110,14 @@ def find_tutors(request):
                             'hourlyRate': tutor.tutor_profile.hourly_rate,
                             'matchScore': matchScore
                         })
-                        
+
             else:  # exam type
                 matching_exam = Exam.objects.filter(
                     user_id=tutor.id,
                     name=subject_name,
                     score__gte=float(aim) - 0.01
                 ).first()
-                
+
                 if matching_exam:
                     tutor_data = {
                         'score': matching_exam.score,
@@ -125,13 +125,13 @@ def find_tutors(request):
                         'teaching_styles': tutor.tutor_profile.teaching_style,
                         'hourly_rate': tutor.tutor_profile.hourly_rate
                     }
-                    
+
                     matcher = TutorMatcher(tutor_data, request_data)
                     matchScore = matcher.calculate_overall_score()
-                    
+
                     if matchScore > 0:
                         first_school = None
-                        education_records = tutor.education_records.all() 
+                        education_records = tutor.education_records.all()
                         if education_records and len(education_records) > 0:
                             first_school = education_records.first().school_name
                         ranked_tutors.append({
@@ -145,12 +145,12 @@ def find_tutors(request):
                             'hourlyRate': tutor.tutor_profile.hourly_rate,
                             'matchScore': matchScore
                         })
-                        
+
         except Exception as e:
             print(f"Error processing tutor {tutor.id}: {str(e)}")
             continue
 
     # Sort tutors by match score
     ranked_tutors.sort(key=lambda x: x['matchScore'], reverse=True)
-    
+
     return Response(ranked_tutors, status=status.HTTP_200_OK)

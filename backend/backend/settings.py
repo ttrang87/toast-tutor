@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 from decouple import config
 import dj_database_url
@@ -147,14 +148,13 @@ REST_FRAMEWORK = {
     ),
 }
 
-from datetime import timedelta
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  # Example: 15 minutes
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),     # Example: 7 days
 }
 
-AUTH_USER_MODEL = 'toast_tutor.User' 
+AUTH_USER_MODEL = 'toast_tutor.User'
 
 
 # Internationalization
