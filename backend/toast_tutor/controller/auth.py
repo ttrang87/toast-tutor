@@ -10,13 +10,15 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-from toast_tutor.models import User, ResetToken  # Import your User model instead of Django's default
+# Import your User model instead of Django's default
+from toast_tutor.models import User, ResetToken
 from django.http import JsonResponse
 from django.contrib.auth.hashers import make_password
 from django.utils.timezone import now
 from ..models import User, ResetToken
-from django.views.decorators.csrf import csrf_exempt 
+from django.views.decorators.csrf import csrf_exempt
 import json
+
 
 @api_view(['POST'])
 def request_password_reset(request):
@@ -28,7 +30,7 @@ def request_password_reset(request):
     if not email:
         print("Failed: No email provided")
         return Response(
-            {'error': 'Please provide an email address'}, 
+            {'error': 'Please provide an email address'},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -39,7 +41,7 @@ def request_password_reset(request):
     except ValidationError:
         print(f"Failed: Invalid email format - {email}")
         return Response(
-            {'error': 'Invalid email format'}, 
+            {'error': 'Invalid email format'},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -50,7 +52,7 @@ def request_password_reset(request):
     except User.DoesNotExist:
         print(f"Failed: No user found with email - {email}")
         return Response(
-            {'error': 'No account found with this email address'}, 
+            {'error': 'No account found with this email address'},
             status=status.HTTP_404_NOT_FOUND
         )
 
@@ -58,16 +60,18 @@ def request_password_reset(request):
         print("Attempting to generate/retrieve token")
         # This will now either return existing valid token or generate new one
         token = ResetToken.generate_for_user(user)
-        print(f"Token obtained: {token[:10]}...")  # Print first 10 chars for security
+        # Print first 10 chars for security
+        print(f"Token obtained: {token[:10]}...")
 
         # Create reset URL
         reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password/{token}/"
-        print(f"Reset URL generated (base): {settings.FRONTEND_BASE_URL}/reset-password/...")
+        print(
+            f"Reset URL generated (base): {settings.FRONTEND_BASE_URL}/reset-password/...")
 
         # Send email
         print("Preparing to send email")
         subject = 'Password Reset Request'
-        
+
         text_content = f'''
         Hello {user.username},
 
@@ -274,23 +278,25 @@ def request_password_reset(request):
 
         print(f"Email sent successfully to {email}")
         return Response(
-            {'message': 'Password reset email sent successfully'}, 
+            {'message': 'Password reset email sent successfully'},
             status=status.HTTP_200_OK
         )
 
     except Exception as e:
         print(f"Failed: Error sending email - {str(e)}")
         return Response(
-            {'error': 'Error sending password reset email'}, 
+            {'error': 'Error sending password reset email'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
+
 @csrf_exempt
-@api_view(['POST']) 
+@api_view(['POST'])
 def reset_password(request):
     if request.method != "POST":
-        return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=405)
-    
+        return JsonResponse(
+            {'success': False, 'message': 'Invalid request method'}, status=405)
+
     try:
         # Parse request body
         body = json.loads(request.body)
@@ -298,10 +304,12 @@ def reset_password(request):
         token = body.get('token')  # Get token from request body
 
         if not new_password:
-            return JsonResponse({'success': False, 'message': 'Password is required'}, status=400)
-            
+            return JsonResponse(
+                {'success': False, 'message': 'Password is required'}, status=400)
+
         if not token:
-            return JsonResponse({'success': False, 'message': 'Token is required'}, status=400)
+            return JsonResponse(
+                {'success': False, 'message': 'Token is required'}, status=400)
 
         # Find the valid reset token
         reset_token = ResetToken.objects.filter(
@@ -310,7 +318,8 @@ def reset_password(request):
         ).select_related('user').first()
 
         if not reset_token:
-            return JsonResponse({'success': False, 'message': 'Invalid or expired token'}, status=403)
+            return JsonResponse(
+                {'success': False, 'message': 'Invalid or expired token'}, status=403)
 
         # Get the user associated with the token
         user = reset_token.user
@@ -329,7 +338,9 @@ def reset_password(request):
         })
 
     except json.JSONDecodeError:
-        return JsonResponse({'success': False, 'message': 'Invalid JSON format'}, status=400)
+        return JsonResponse(
+            {'success': False, 'message': 'Invalid JSON format'}, status=400)
     except Exception as e:
         print(f"Error resetting password: {e}")
-        return JsonResponse({'success': False, 'message': 'An error occurred'}, status=500)
+        return JsonResponse(
+            {'success': False, 'message': 'An error occurred'}, status=500)
