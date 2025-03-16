@@ -85,11 +85,13 @@ jobs:
             # - name: Run Django Test
             #   run: python manage.py test
             
-            - name: Run Django Linting with auto-fix
+            - name: Run Django Linting (excluding migrations)
               run: |
-                pip install flake8 autopep8
-                autopep8 --in-place --aggressive --aggressive --recursive --max-line-length=79 .
-                flake8 .
+                pip install flake8
+                echo "[flake8]" > .flake8
+                echo "exclude = .git,__pycache__,*/migrations/*,venv" >> .flake8
+                echo "max-line-length = 79" >> .flake8
+                flake8
             
             - name: Start Django Server
               run: python manage.py runserver & sleep 10
