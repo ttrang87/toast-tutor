@@ -73,6 +73,7 @@ jobs:
                 key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }} #hashFiles: Changes if dependencies change
                 restore-keys: |  #Fallback keys to use if exact match isn't found
                   ${{ runner.os }}-pip-
+                  ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-
 
             
             - name: Install Python Dependencies
