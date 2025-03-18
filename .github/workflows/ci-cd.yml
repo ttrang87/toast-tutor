@@ -22,6 +22,8 @@ jobs:
           DATABASE_NAME: test_db 
           DATABASE_USER: test_user   
           DATABASE_PASSWORD: test_pw
+          DATABASE_HOST: test_host
+          DATABASE_PORT: test_port
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           EMAIL_HOST: localhost
