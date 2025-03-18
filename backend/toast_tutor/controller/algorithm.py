@@ -37,9 +37,7 @@ class TutorMatcher:
     def calculate_aim(self):
         if self.type == "exam":
             diff = round(
-                (float(self.tutor_score) - float(self.request_aim))
-                / self.request_max_score
-                * 100,
+                (float(self.tutor_score) - float(self.request_aim)) / self.request_max_score * 100,
                 2,
             )
         else:
@@ -49,9 +47,7 @@ class TutorMatcher:
                 "Advanced": 3,
                 "Expert": 4,
             }
-            diff = (
-                level_map[self.tutor_score] - level_map[self.request_aim] + 1
-            )
+            diff = level_map[self.tutor_score] - level_map[self.request_aim] + 1
         return diff * self.weights["aim_match"]
 
     def calculate_experience(self):

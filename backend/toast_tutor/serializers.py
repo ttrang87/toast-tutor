@@ -102,9 +102,7 @@ class TutorRequestSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     profile = TutorProfileSerializer(source="tutor_profile", required=False)
-    education = EducationSerializer(
-        source="education_records", many=True, required=False
-    )
+    education = EducationSerializer(source="education_records", many=True, required=False)
     course = CourseSerializer(source="course_list", many=True, required=False)
     exam = ExamSerializer(source="exam_list", many=True, required=False)
     award = AwardSerializer(source="awards", many=True, required=False)

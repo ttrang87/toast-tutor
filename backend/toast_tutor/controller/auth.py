@@ -63,9 +63,7 @@ def request_password_reset(request):
 
         # Create reset URL
         reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password/{token}/"
-        print(
-            f"Reset URL generated (base): {settings.FRONTEND_BASE_URL}/reset-password/..."
-        )
+        print(f"Reset URL generated (base): {settings.FRONTEND_BASE_URL}/reset-password/...")
 
         # Send email
         print("Preparing to send email")
@@ -293,9 +291,7 @@ def request_password_reset(request):
 @api_view(["POST"])
 def reset_password(request):
     if request.method != "POST":
-        return JsonResponse(
-            {"success": False, "message": "Invalid request method"}, status=405
-        )
+        return JsonResponse({"success": False, "message": "Invalid request method"}, status=405)
 
     try:
         # Parse request body
@@ -310,9 +306,7 @@ def reset_password(request):
             )
 
         if not token:
-            return JsonResponse(
-                {"success": False, "message": "Token is required"}, status=400
-            )
+            return JsonResponse({"success": False, "message": "Token is required"}, status=400)
 
         # Find the valid reset token
         reset_token = (
@@ -338,16 +332,10 @@ def reset_password(request):
         # Delete all reset tokens for this user
         ResetToken.objects.filter(user=user).delete()
 
-        return JsonResponse(
-            {"success": True, "message": "Password reset successfully"}
-        )
+        return JsonResponse({"success": True, "message": "Password reset successfully"})
 
     except json.JSONDecodeError:
-        return JsonResponse(
-            {"success": False, "message": "Invalid JSON format"}, status=400
-        )
+        return JsonResponse({"success": False, "message": "Invalid JSON format"}, status=400)
     except Exception as e:
         print(f"Error resetting password: {e}")
-        return JsonResponse(
-            {"success": False, "message": "An error occurred"}, status=500
-        )
+        return JsonResponse({"success": False, "message": "An error occurred"}, status=500)

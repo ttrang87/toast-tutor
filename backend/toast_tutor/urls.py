@@ -1,7 +1,5 @@
 from django.urls import path
-from toast_tutor.controller import auth, profile
-
-from .controller import matching, profile
+from .controller import matching, profile, auth
 
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user

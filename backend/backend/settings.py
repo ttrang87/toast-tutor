@@ -63,9 +63,7 @@ CACHES = {
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "django-insecure-_*wh%jg(pq5n3=$*14px-o+p=bf6nqxtso1s7o%^iipik^nh%0"
-)
+SECRET_KEY = "django-insecure-_*wh%jg(pq5n3=$*14px-o+p=bf6nqxtso1s7o%^iipik^nh%0"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

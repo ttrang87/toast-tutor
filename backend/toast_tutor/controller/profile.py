@@ -34,24 +34,18 @@ def update_tutor_profile(request, profileId):
     try:
         profile = get_object_or_404(TutorProfile, id=profileId)
         print(profile.teaching_style)
-        serializer = TutorProfileSerializer(
-            profile, data=request.data, partial=True
-        )
+        serializer = TutorProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         errors = serializer.errors
-        if (
-            "username" in errors
-        ):  # because validationError = "This username is already in use."
+        if "username" in errors:  # because validationError = "This username is already in use."
             return Response(
                 {"error": "username_exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         elif "email" in errors:
-            return Response(
-                {"error": "email_exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "email_exists"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -64,9 +58,7 @@ def update_tutor_profile(request, profileId):
 def update_education(request, eduId):
     try:
         education = get_object_or_404(Education, id=eduId)
-        serializer = EducationSerializer(
-            education, data=request.data, partial=True
-        )
+        serializer = EducationSerializer(education, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

@@ -42,9 +42,7 @@ def find_tutors(request):
         elif request_type == "subject":
             matching_items = Course.objects.filter(name=subject_name)
 
-        matching_user_ids = matching_items.values_list(
-            "user_id", flat=True
-        ).distinct()
+        matching_user_ids = matching_items.values_list("user_id", flat=True).distinct()
 
         tutors = []
         for user_id in matching_user_ids:
@@ -94,9 +92,7 @@ def find_tutors(request):
                         first_school = None
                         education_records = tutor.education_records.all()
                         if education_records and len(education_records) > 0:
-                            first_school = (
-                                education_records.first().school_name
-                            )
+                            first_school = education_records.first().school_name
 
                         ranked_tutors.append(
                             {
@@ -134,9 +130,7 @@ def find_tutors(request):
                         first_school = None
                         education_records = tutor.education_records.all()
                         if education_records and len(education_records) > 0:
-                            first_school = (
-                                education_records.first().school_name
-                            )
+                            first_school = education_records.first().school_name
                         ranked_tutors.append(
                             {
                                 "userId": tutor.id,

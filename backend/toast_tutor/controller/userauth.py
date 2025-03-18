@@ -42,9 +42,7 @@ def register_user(request):
             status=status.HTTP_201_CREATED,
         )
 
-    return Response(
-        {"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
-    )
+    return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -53,9 +51,7 @@ def login_user(request):
     password = request.data.get("password")
     user = authenticate(username=username, password=password)
     if user:
-        user.last_login = (
-            timezone.now()
-        )  # Set last_login to the current timestamp
+        user.last_login = timezone.now()  # Set last_login to the current timestamp
         user.save()  # Save the user to persist the change
 
         refresh = RefreshToken.for_user(user)
@@ -69,9 +65,7 @@ def login_user(request):
             },
             status=status.HTTP_200_OK,
         )
-    return Response(
-        {"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
-    )
+    return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(["POST"])

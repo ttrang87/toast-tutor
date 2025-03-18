@@ -29,9 +29,7 @@ class User(AbstractUser):
 
 
 class TutorProfile(models.Model):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="tutor_profile"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="tutor_profile")
     bio = models.TextField(blank=True)
     hourly_rate = models.IntegerField()
     # Brief description of teaching style
@@ -44,9 +42,7 @@ class TutorProfile(models.Model):
 
 
 class Education(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="education_records"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="education_records")
     school_name = models.CharField(max_length=200)
     degree = models.CharField(max_length=200)
     start_year = models.IntegerField()
@@ -57,9 +53,7 @@ class Education(models.Model):
 
 
 class Course(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="course_list"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="course_list")
     name = models.CharField(max_length=200)
     grade = models.IntegerField()
     level = models.CharField(max_length=50)
@@ -70,9 +64,7 @@ class Course(models.Model):
 
 
 class Exam(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="exam_list"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="exam_list")
     name = models.CharField(max_length=200)
     score = models.CharField(max_length=20)
     date = models.DateField(default=date.today)
@@ -83,9 +75,7 @@ class Exam(models.Model):
 
 
 class Award(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="awards"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="awards")
     name = models.CharField(max_length=200)
     year = models.IntegerField()
 
@@ -94,9 +84,7 @@ class Award(models.Model):
 
 
 class ResetToken(models.Model):
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reset_tokens"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_tokens")
     token = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expiry_at = models.DateTimeField()
@@ -107,9 +95,7 @@ class ResetToken(models.Model):
         print(f"Generating/retrieving token for user: {user.email}")
 
         # Check for existing valid token
-        existing_token = cls.objects.filter(
-            user=user, expiry_at__gt=now()
-        ).first()
+        existing_token = cls.objects.filter(user=user, expiry_at__gt=now()).first()
 
         print(f"Existing valid token found: {existing_token is not None}")
 
@@ -128,9 +114,7 @@ class ResetToken(models.Model):
             token = hashlib.sha256(os.urandom(32)).hexdigest()
 
         expiry_at = now() + timedelta(minutes=15)
-        reset_token = cls.objects.create(
-            user=user, token=token, expiry_at=expiry_at
-        )
+        reset_token = cls.objects.create(user=user, token=token, expiry_at=expiry_at)
         print(f"Created new token: {token}")
         print(f"New token expiry: {expiry_at}")
         return reset_token.token
@@ -143,9 +127,7 @@ class TutorRequest(models.Model):
         ("completed", "Completed"),
         ("cancelled", "Cancelled"),
     ]
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="tutor_requests"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tutor_requests")
     # service = models.CharField(max_length=10)
     # request_type = models.CharField(max_length=10)
     # subject_name = models.CharField(max_length=200)  # Name of exam or course
@@ -156,9 +138,7 @@ class TutorRequest(models.Model):
     # teaching_styles = models.CharField(max_length=200)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default="pending"
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
 
     class Meta:
         ordering = ["-created_at"]
