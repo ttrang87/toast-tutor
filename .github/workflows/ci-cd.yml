@@ -19,6 +19,7 @@ jobs:
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
           DATABASE_ENGINE: django.db.backends.postgresql
+          DATABASE_NAME: test_db 
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           EMAIL_HOST: localhost
@@ -79,22 +80,22 @@ jobs:
             - name: Install Python Dependencies
               run: pip install -r requirements.txt
 
-            # - name: Check Migration
-            #   run: python manage.py makemigrations --check --dry-run  #Prevents forgetting to create or commit migration files => especially when Supabase require consistent schema
-            #   #checking if you have any pending model changes that require migrations, but not actually applying those migrations to any database => can use with test database
+            - name: Check Migration
+              run: python manage.py makemigrations --check --dry-run  #Prevents forgetting to create or commit migration files => especially when Supabase require consistent schema
+              #checking if you have any pending model changes that require migrations, but not actually applying those migrations to any database => can use with test database
             
             # - name: Run Django Test
             #   run: python manage.py test
             
             
-            - name: Start Django Server
-              run: python manage.py runserver & sleep 10
+            # - name: Start Django Server
+            #   run: python manage.py runserver & sleep 10
 
-            - name: Performance Testing Backend (Locust)
-              run: | #simulate 12 concurrent users (but gradually add 3 users/sec until reach 12 (then stop) or stop when reach 1 minutes (note: users always <= 12))
-                pip install locust
-                locust --headless -u 12 -r 3 -t 1m --host=http://localhost:8000  
-              continue-on-error: true  # performance failures should not block deployment
+            # - name: Performance Testing Backend (Locust)
+            #   run: | #simulate 12 concurrent users (but gradually add 3 users/sec until reach 12 (then stop) or stop when reach 1 minutes (note: users always <= 12))
+            #     pip install locust
+            #     locust --headless -u 12 -r 3 -t 1m --host=http://localhost:8000  
+            #   continue-on-error: true  # performance failures should not block deployment
       
     test-frontend:
         defaults:
