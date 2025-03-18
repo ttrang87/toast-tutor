@@ -20,6 +20,7 @@ jobs:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
           DATABASE_ENGINE: django.db.backends.postgresql
           DATABASE_NAME: test_db 
+          DATABASE_USER: test_user   
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           EMAIL_HOST: localhost
@@ -101,9 +102,6 @@ jobs:
         defaults:
           run:
             working-directory: ./frontend
-        strategy:
-          matrix:
-            node-version: ["18", "20"]
         runs-on: ubuntu-latest
         
         steps:
@@ -111,7 +109,7 @@ jobs:
           - name: Set Up Node.js
             uses: actions/setup-node@v4
             with:
-              node-version: ${{matrix.node-version}}
+              node-version: '20'
               cache: 'npm'  #caching is already integrated directly into the actions/setup-node action => dont need separate cache step like Django
               cache-dependency-path: package-lock.json
           
