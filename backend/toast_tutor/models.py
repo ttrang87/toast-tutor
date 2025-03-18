@@ -1,26 +1,27 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-from datetime import date
-from django.utils.timezone import now, timedelta
 import hashlib
 import os
+from datetime import date
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+from django.utils.timezone import now, timedelta
 
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='toast_tutor_users',  # Custom related_name
+        "auth.Group",
+        related_name="toast_tutor_users",  # Custom related_name
         blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups',
+        help_text="The groups this user belongs to.",
+        verbose_name="groups",
     )
     user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='toast_tutor_users',  # Custom related_name
+        "auth.Permission",
+        related_name="toast_tutor_users",  # Custom related_name
         blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
+        help_text="Specific permissions for this user.",
+        verbose_name="user permissions",
     )
 
     def __str__(self):
@@ -29,9 +30,8 @@ class User(AbstractUser):
 
 class TutorProfile(models.Model):
     user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='tutor_profile')
+        User, on_delete=models.CASCADE, related_name="tutor_profile"
+    )
     bio = models.TextField(blank=True)
     hourly_rate = models.IntegerField()
     # Brief description of teaching style
@@ -45,9 +45,8 @@ class TutorProfile(models.Model):
 
 class Education(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='education_records')
+        User, on_delete=models.CASCADE, related_name="education_records"
+    )
     school_name = models.CharField(max_length=200)
     degree = models.CharField(max_length=200)
     start_year = models.IntegerField()
@@ -59,9 +58,8 @@ class Education(models.Model):
 
 class Course(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='course_list')
+        User, on_delete=models.CASCADE, related_name="course_list"
+    )
     name = models.CharField(max_length=200)
     grade = models.IntegerField()
     level = models.CharField(max_length=50)
@@ -73,9 +71,8 @@ class Course(models.Model):
 
 class Exam(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='exam_list')
+        User, on_delete=models.CASCADE, related_name="exam_list"
+    )
     name = models.CharField(max_length=200)
     score = models.CharField(max_length=20)
     date = models.DateField(default=date.today)
@@ -87,9 +84,8 @@ class Exam(models.Model):
 
 class Award(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='awards')
+        User, on_delete=models.CASCADE, related_name="awards"
+    )
     name = models.CharField(max_length=200)
     year = models.IntegerField()
 
@@ -99,9 +95,8 @@ class Award(models.Model):
 
 class ResetToken(models.Model):
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='reset_tokens')
+        User, on_delete=models.CASCADE, related_name="reset_tokens"
+    )
     token = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     expiry_at = models.DateTimeField()
@@ -113,8 +108,7 @@ class ResetToken(models.Model):
 
         # Check for existing valid token
         existing_token = cls.objects.filter(
-            user=user,
-            expiry_at__gt=now()
+            user=user, expiry_at__gt=now()
         ).first()
 
         print(f"Existing valid token found: {existing_token is not None}")
@@ -135,9 +129,7 @@ class ResetToken(models.Model):
 
         expiry_at = now() + timedelta(minutes=15)
         reset_token = cls.objects.create(
-            user=user,
-            token=token,
-            expiry_at=expiry_at
+            user=user, token=token, expiry_at=expiry_at
         )
         print(f"Created new token: {token}")
         print(f"New token expiry: {expiry_at}")
@@ -146,15 +138,14 @@ class ResetToken(models.Model):
 
 class TutorRequest(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('matched', 'Matched'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled')
+        ("pending", "Pending"),
+        ("matched", "Matched"),
+        ("completed", "Completed"),
+        ("cancelled", "Cancelled"),
     ]
     user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='tutor_requests')
+        User, on_delete=models.CASCADE, related_name="tutor_requests"
+    )
     # service = models.CharField(max_length=10)
     # request_type = models.CharField(max_length=10)
     # subject_name = models.CharField(max_length=200)  # Name of exam or course
@@ -166,9 +157,8 @@ class TutorRequest(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending')
+        max_length=20, choices=STATUS_CHOICES, default="pending"
+    )
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ["-created_at"]

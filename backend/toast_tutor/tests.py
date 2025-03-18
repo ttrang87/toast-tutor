@@ -8,15 +8,15 @@ class TutorMatcherTestCase(TestCase):
     def setUp(self):
         # Sample data for testing
         self.tutor_data = {
-            'score': 'intermediate',
-            'experience': '3',
-            'teaching_styles': ['visual', 'interactive']
+            "score": "intermediate",
+            "experience": "3",
+            "teaching_styles": ["visual", "interactive"],
         }
         self.request_data = {
-            'type': 'subject',
-            'aim': 'beginner',
-            'max_score': '100',
-            'teaching_styles': ['visual', 'textual']
+            "type": "subject",
+            "aim": "beginner",
+            "max_score": "100",
+            "teaching_styles": ["visual", "textual"],
         }
         self.matcher = TutorMatcher(self.tutor_data, self.request_data)
 

@@ -1,0 +1,37 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: isort
+        name: isort
+        entry: isort
+        language: system
+        args: ["--profile", "black", "--line-length=79"]
+        exclude: migrations/
+        files: ^backend/
+        types: [python]
+
+    # -   id: flake8
+    #     name: flake8
+    #     entry: flake8
+    #     language: system
+    #     exclude: migrations/
+    #     files: ^backend/
+    #     types: [python]
+
+    -   id: black
+        name: black
+        entry: black
+        language: system
+        args: ["--line-length=79"]
+        exclude: migrations/
+        files: ^backend/
+        types: [python]
+
+    -   id: autoflake
+        name: autoflake
+        entry: autoflake
+        language: system
+        args: ["--remove-all-unused-imports", "--remove-unused-variables"]
+        exclude: migrations/
+        files: ^backend/
+        types: [python]

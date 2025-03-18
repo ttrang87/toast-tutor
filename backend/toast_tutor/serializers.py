@@ -1,48 +1,64 @@
 from rest_framework import serializers
-from .models import User, TutorProfile, Education, Course, Exam, Award, TutorRequest, ResetToken
+
+from .models import (
+    Award,
+    Course,
+    Education,
+    Exam,
+    ResetToken,
+    TutorProfile,
+    TutorRequest,
+    User,
+)
 
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Education
-        fields = ['id', 'school_name', 'degree', 'start_year', 'end_year']
+        fields = ["id", "school_name", "degree", "start_year", "end_year"]
 
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = ['id', 'name', 'grade', 'level', 'experience']
+        fields = ["id", "name", "grade", "level", "experience"]
 
 
 class ExamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Exam
-        fields = ['id', 'name', 'score', 'date',
-                  'experience']  # Include 'id' here
+        fields = [
+            "id",
+            "name",
+            "score",
+            "date",
+            "experience",
+        ]  # Include 'id' here
 
 
 class AwardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Award
-        fields = ['id', 'name', 'year']  # Include 'id' here
+        fields = ["id", "name", "year"]  # Include 'id' here
 
 
 class TutorProfileSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(source='user.email')
-    username = serializers.CharField(source='user.username')
+    email = serializers.EmailField(source="user.email")
+    username = serializers.CharField(source="user.username")
 
     class Meta:
         model = TutorProfile
         fields = [
-            'id',
-            'email',
-            'username',
-            'bio',
-            'hourly_rate',
-            'teaching_style',
-            'avatar',
-            'cover']
-        read_only_fields = ['id']
+            "id",
+            "email",
+            "username",
+            "bio",
+            "hourly_rate",
+            "teaching_style",
+            "avatar",
+            "cover",
+        ]
+        read_only_fields = ["id"]
 
     # def validate_email(self, value):
     #     user_id = self.instance.user.id if self.instance else None
@@ -59,8 +75,8 @@ class TutorProfileSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Get user data if provided
         user_data = {}
-        if 'user' in validated_data:
-            user_data = validated_data.pop('user')
+        if "user" in validated_data:
+            user_data = validated_data.pop("user")
 
         # Update user fields if provided
         if user_data:
@@ -80,36 +96,36 @@ class TutorProfileSerializer(serializers.ModelSerializer):
 class TutorRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = TutorRequest
-        fields = ['id', 'user', 'description', 'status', 'created_at']
-        read_only_fields = ['id', 'created_at']
+        fields = ["id", "user", "description", "status", "created_at"]
+        read_only_fields = ["id", "created_at"]
 
 
 class UserSerializer(serializers.ModelSerializer):
-    profile = TutorProfileSerializer(source='tutor_profile', required=False)
+    profile = TutorProfileSerializer(source="tutor_profile", required=False)
     education = EducationSerializer(
-        source='education_records',
-        many=True,
-        required=False)
-    course = CourseSerializer(source='course_list', many=True, required=False)
-    exam = ExamSerializer(source='exam_list', many=True, required=False)
-    award = AwardSerializer(source='awards', many=True, required=False)
+        source="education_records", many=True, required=False
+    )
+    course = CourseSerializer(source="course_list", many=True, required=False)
+    exam = ExamSerializer(source="exam_list", many=True, required=False)
+    award = AwardSerializer(source="awards", many=True, required=False)
 
     class Meta:
         model = User
         fields = [
-            'id',
+            "id",
             "username",
             "email",
             "password",
-            'profile',
-            'education',
-            'course',
-            'exam',
-            'award']
+            "profile",
+            "education",
+            "course",
+            "exam",
+            "award",
+        ]
 
 
 class ResetTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResetToken
-        fields = ['token', 'created_at', 'expiry_at']
-        read_only_fields = ['token', 'created_at', 'expiry_at']
+        fields = ["token", "created_at", "expiry_at"]
+        read_only_fields = ["token", "created_at", "expiry_at"]
