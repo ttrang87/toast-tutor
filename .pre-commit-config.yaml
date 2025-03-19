@@ -36,3 +36,31 @@ repos:
         exclude: "(migrations/|auth.py)"
         files: ^backend/
         types: [python]
+
+    # Frontend hooks
+    -   id: eslint-fix
+        name: eslint-fix
+        entry: npx eslint
+        language: system
+        args: ["--fix"]
+        files: ^frontend/.*\.(js|jsx)$
+        exclude: node_modules/
+        types: [file]
+    
+    -   id: eslint-check
+        name: eslint-check
+        entry: npx eslint
+        language: system
+        args: []
+        files: ^frontend/.*\.(js|jsx)$
+        exclude: node_modules/
+        types: [file]
+        
+    -   id: react-deps-check
+        name: react-hooks-deps
+        entry: npx eslint
+        language: system
+        args: ["--rule", "react-hooks/exhaustive-deps: error"]
+        files: ^frontend/.*\.(js|jsx)$
+        exclude: node_modules/
+        types: [file]
