@@ -11,9 +11,6 @@ jobs:
         defaults:
           run:
             working-directory: ./backend
-        strategy:
-            matrix:
-                python-version: ["3.10", "3.11"]
         runs-on: ubuntu-latest
 
         env:
@@ -69,7 +66,7 @@ jobs:
             - name: Set Up Python
               uses: actions/setup-python@v5 
               with: 
-                python-version: ${{matrix.python-version}}
+                python-version: "3.11"
             
             - name: Cache Dependencies
               uses: actions/cache@v4
@@ -88,18 +85,12 @@ jobs:
               run: python manage.py makemigrations --check --dry-run  #Prevents forgetting to create or commit migration files => especially when Supabase require consistent schema
               #checking if you have any pending model changes that require migrations, but not actually applying those migrations to any database => can use with test database
             
-            # - name: Run Django Test
-            #   run: python manage.py test
-            
-            
-            # - name: Start Django Server
-            #   run: python manage.py runserver & sleep 10
+            - name: Run Django Unit Test
+              run: python manage.py test toast_tutor.tests.units
 
-            # - name: Performance Testing Backend (Locust)
-            #   run: | #simulate 12 concurrent users (but gradually add 3 users/sec until reach 12 (then stop) or stop when reach 1 minutes (note: users always <= 12))
-            #     pip install locust
-            #     locust --headless -u 12 -r 3 -t 1m --host=http://localhost:8000  
-            #   continue-on-error: true  # performance failures should not block deployment
+            - name: Verify Django Build
+              run: python manage.py collectstatic --noinput --dry-run
+            
       
     test-frontend:
         defaults:
@@ -122,22 +113,88 @@ jobs:
           # - name: Run React test
           #   run: npm test -- --watchAll=false  #allow Jest (React testing framework run once, not need to wait until file change/ CI hang indefinitely (may leads to timeout))
           
-          # - name: Check TypeScript Types
-          #   run: npm run type-check
-          
           - name: Check Linting
             run: npm run lint
 
-          - name: Run Vite
-            run: npm run dev & sleep 10 #Vite takes a second to initialize, so Lighthouse might run before the server starts.
+          - name: Build Vite
+            run: npm run build  #verifies Vite code can be compiled for production
           
-          - name: Performance Checking Frontend (Lighthouse)
-            run: |  #analyzes page load speed, accessibility, and performance score, generates a JSON report
-              npm install -g lighthouse
-              lighthouse http://localhost:5173 --output=json --output-path=./lighthouse-report.json  
-            continue-on-error: true
+    integration-tests:
+        needs: [test-backend, test-frontend]
+        runs-on: ubuntu-latest
+        defaults:
+          run:
+            working-directory: ./backend
+        
+        env:
+            DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+            DATABASE_ENGINE: django.db.backends.postgresql
+            DATABASE_NAME: test_db 
+            DATABASE_USER: test_user   
+            DATABASE_PASSWORD: test_pw
+            DATABASE_HOST: test_host
+            DATABASE_PORT: test_port
+            SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+            SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+            EMAIL_HOST: localhost
+            EMAIL_PORT: 1025
+            EMAIL_HOST_USER: ''
+            EMAIL_HOST_PASSWORD: ''
 
+        services:
+          redis: 
+            image: redis
+            ports: 
+              - 6379:6379
+            options: >-   
+              --health-cmd "redis-cli ping" 
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+          
+          postgres:
+            image: postgres
+            env:
+              POSTGRES_DB: test_db
+              POSTGRES_USER: test_user
+              POSTGRES_PASSWORD: test_password
+            ports:
+              - 5432:5432
+            options: >-
+              --health-cmd pg_isready
+              --health-interval 10s
+              --health-timeout 5s
+              --health-retries 5
+          
+          mailhog:
+            image: mailhog/mailhog
+            ports:
+              - 1025:1025
+              - 8025:8025
 
+            
+        steps:
+            - uses: actions/checkout@v4  
+            
+            - name: Set Up Python
+              uses: actions/setup-python@v5 
+              with: 
+                python-version: "3.11"
+            
+            - name: Cache Dependencies
+              uses: actions/cache@v4
+              with: 
+                path: ~/.cache/pip 
+                key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }} 
+                restore-keys: |  
+                  ${{ runner.os }}-pip-
+                  ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}-
+
+            - name: Install Python Dependencies
+              run: pip install -r requirements.txt
+
+            - name: Run API/Integration Tests
+              run: python manage.py test toast_tutor.tests.apis
 
 
 
