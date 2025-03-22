@@ -1,18 +1,19 @@
-import { React, useState, useEffect } from "react";
+import { useEffect } from "react";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/authService";
 
 const Header = (props) => {
   const navigate = useNavigate();
+  const { setIsLoggedIn } = props; // Destructure the specific prop
 
   // Check login status
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
-      props.setIsLoggedIn(true);
+      setIsLoggedIn(true);
     }
-  }, []);
+  }, [setIsLoggedIn])
 
   const handleLogout = () => {
     props.setIsLoggedIn(false);

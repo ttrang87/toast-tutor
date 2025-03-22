@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ProgressBar = ({ currentStep, totalSteps }) => {
   return (
     <div className="flex justify-center gap-2">

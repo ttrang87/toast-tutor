@@ -1,11 +1,9 @@
-import { React, useState } from 'react'
 import { EmailIcon, StarIcon } from '../../../assets/icon'
 import avatars from '../AvatarList'
 import covers from '../CoverList'
 
-
 const BasicInfor = ({ data }) => {
-    const { id, username, email, bio, teaching_style, hourly_rate, avatar, cover } = data
+    const { username, email, bio, teaching_style, hourly_rate, avatar, cover } = data
 
     const parseTeachingStyle = (styleData) => {
         if (Array.isArray(styleData)) {
@@ -22,7 +20,6 @@ const BasicInfor = ({ data }) => {
         return [];
     };
 
-    const [Star, setStar] = useState(5)
     const teachingStyle = parseTeachingStyle(teaching_style)
     // const teachingStyle = teaching_style
     const fetchAvatar = avatars.find((ava) => ava.id === avatar)
@@ -53,7 +50,7 @@ const BasicInfor = ({ data }) => {
                             {EmailIcon}
                             <div>{email}</div>
                         </div>
-                        <div className='flex gap-1'>Rated {Star}{StarIcon}by 5 students</div>
+                        <div className='flex gap-1'>Rated {5}{StarIcon}by 5 students</div>
                     </div>
                 </div>
                 <div className='flex justify-between'>

@@ -1,4 +1,3 @@
-import React from 'react';
 import TeachingStyleSelector from '../tutor_profile/edit/update_modal/StyleUpdate';
 
 const LEVEL_OPTIONS = ["Beginner", "Intermediate", "Advanced", "Expert"];

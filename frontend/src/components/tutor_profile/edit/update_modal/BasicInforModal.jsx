@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { API_ROUTES } from '../../../../constant/APIRoutes'
 import axios from 'axios'
 import TeachingStyleSelector from './StyleUpdate'
@@ -52,7 +52,7 @@ const BasicInforModal = ({
         }
 
         try {
-            const response = await axios.put(API_ROUTES.FIX_BASIC_INFOR(profileId), data, {
+            await axios.put(API_ROUTES.FIX_BASIC_INFOR(profileId), data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

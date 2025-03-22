@@ -1,4 +1,3 @@
-import React from 'react';
 import { AwardIcon } from '../../../assets/icon';
 
 const Awards = ({ data }) => {

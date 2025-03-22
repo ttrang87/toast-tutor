@@ -1,5 +1,3 @@
-import React from 'react';
-
 const PAY_OPTIONS = [
     { label: "Less than 20$", value: "0-20$" },
     { label: "20-40$", value: "20-40$" },

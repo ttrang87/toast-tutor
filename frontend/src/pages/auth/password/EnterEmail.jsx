@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import { useState } from "react";
 import resetBg from '../../../assets/resetBg.jpg';
 import { LockIcon } from "../../../assets/icon";
 import { Link } from 'react-router-dom';
@@ -101,7 +100,7 @@ const EnterEmail = () => {
                     <div className="text-2xl font-bold text-yellow-700 text-center">Forgot Password?</div>
                 </div>
                 <div>
-                    <p className="text-yellow-800 mb-1 text-center">No worries, we'll send you the reset instructions through your email.</p>
+                    <p className="text-yellow-800 mb-1 text-center">No worries, we&apos;ll send you the reset instructions through your email.</p>
                 </div>
                 <div>
                     <div className="flex items-center justify-center">

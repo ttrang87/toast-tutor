@@ -1,4 +1,3 @@
-import React from 'react';
 import { LightIcon, CalendarIcon } from '../../assets/icon';
 
 const TimeService = ({ selectOption, setSelectOption }) => {
