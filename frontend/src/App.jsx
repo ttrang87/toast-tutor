@@ -18,9 +18,9 @@ import TutorList from "./pages/TutorList";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-import Payment from "./pages/payment/payment";
-import SuccessPayment from "./pages/payment/success";
-import Confirmation from "./pages/payment/Confirm";
+// import Payment from "./pages/payment/payment";
+// import SuccessPayment from "./pages/payment/success";
+// import Confirmation from "./pages/payment/Confirm";
 
 function App() {
   const [userId, setUserId] = useState(null);
@@ -89,9 +89,9 @@ function App() {
 
         <Route path="/listing" element={<TutorList />} />
 
-        <Route path="/payment" element={<Payment />}/>
+        {/* <Route path="/payment" element={<Payment />}/>
         <Route path="/success" element={<SuccessPayment />}/>
-        <Route path="/confirmation" element={<Confirmation />}/>
+        <Route path="/confirmation" element={<Confirmation />}/> */}
 
         <Route path="*" element={<NotFound />} />
       </Routes>
