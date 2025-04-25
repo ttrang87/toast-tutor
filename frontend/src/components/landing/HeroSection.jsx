@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
@@ -28,7 +27,7 @@ const HeroSection = () => {
         <p className="text-xl text-yellow-700 max-w-xl">
           If it feels overwhelming, just take one tiny step at
           <br />
-          a time. I'm here with you! 🍞
+          a time. I&apos;m here with you! 🍞
         </p>
 
         <div className="flex flex-col gap-4 max-w-md pt-4">

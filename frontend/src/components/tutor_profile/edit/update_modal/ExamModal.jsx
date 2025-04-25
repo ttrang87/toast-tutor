@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_ROUTES } from '../../../../constant/APIRoutes';
 
@@ -23,7 +23,7 @@ const ExamModal = ({ isOpen, onClose, userId, examData, mode, onExamUpdate, show
                 });
             }
         }
-    }, [examData, mode]);
+    }, [examData, mode, isOpen]);
 
     // Create a wrapper for onClose to reset for
 
@@ -50,6 +50,7 @@ const ExamModal = ({ isOpen, onClose, userId, examData, mode, onExamUpdate, show
             }
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }
@@ -66,6 +67,7 @@ const ExamModal = ({ isOpen, onClose, userId, examData, mode, onExamUpdate, show
             onClose()
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }

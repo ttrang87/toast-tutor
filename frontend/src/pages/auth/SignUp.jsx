@@ -83,7 +83,7 @@ const SignUp = () => {
     };
 
     try {
-      const response = await register(dataToSend);
+      await register(dataToSend);
       toast.success("Signed up successfully!", {
         duration: 2000, // Optional: duration for the toast
       });

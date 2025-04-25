@@ -26,7 +26,7 @@ const LogIn = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await login(formData); // Replace with your API logic
+      await login(formData); // Replace with your API logic
       props.setIsLoggedIn(true);
 
       // Show success toast
@@ -125,7 +125,7 @@ const LogIn = (props) => {
           </form>
 
           <p className="text-center text-xs text-gray-600 mt-4">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <button
               className="text-yellow-600 font-medium hover:underline focus:outline-none"
               onClick={() => navigate("/signup")}

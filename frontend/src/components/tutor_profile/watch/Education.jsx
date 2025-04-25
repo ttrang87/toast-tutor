@@ -1,6 +1,4 @@
-import React from 'react';
 import { HomeIcon } from '../../../assets/icon';
-
 
 const Education = ({ data }) => {
     return (

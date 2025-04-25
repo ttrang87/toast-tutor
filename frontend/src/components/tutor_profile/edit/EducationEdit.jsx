@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { HomeIcon, SmallEditIcon, PlusIcon } from '../../../assets/icon';
 import EducationModal from './update_modal/EducationModal';
 

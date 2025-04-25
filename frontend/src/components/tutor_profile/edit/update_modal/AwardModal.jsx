@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_ROUTES } from '../../../../constant/APIRoutes';
-import { toast, Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, showToast }) => {
 
@@ -19,7 +19,7 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
                 });
             }
         }
-    }, [awardData, mode]);
+    }, [awardData, mode, isOpen]); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,7 +36,6 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
                 });
 
             }
-
             if (response.data) {
                 onAwardUpdate(response.data);
                 showToast('success')
@@ -44,6 +43,7 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
             }
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }
@@ -60,6 +60,7 @@ const AwardModal = ({ isOpen, onClose, userId, awardData, mode, onAwardUpdate, s
             onClose()
         } catch (error) {
             showToast('error')
+            console.log(error)
         } finally {
             setIsLoading(false);
         }

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import resetBg from '../../../assets/resetBg.jpg';
 import { UnlockIcon, EyeCloseIcon, EyeOpenIcon } from "../../../assets/icon";
 import axios from "axios";
 import { useParams, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {API_ROUTES} from '../../../constant/APIRoutes';
 
@@ -74,7 +74,7 @@ const NewPassword = () => {
         }
     
         try {
-            const response = await axios.post(API_ROUTES.RESET_PASSWORD(), {
+            await axios.post(API_ROUTES.RESET_PASSWORD(), {
                 password: password1,
                 token: token
             });

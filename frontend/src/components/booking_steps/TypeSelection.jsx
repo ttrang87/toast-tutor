@@ -1,5 +1,3 @@
-import React from 'react';
-
 const TypeSelection = ({ selectType, setSelectType }) => {
   return (
     <div className='flex flex-col gap-3 items-center justify-center text-lg'>

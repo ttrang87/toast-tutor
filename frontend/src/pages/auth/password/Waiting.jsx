@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import resetBg from '../../../assets/resetBg.jpg';
 import { EnvelopeIcon } from "../../../assets/icon";
 import { Link } from 'react-router-dom';

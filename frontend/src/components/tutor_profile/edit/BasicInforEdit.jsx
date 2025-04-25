@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { useState } from 'react'
 import { EmailIcon, StarIcon, EditIcon, CameraIcon } from '../../../assets/icon'
 import BasicInforModal from './update_modal/BasicInforModal'
 import AvatarModal from './update_modal/AvatarModal'
@@ -31,7 +31,6 @@ const BasicInforEdit = ({ data, showToast }) => {
     const [tutorTeachingStyle, setTeachingStyle] = useState(parseTeachingStyle(teaching_style))
     const [tutorAvatar, setAvatar] = useState(avatar)
     const [tutorCover, setCover] = useState(cover)
-    const [Star, setStar] = useState(5)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [avaOpen, setAvaOpen] = useState(false)
 
@@ -76,7 +75,7 @@ const BasicInforEdit = ({ data, showToast }) => {
                             {EmailIcon}
                             <div>{tutorEmail}</div>
                         </div>
-                        <div className="flex gap-1">Rated {Star}{StarIcon}by 5 students</div>
+                        <div className="flex gap-1">Rated {5}{StarIcon}by 5 students</div>
                     </div>
                 </div>
                 <div className="flex justify-between">

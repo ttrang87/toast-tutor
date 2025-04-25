@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from "react";
+import { useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 
@@ -23,14 +23,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // import Confirmation from "./pages/payment/Confirm";
 
 function App() {
-  const [userId, setUserId] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    // Get the user ID from localStorage
-    const storedUserId = localStorage.getItem("userId");
-    setUserId(storedUserId);
-  }, []);
 
   return (
     <BrowserRouter>

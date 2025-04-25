@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { useState } from 'react';
 import { AwardIcon, PlusIcon, SmallEditIcon } from '../../../assets/icon';
 import AwardModal from './update_modal/AwardModal';
 

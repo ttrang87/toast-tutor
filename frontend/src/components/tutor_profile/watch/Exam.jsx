@@ -1,4 +1,3 @@
-import React from 'react';
 import { ExamIcon } from '../../../assets/icon';
 
 const Exams = ({ data }) => {
