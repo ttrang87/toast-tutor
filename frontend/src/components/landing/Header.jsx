@@ -46,7 +46,10 @@ const Header = (props) => {
             Profile
           </button>
         )}
-        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
+        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+        onClick={() =>
+          navigate('/listing')
+        }>
           Tutors
         </button>
         <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
