@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+
 import Header from "./components/landing/Header";
 import LandingPage from "./pages/LandingPage";
 import TutorProfile from "./pages/TutorProfile";
@@ -13,8 +14,13 @@ import NewPassword from "./pages/auth/password/NewPassword";
 import RedirectPage from "./pages/auth/password/RedirectPage";
 import Waiting from "./pages/auth/password/Waiting";
 import LogIn from "./pages/auth/LogIn";
+import TutorList from "./pages/TutorList";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+
+import Payment from "./pages/payment/payment";
+import SuccessPayment from "./pages/payment/success";
+import Confirmation from "./pages/payment/Confirm";
 
 function App() {
   const [userId, setUserId] = useState(null);
@@ -80,6 +86,12 @@ function App() {
         <Route path="/reset-password/:token" element={<NewPassword />} />
         <Route path="/auth/waiting" element={<Waiting />} />
         <Route path="/auth/redirect" element={<RedirectPage />} />
+
+        <Route path="/listing" element={<TutorList />} />
+
+        <Route path="/payment" element={<Payment />}/>
+        <Route path="/success" element={<SuccessPayment />}/>
+        <Route path="/confirmation" element={<Confirmation />}/>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

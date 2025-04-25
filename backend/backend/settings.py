@@ -43,8 +43,9 @@ DATABASES = {
         'PORT': '6543',
         'OPTIONS': {'gssencmode': 'disable'},
         'CONN_MAX_AGE': 500,
-    }
 }
+}
+
 
 
 CACHES = {
@@ -97,7 +98,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # If using Vite
-    "http://127.0.0.1:5173",  # Alternative localhost format
+    "http://127.0.0.1:8000",  # Alternative localhost format
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -181,11 +182,7 @@ DEBUG = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True 
-# EMAIL_HOST_USER = 'toasttutorreach@gmail.com'
-# EMAIL_HOST_PASSWORD = 'wupofgoejcngvwob'
-
-# FRONTEND_BASE_URL = 'http://localhost:5173'
+#Stripe
+STRIPE_PUBLIC_KEY = os.getenv('PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = ''

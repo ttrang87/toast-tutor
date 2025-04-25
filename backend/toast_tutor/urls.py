@@ -2,7 +2,7 @@ from django.urls import path
 from .controller import profile, matching
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import register_user, login_user, logout_user
-from toast_tutor.controller import auth, profile
+from toast_tutor.controller import auth, profile, tutorlist
 
 urlpatterns = [
     # Specific
@@ -38,6 +38,9 @@ urlpatterns = [
 
     # Most general pattern last
     path('tutor/profile/<int:userId>/', profile.get_tutor_profile, name='get_tutor_profile'),
+
+    #DISPLAY ALL TUTORS
+    path('get_all_tutor/', tutorlist.get_user_details, name='get_user_details'),
 
     path('password-reset/', auth.request_password_reset, name='request_password_reset'),
     path('reset-password/', auth.reset_password, name='reset_password')

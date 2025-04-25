@@ -127,6 +127,7 @@ class TutorRequest(models.Model):
         ('cancelled', 'Cancelled')
     ]
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tutor_requests')
+
     # service = models.CharField(max_length=10)
     # request_type = models.CharField(max_length=10)
     # subject_name = models.CharField(max_length=200)  # Name of exam or course
@@ -135,9 +136,13 @@ class TutorRequest(models.Model):
     # grade = models.CharField(max_length=20)
     # aim = models.CharField(max_length=40)
     # teaching_styles = models.CharField(max_length=200)
+
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
     class Meta:
         ordering = ['-created_at']
+
+    
+ 
