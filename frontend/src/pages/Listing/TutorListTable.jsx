@@ -1,6 +1,5 @@
-import React from "react";
 import { Link } from 'react-router-dom';
-import { StarIcon } from "../../assets/icon";
+import { StarIcon, pfpIcon } from "../../assets/icon";
 
 export const TutorListTable = ({ currentRows, getAvatarPath }) => {
   return (

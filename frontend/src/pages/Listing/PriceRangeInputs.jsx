@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { trashIcon } from "../../assets/icon";
 
 export const PriceRangeInputs = ({ initialRange, onRangeChange }) => {

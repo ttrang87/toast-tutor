@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { API_ROUTES } from '../constant/APIRoutes';
 
@@ -25,7 +25,7 @@ const TutorList = () => {
   });
 
   // Price range and rating states
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 200 });
+  const [_priceRange, setPriceRange] = useState({ min: 0, max: 200 });
   const [selectedPriceRange, setSelectedPriceRange] = useState({ min: 0, max: 200 });
   const [minimumRating, setMinimumRating] = useState(0);
 

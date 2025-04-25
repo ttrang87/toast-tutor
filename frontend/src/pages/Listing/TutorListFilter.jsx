@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PriceRangeInputs } from "./PriceRangeInputs";
 
 export const TutorListFilter = ({

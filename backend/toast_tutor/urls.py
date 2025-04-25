@@ -88,14 +88,12 @@ urlpatterns = [
         profile.get_tutor_profile,
         name="get_tutor_profile",
     ),
-
     path(
         "password-reset/",
         auth.request_password_reset,
         name="request_password_reset",
     ),
     path("reset-password/", auth.reset_password, name="reset_password"),
-
-     #DISPLAY ALL TUTORS
-    path('get_all_tutor/', tutorlist.get_user_details, name='get_user_details'),
+    # DISPLAY ALL TUTORS
+    path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
 ]

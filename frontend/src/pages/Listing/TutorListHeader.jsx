@@ -1,4 +1,3 @@
-import React from "react";
 import { SearchIcon, filterIcon } from "../../assets/icon";
 
 export const TutorListHeader = ({
