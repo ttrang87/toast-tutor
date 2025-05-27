@@ -27,7 +27,8 @@ export const API_ROUTES = {
     DELETE_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/deleteaward/${awardId}/`,
     ADD_AWARD: (userId) => `${API_BASE_URL}/tutor/profile/addaward/${userId}/`,
 
-    FIND_TUTORS: `${API_BASE_URL}/find_tutors/`,
+    FIND_TUTORS:`${API_BASE_URL}/find_tutors/`,
+    GET_ALL_TUTORS:`${API_BASE_URL}/get_all_tutor/`,
 
     FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
     RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`

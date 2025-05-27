@@ -3,6 +3,7 @@ from .controller import matching, profile, auth
 
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
+from .controller import tutorlist
 
 urlpatterns = [
     # Specific
@@ -93,4 +94,6 @@ urlpatterns = [
         name="request_password_reset",
     ),
     path("reset-password/", auth.reset_password, name="reset_password"),
+    # DISPLAY ALL TUTORS
+    path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
 ]

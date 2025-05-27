@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { login } from "../../services/authService";
 import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +12,11 @@ const LogIn = (props) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  
   const renderEyeIcon = (isOpen) => {
-    return React.cloneElement(isOpen ? EyeOpenIcon : EyeCloseIcon);
+    const Icon = isOpen ? EyeOpenIcon : EyeCloseIcon;
+    return <Icon />;
   };
-
 
   const navigate = useNavigate();
 
