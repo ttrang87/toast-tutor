@@ -21,6 +21,13 @@ export const API_ROUTES = {
     DELETE_EXAM_INFOR: (examId) => `${API_BASE_URL}/tutor/profile/deleteexam/${examId}/`,
     ADD_EXAM: (userId) => `${API_BASE_URL}/tutor/profile/addexam/${userId}/`,
 
+    /*MEETING SECTION*/
+    GET_MEETINGS  :                 `${API_BASE_URL}/meetings/`,              
+    CREATE_MEETING:                 `${API_BASE_URL}/meetings/create/`,       
+    VIEW_MEETING: (id) => `${API_BASE_URL}/meetings/${id}/`,     
+    GET_TUTOR_MEETINGS    : (tutorId) => `${API_BASE_URL}/meetings/tutor/${tutorId}/`, // NEW
+    BOOK_MEETING  : (id) =>         `${API_BASE_URL}/meetings/${id}/book/`,   
+    UPDATE_MEETING: (id) => `${API_BASE_URL}/meetings/${id}/`,
 
     /*AWARD SECTION*/
     FIX_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/updateaward/${awardId}/`,
