@@ -1,8 +1,6 @@
-# Toast Tutor 🍞📚
+# Toast Tutor 🍞
 
-A comprehensive web application that intelligently connects tutors with students based on personalized learning needs, availability, and teaching preferences.
-
-## 🌟 Overview
+<img width="1280" alt="Screenshot 2025-05-28 at 9 49 06 PM" src="https://github.com/user-attachments/assets/22bcb795-5c01-4e10-a853-26e29d4048eb" />
 
 Toast Tutor streamlines the process of finding the perfect tutor-student match by considering multiple factors including time availability, subject expertise, skill levels, and preferred teaching styles. Our platform creates meaningful educational connections that lead to better learning outcomes.
 
