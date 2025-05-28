@@ -82,6 +82,25 @@ class Award(models.Model):
     def __str__(self):
         return f"{self.name} ({self.year})"
 
+class Meeting(models.Model):
+    status = models.CharField(          
+        max_length=20,
+        choices=[      
+        ("scheduled", "Scheduled"),
+        ("booked",    "Booked"),
+        ("completed", "Completed"),
+        ],
+        default="scheduled",
+    )
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE,
+                                  related_name="organized_meetings")
+    student = models.ForeignKey(User,on_delete=models.CASCADE, related_name="student_meetings",
+                                null=True,blank=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    google_event_id = models.CharField(max_length=255, blank=True, null=True)
+    google_meet_link = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class ResetToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_tokens")

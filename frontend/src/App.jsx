@@ -7,6 +7,10 @@ import LandingPage from "./pages/LandingPage";
 import TutorProfile from "./pages/TutorProfile";
 import Booking from "./pages/features/booking_tutor/CombineBookingSteps";
 import WaitingMatched from "./pages/features/booking_tutor/WaitingMatched";
+import MeetingsListPage from "./pages/meeting/MeetingsListPage";
+import CreateMeetingPage from "./pages/meeting/CreateMeetingPage";
+import BookingMeetingPage from "./pages/meeting/BookingPage";
+import TutorMeetingPage from "./pages/meeting/TutorMeetingPage";
 import MatchedTutors from "./pages/features/booking_tutor/MatchedTutors";
 import SignUp from "./pages/auth/SignUp";
 import EnterEmail from "./pages/auth/password/EnterEmail";
@@ -53,6 +57,34 @@ function App() {
               <WaitingMatched />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/meetings/create"
+          element={
+            <ProtectedRoute>
+              <CreateMeetingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/meetings"
+          element={
+            <ProtectedRoute>
+              <MeetingsListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/meetings/:meetingId"
+          element={
+            <ProtectedRoute>
+              <BookingMeetingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/meetings/tutor/:tutorId/:studentId"
+          element={<TutorMeetingPage />}
         />
         <Route
           path="/matched_tutors/:id"

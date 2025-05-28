@@ -121,7 +121,28 @@ class UserSerializer(serializers.ModelSerializer):
             "award",
         ]
 
-
+class MeetingSerializer(serializers.ModelSerializer):
+    organizer_id   = serializers.IntegerField(source="organizer.id",  read_only=True)
+    organizer_name = serializers.CharField(source="organizer.username", read_only=True)
+    class Meta:
+        model  = Meeting
+        fields = [
+            "id",
+            "organizer_id",
+            "organizer_name",
+            "organizer",        
+            "student",
+            "start_time",
+            "end_time",
+            "status",
+            "google_event_id",
+            "google_meet_link",
+            "created_at",
+        ]  
+        extra_kwargs = {
+            "student": {"required": False, "allow_null": True},
+        }
+        
 class ResetTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResetToken
