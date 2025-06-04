@@ -12,14 +12,20 @@ urlpatterns = [
     path("auth/register/", register_user, name="register"),
     path("auth/login/", login_user, name="login"),
     path("auth/logout/", logout_user, name="logout"),
+
     # MEETINGS
-    path("meetings/", meeting.get_meetings, name="meetings_list"),
-    path("meetings/create/", meeting.create_meeting, name="meeting_create"),
-    path("meetings/<int:pk>/", meeting.meeting_detail_or_update, name="meeting_detail"),  
-    path("meetings/<int:pk>/book/", meeting.book_meeting, name="meeting_book"),
-    path("meetings/tutor/<int:tutor_id>/",    # NEW
+    path("meetings/",                  meeting.get_meetings,            name="meetings_list"),
+    path("meetings/create/",           meeting.create_meeting,          name="meeting_create"),
+    path("meetings/<int:pk>/",         meeting.get_meeting,             name="meeting_detail"),   # GET
+    path("meetings/<int:pk>/update/",  meeting.update_meeting,          name="meeting_update"),   # PATCH
+    path("meetings/<int:pk>/delete/",  meeting.delete_meeting,          name="meeting_delete"),   # DELETE
+    path("meetings/<int:pk>/book/",            meeting.book_meeting,      name="meeting_book"),
+    path("meetings/<int:pk>/confirm_payment/", meeting.confirm_payment,   name="meeting_confirm"),
+    path("meetings/<int:pk>/cancel_payment/",  meeting.cancel_payment,    name="meeting_cancel"),
+    path("meetings/tutor/<int:tutor_id>/",
          meeting.get_meetings_by_tutor,
          name="meetings_by_tutor"),
+
     # AWARD SECTION
     path(
         "tutor/profile/addaward/<int:userId>/",

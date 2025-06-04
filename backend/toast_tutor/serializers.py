@@ -8,6 +8,7 @@ from .models import (
     ResetToken,
     TutorProfile,
     TutorRequest,
+    Meeting,
     User,
 )
 
@@ -124,6 +125,28 @@ class UserSerializer(serializers.ModelSerializer):
 class MeetingSerializer(serializers.ModelSerializer):
     organizer_id   = serializers.IntegerField(source="organizer.id",  read_only=True)
     organizer_name = serializers.CharField(source="organizer.username", read_only=True)
+
+    # Custom method to conditionally hide google fields based on status and user
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get('request')
+        current_user_id = None
+        if request and hasattr(request, 'user') and request.user.is_authenticated:
+            current_user_id = request.user.ud
+
+        # Hide google_event_id and google_meet_link for non-participants when status is not booked
+        # or when the meeting is scheduled/pending and user is not the organizer
+        if instance.status in ['scheduled', 'pending']:
+            if current_user_id != instance.organizer_id:
+                data['google_event_id'] = None
+                data['google_meet_link'] = None
+        elif instance.status == 'booked':
+            if current_user_id not in [instance.organizer_id, instance.student_id if instance.student else None]:
+                data['google_event_id'] = None
+                data['google_meet_link'] = None
+        
+        return data
+    
     class Meta:
         model  = Meeting
         fields = [
@@ -138,6 +161,7 @@ class MeetingSerializer(serializers.ModelSerializer):
             "google_event_id",
             "google_meet_link",
             "created_at",
+            "payment_expires_at",
         ]  
         extra_kwargs = {
             "student": {"required": False, "allow_null": True},
