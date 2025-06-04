@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from ..models import User
 from ..serializers import TutorProfileSerializer, UserSerializer
 
+
 @api_view(["POST"])
 def register_user(request):
     serializer = UserSerializer(data=request.data)

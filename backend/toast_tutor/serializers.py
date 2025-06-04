@@ -9,6 +9,7 @@ from .models import (
     TutorProfile,
     TutorRequest,
     User,
+    Meeting
 )
 
 
@@ -40,7 +41,6 @@ class AwardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Award
         fields = ["id", "name", "year"]  # Include 'id' here
-
 
 class TutorProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email")

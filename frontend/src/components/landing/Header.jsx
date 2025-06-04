@@ -13,7 +13,7 @@ const Header = (props) => {
     if (userId) {
       setIsLoggedIn(true);
     }
-  }, [setIsLoggedIn])
+  }, [setIsLoggedIn]);
 
   const handleLogout = () => {
     props.setIsLoggedIn(false);
@@ -46,10 +46,7 @@ const Header = (props) => {
             Profile
           </button>
         )}
-        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-        onClick={() =>
-          navigate('/listing')
-        }>
+        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
           Tutors
         </button>
         <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">

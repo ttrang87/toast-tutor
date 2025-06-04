@@ -3,23 +3,29 @@ from .controller import matching, profile, auth, meeting
 
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
-from .controller import tutorlist
 
 urlpatterns = [
     # Specific
     path("find_tutors/", matching.find_tutors, name="find_tutors"),
     # AUTHENTICATION
     path("auth/register/", register_user, name="register"),
-    path("auth/login/", login_user, name="login"),
-    path("auth/logout/", logout_user, name="logout"),
-    # MEETINGS
-    path("meetings/", meeting.get_meetings, name="meetings_list"),
-    path("meetings/create/", meeting.create_meeting, name="meeting_create"),
-    path("meetings/<int:pk>/", meeting.meeting_detail_or_update, name="meeting_detail"),  
-    path("meetings/<int:pk>/book/", meeting.book_meeting, name="meeting_book"),
-    path("meetings/tutor/<int:tutor_id>/",    # NEW
+    path("auth/meeting/", meeting.get_meetings, name="meeting"),
+    
+    # Meetings API
+    path("meetings/",                  meeting.get_meetings,            name="meetings_list"),
+    path("meetings/create/",           meeting.create_meeting,          name="meeting_create"),
+    path("meetings/<int:pk>/",         meeting.get_meeting,             name="meeting_detail"),   # GET
+    path("meetings/<int:pk>/update/",  meeting.update_meeting,          name="meeting_update"),   # PATCH
+    path("meetings/<int:pk>/delete/",  meeting.delete_meeting,          name="meeting_delete"),   # DELETE
+    path("meetings/<int:pk>/book/",            meeting.book_meeting,      name="meeting_book"),
+    path("meetings/<int:pk>/confirm_payment/", meeting.confirm_payment,   name="meeting_confirm"),
+    path("meetings/<int:pk>/cancel_payment/",  meeting.cancel_payment,    name="meeting_cancel"),
+    path("meetings/tutor/<int:tutor_id>/",
          meeting.get_meetings_by_tutor,
          name="meetings_by_tutor"),
+    
+    path("auth/login/", login_user, name="login"),
+    path("auth/logout/", logout_user, name="logout"),
     # AWARD SECTION
     path(
         "tutor/profile/addaward/<int:userId>/",
@@ -102,6 +108,4 @@ urlpatterns = [
         name="request_password_reset",
     ),
     path("reset-password/", auth.reset_password, name="reset_password"),
-    # DISPLAY ALL TUTORS
-    path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
 ]

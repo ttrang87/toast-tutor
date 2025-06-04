@@ -1,50 +1,103 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { API_ROUTES } from "../../constant/APIRoutes";
-import { CalendarCheck, Clock } from "../../assets/icon"; // Adjust icons as needed
+import { toast } from "react-hot-toast";
+import { CalendarCheck, Clock } from "../../assets/icon";
+import { CalendarFooter } from "../../components/meeting/Calendar";
 
-const BookingMeetingPage = () => {
+export default function BookingMeetingPage() {
   const { meetingId } = useParams();
   const navigate = useNavigate();
   const [meeting, setMeeting] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [countdown, setCountdown] = useState(0); // seconds
+  const timerRef = useRef(null);
   const studentId = Number(localStorage.getItem("userId") || "0") || null;
 
+  /* ------------------ helpers ------------------ */
+  const fetchMeeting = async () => {
+    const { data } = await axios.get(API_ROUTES.VIEW_MEETING(meetingId));
+    setMeeting(data);
+    if (data.status === "pending" && data.payment_expires_at) {
+      const expiry = new Date(data.payment_expires_at).getTime();
+      const secsLeft = Math.max(0, Math.floor((expiry - Date.now()) / 1000));
+      setCountdown(secsLeft);
+    }
+  };
+
+  /* ------------------ initial load ------------------ */
   useEffect(() => {
-    const fetchMeetingData = async () => {
-      setLoading(true);
+    if (!meetingId) {
+      setLoading(false);
+      return;
+    }
+    (async () => {
       try {
-        const { data } = await axios.get(API_ROUTES.VIEW_MEETING(meetingId));
-        setMeeting(data);
+        await fetchMeeting();
       } catch (err) {
-        console.error("Failed to fetch meeting:", err);
+        console.error("Fetch failed:", err);
       } finally {
         setLoading(false);
       }
-    };
-
-    if (meetingId) fetchMeetingData();
-    else setLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meetingId]);
 
+  /* ------------------ countdown ticker ------------------ */
+  useEffect(() => {
+    if (countdown <= 0) return;
+    timerRef.current = setInterval(() => {
+      setCountdown((s) => s - 1);
+    }, 1000);
+    return () => clearInterval(timerRef.current);
+  }, [countdown]);
+
+  /* when timer hits 0, auto-cancel */
+  useEffect(() => {
+    if (countdown === 0 && meeting?.status === "pending") {
+      (async () => {
+        await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+        toast("Payment window expired. Slot released.", { icon: "⏲️" });
+        await fetchMeeting(); // refresh to scheduled
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countdown]);
+
+  /* ------------------ actions ------------------ */
   async function handleBook() {
     if (studentId === meeting.organizer_id) {
-      alert("You are the organizer — you can't book your own meeting.");
+      toast("You are the organizer — you can't book your own meeting.", {
+        icon: "⚠️",
+      });
       return;
     }
-
-    try {
-      await axios.post(API_ROUTES.BOOK_MEETING(meetingId), {
-        student: studentId,
-      });
-      alert("Booked successfully!");
-      navigate("/meetings", { replace: true });
-    } catch (err) {
-      console.error("Failed to book meeting:", err);
-    }
+    const { data } = await axios.post(API_ROUTES.BOOK_MEETING(meetingId), {
+      student: studentId,
+    });
+    setMeeting(data);
+    const secsLeft = 300; // 5 min
+    setCountdown(secsLeft);
+    toast("Slot reserved — complete payment within 5 min.", { icon: "💳" });
   }
 
+  async function handlePayNow() {
+    const { data } = await axios.post(API_ROUTES.CONFIRM_PAYMENT(meetingId));
+    setMeeting(data);
+    clearInterval(timerRef.current);
+    toast.success("Payment accepted. Meeting booked!");
+    navigate("/", { replace: true });
+  }
+
+  async function handleCancel() {
+    await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+    clearInterval(timerRef.current);
+    toast("Reservation canceled.", { icon: "🚫" });
+    await fetchMeeting();
+  }
+
+  /* ------------------ render ------------------ */
   if (loading)
     return (
       <div className="h-screen flex items-center justify-center bg-[#FFFDE7]">
@@ -57,9 +110,23 @@ const BookingMeetingPage = () => {
   const formattedStart = new Date(meeting.start_time).toLocaleString();
   const formattedEnd = new Date(meeting.end_time).toLocaleString();
 
+  /* countdown label */
+  const mm = String(Math.floor(countdown / 60)).padStart(2, "0");
+  const ss = String(countdown % 60).padStart(2, "0");
+  const countdownLabel = `${mm}:${ss}`;
+
   return (
     <div className="min-h-screen bg-[#FFFDE7] py-12 px-5">
+      {/* <Toaster position="top-middle" /> */}
       <div className="max-w-2xl mx-auto bg-white border-2 border-[#FFE082] rounded-3xl shadow-xl p-8 space-y-8">
+        {/* Countdown banner */}
+        {meeting.status === "pending" && (
+          <div className="text-center text-lg font-semibold text-red-600">
+            Complete payment within&nbsp;
+            <span className="font-mono">{countdownLabel}</span>
+          </div>
+        )}
+
         {/* Title */}
         <div className="flex items-center gap-3 text-[#8b5e34]">
           <div className="w-12 h-12 bg-[#FFF8E1] rounded-full flex items-center justify-center">
@@ -68,7 +135,7 @@ const BookingMeetingPage = () => {
           <h1 className="text-2xl font-bold">{meeting.title}</h1>
         </div>
 
-        {/* Organizer Info */}
+        {/* Organizer */}
         <div className="border-l-4 border-[#FFE082] pl-4 bg-[#FFFBEC] py-2">
           <p className="text-xs font-semibold text-[#B78846]">Organizer</p>
           <Link
@@ -91,33 +158,41 @@ const BookingMeetingPage = () => {
           </div>
         </div>
 
-        {/* Action */}
-        {meeting.status === "scheduled" ? (
+        {/* Actions */}
+        {meeting.status === "scheduled" && (
           <button
             onClick={handleBook}
-            className="w-full px-8 py-4 text-lg font-semibold text-white bg-[#E9967A] rounded-xl hover:bg-[#e07a5f] transition shadow-lg focus:outline-none focus:ring-2 focus:ring-[#e07a5f] focus:ring-opacity-50"
+            className="w-full px-8 py-4 text-lg font-semibold text-white bg-[#E9967A] rounded-xl hover:bg-[#e07a5f] transition shadow-lg"
           >
             Book this slot
           </button>
-        ) : (
-          <div className="text-center py-4 px-6 bg-[#FFF8E1] text-[#8b5e34] rounded-xl border border-[#FFE082] font-medium">
-            This meeting is already{" "}
-            <span className="font-bold">{meeting.status}</span>.
+        )}
+
+        {meeting.status === "pending" && meeting.student === studentId && (
+          <div className="flex flex-col gap-4">
+            <button
+              onClick={handlePayNow}
+              className="w-full px-8 py-4 text-lg font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-lg"
+            >
+              Pay now (stub)
+            </button>
+            <button
+              onClick={handleCancel}
+              className="w-full px-8 py-3 text-lg font-semibold text-[#8b5e34] bg-[#FFF8E1] border border-[#FFE082] rounded-xl hover:bg-[#FFECB3] transition"
+            >
+              Cancel reservation
+            </button>
           </div>
         )}
 
-        {/* Back Navigation */}
-        <div className="text-center">
-          <Link
-            to="/meetings"
-            className="text-sm text-[#d4a373] hover:text-[#b78846] hover:underline"
-          >
-            ← Back to Meetings
-          </Link>
-        </div>
+        {meeting.status === "booked" && (
+          <div className="text-center py-4 px-6 bg-[#FFF8E1] text-[#8b5e34] rounded-xl border border-[#FFE082] font-medium">
+            This meeting is <span className="font-bold">booked</span>.
+          </div>
+        )}
+
+        <CalendarFooter />
       </div>
     </div>
   );
-};
-
-export default BookingMeetingPage;
+}

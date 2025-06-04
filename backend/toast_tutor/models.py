@@ -1,10 +1,10 @@
 import hashlib
 import os
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.timezone import now, timedelta
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -82,25 +82,39 @@ class Award(models.Model):
     def __str__(self):
         return f"{self.name} ({self.year})"
 
+# Add to models.py
 class Meeting(models.Model):
-    status = models.CharField(          
-        max_length=20,
-        choices=[      
+    STATUS_CHOICES = [
         ("scheduled", "Scheduled"),
+        ("pending",   "Pending-Payment"),
         ("booked",    "Booked"),
-        ("completed", "Completed"),
-        ],
-        default="scheduled",
-    )
-    organizer = models.ForeignKey(User, on_delete=models.CASCADE,
-                                  related_name="organized_meetings")
-    student = models.ForeignKey(User,on_delete=models.CASCADE, related_name="student_meetings",
-                                null=True,blank=True)
+    ]
+
+    organizer = models.ForeignKey("User", related_name="organized_meetings",
+                                   on_delete=models.CASCADE)
+    student   = models.ForeignKey("User", related_name="booked_meetings",
+                                   null=True, blank=True, on_delete=models.SET_NULL)
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    google_event_id = models.CharField(max_length=255, blank=True, null=True)
+    end_time   = models.DateTimeField()
+    status     = models.CharField(max_length=10, choices=STATUS_CHOICES,
+                                  default="scheduled")
+    payment_expires_at = models.DateTimeField(null=True, blank=True)
+    google_event_id  = models.CharField(max_length=128, blank=True, null=True)
     google_meet_link = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # convenience helper – used by serializers and views
+    def set_pending(self, student_id: int):
+        self.student_id         = student_id
+        self.status             = "pending"
+        self.payment_expires_at = timezone.now() + timedelta(minutes=5)
+        self.save(update_fields=["student", "status", "payment_expires_at"])
+    
+    class Meta:
+        ordering = ["-start_time"]
+        
+    def __str__(self):
+        return f"{self.title} - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
 
 class ResetToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_tokens")
@@ -155,7 +169,6 @@ class TutorRequest(models.Model):
     # grade = models.CharField(max_length=20)
     # aim = models.CharField(max_length=40)
     # teaching_styles = models.CharField(max_length=200)
-
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")

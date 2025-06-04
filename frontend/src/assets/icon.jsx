@@ -5,6 +5,7 @@
    GOLD     (#FFCA28)  → highlights / ratings
    DEEP     (#8B5E34)  → text-like accents
 */
+import { toast } from "react-hot-toast";
 
 const PRIMARY = "#E9967A";
 const GOLD = "#FFCA28";
@@ -360,3 +361,33 @@ export const GoogleCalendarIcon = (
     <path d="M21.8 10.04H21V10H12V14H17.65C16.83 16.33 14.61 18 12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C13.53 6 14.92 6.58 15.98 7.52L18.81 4.69C17.02 3.03 14.63 2 12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 11.33 21.93 10.68 21.8 10.04Z" />
   </svg>
 );
+
+export function confirmToast(message, onConfirm) {
+  toast.custom(
+    (t) => (
+      <div className="flex flex-col gap-4 p-4 bg-white rounded-xl shadow-lg border border-neutral-200">
+        <span className="text-sm">{message}</span>
+        <div className="flex gap-3 self-end">
+          {/* Confirm */}
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              await onConfirm();
+            }}
+            className="px-4 py-1.5 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+          >
+            Delete
+          </button>
+          {/* Cancel */}
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-4 py-1.5 text-sm font-medium text-neutral-700 bg-neutral-100 rounded-md hover:bg-neutral-200"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ),
+    { duration: Infinity }
+  );
+}
