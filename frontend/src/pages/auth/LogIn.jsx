@@ -12,7 +12,7 @@ const LogIn = (props) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const renderEyeIcon = (isOpen) => {
     const Icon = isOpen ? EyeOpenIcon : EyeCloseIcon;
     return <Icon />;

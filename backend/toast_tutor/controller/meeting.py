@@ -14,7 +14,7 @@ def get_meeting(request, pk):
     return Response(MeetingSerializer(meeting).data, status=status.HTTP_200_OK)
 
 @api_view(["GET"])
-def get_meetings(request, pk):
+def get_meetings(request):        
     meetings = Meeting.objects.all().order_by("start_time")
     return Response(MeetingSerializer(meetings, many=True).data, status=200)
 
@@ -27,7 +27,7 @@ def get_meetings_by_tutor(request, tutor_id):
 
     
 @api_view(["POST"])
-def create_meeting(request, pk):
+def create_meeting(request):        
     serializer = MeetingSerializer(data=request.data)
     if serializer.is_valid():
         meeting = serializer.save()

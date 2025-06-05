@@ -21,21 +21,24 @@ export const API_ROUTES = {
     DELETE_EXAM_INFOR: (examId) => `${API_BASE_URL}/tutor/profile/deleteexam/${examId}/`,
     ADD_EXAM: (userId) => `${API_BASE_URL}/tutor/profile/addexam/${userId}/`,
 
-    /*MEETING SECTION*/
-    GET_MEETINGS  :                 `${API_BASE_URL}/meetings/`,              
-    CREATE_MEETING:                 `${API_BASE_URL}/meetings/create/`,       
-    VIEW_MEETING: (id) => `${API_BASE_URL}/meetings/${id}/`,     
-    GET_TUTOR_MEETINGS    : (tutorId) => `${API_BASE_URL}/meetings/tutor/${tutorId}/`, // NEW
-    BOOK_MEETING  : (id) =>         `${API_BASE_URL}/meetings/${id}/book/`,   
-    UPDATE_MEETING: (id) => `${API_BASE_URL}/meetings/${id}/`,
 
     /*AWARD SECTION*/
     FIX_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/updateaward/${awardId}/`,
     DELETE_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/deleteaward/${awardId}/`,
     ADD_AWARD: (userId) => `${API_BASE_URL}/tutor/profile/addaward/${userId}/`,
 
-    FIND_TUTORS:`${API_BASE_URL}/find_tutors/`,
-    GET_ALL_TUTORS:`${API_BASE_URL}/get_all_tutor/`,
+    /*MEETING SECTION*/
+    GET_MEETINGS  :                 `${API_BASE_URL}/meetings/`,              
+    CREATE_MEETING:                 `${API_BASE_URL}/meetings/create/`,       
+    VIEW_MEETING   : (id) => `${API_BASE_URL}/meetings/${id}/`,   
+    GET_TUTOR_MEETINGS: (tutorId) => `${API_BASE_URL}/meetings/tutor/${tutorId}/`, // NEW
+    BOOK_MEETING        : (id) => `${API_BASE_URL}/meetings/${id}/book/`,
+    CONFIRM_PAYMENT     : (id) => `${API_BASE_URL}/meetings/${id}/confirm_payment/`,
+    CANCEL_PAYMENT      : (id) => `${API_BASE_URL}/meetings/${id}/cancel_payment/`,
+    UPDATE_MEETING: (id) => `${API_BASE_URL}/meetings/${id}/update/`,
+    DELETE_MEETING : (id) => `${API_BASE_URL}/meetings/${id}/delete/`,
+    
+    FIND_TUTORS: `${API_BASE_URL}/find_tutors/`,
 
     FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
     RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`
