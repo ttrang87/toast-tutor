@@ -64,9 +64,9 @@ def confirm_payment(request):
 
             # 1. Create customer in Stripe
             stripe_customer = stripe.Customer.create(
-                name=f"{
+                name=f'''{
                     billing_details.get('firstName', '')} {
-                    billing_details.get('lastName', '')}".strip(),
+                    billing_details.get('lastName', '')}'''.strip(),
                 email=billing_details.get("email", ""),
                 phone=billing_details.get("phone", ""),
                 address={
