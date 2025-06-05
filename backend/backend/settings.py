@@ -99,7 +99,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # If using Vite
-    "http://127.0.0.1:5173",  # Alternative localhost format
+    "http://127.0.0.1:8000",  # Alternative localhost format
 ]
 
 CORS_ALLOW_CREDENTIALS = True

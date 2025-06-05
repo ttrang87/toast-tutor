@@ -35,6 +35,7 @@ export const API_ROUTES = {
     UPDATE_MEETING: (id) => `${API_BASE_URL}/meetings/${id}/`,
     
     FIND_TUTORS: `${API_BASE_URL}/find_tutors/`,
+    GET_ALL_TUTORS:`${API_BASE_URL}/get_all_tutor/`,
 
     FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
     RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`,

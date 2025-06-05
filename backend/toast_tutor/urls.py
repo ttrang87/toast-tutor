@@ -110,4 +110,6 @@ urlpatterns = [
         profile.get_review,
         name="get_review",
     )
+    # DISPLAY ALL TUTORS
+    path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
 ]

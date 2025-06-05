@@ -97,6 +97,13 @@ function App() {
         <Route path="/reset-password/:token" element={<NewPassword />} />
         <Route path="/auth/waiting" element={<Waiting />} />
         <Route path="/auth/redirect" element={<RedirectPage />} />
+
+        <Route path="/listing" element={<TutorList />} />
+
+        {/* <Route path="/payment" element={<Payment />}/>
+        <Route path="/success" element={<SuccessPayment />}/>
+        <Route path="/confirmation" element={<Confirmation />}/> */}
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
