@@ -143,3 +143,39 @@ class TutorRequest(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+class Meeting(models.Model):
+    status = models.CharField(          
+        max_length=20,
+        choices=[      
+        ("scheduled", "Scheduled"),
+        ("booked",    "Booked"),
+        ("completed", "Completed"),
+        ],
+        default="scheduled",
+    )
+    organizer = models.ForeignKey(User, on_delete=models.CASCADE,
+                                  related_name="organized_meetings")
+    student = models.ForeignKey(User,on_delete=models.CASCADE, related_name="student_meetings",
+                                null=True,blank=True)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    google_event_id = models.CharField(max_length=255, blank=True, null=True)
+    google_meet_link = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Customer(models.Model):
+    stripe_customer_id = models.CharField(max_length=255, unique=True)
+    email = models.EmailField()
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Payment(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    stripe_payment_intent_id = models.CharField(max_length=255, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True)

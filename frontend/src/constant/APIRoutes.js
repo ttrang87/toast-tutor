@@ -27,9 +27,20 @@ export const API_ROUTES = {
     DELETE_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/deleteaward/${awardId}/`,
     ADD_AWARD: (userId) => `${API_BASE_URL}/tutor/profile/addaward/${userId}/`,
 
+     /*TUTOR SORTING*/
     FIND_TUTORS:`${API_BASE_URL}/find_tutors/`,
     GET_ALL_TUTORS:`${API_BASE_URL}/get_all_tutor/`,
 
+    /*FORGOT PASSWORD*/
     FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
-    RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`
+    RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`,
+
+    /*STRIPE PAYMENT*/
+    CONFIRM_CARD_SETUP: `${API_BASE_URL}/payment/create-setup-intent/`,
+    GET_CARD_INFO: `${API_BASE_URL}/payment/get-card-info/`,
+    CONFIRM_PAYMENT: `${API_BASE_URL}/payment/confirm-payment/`,
+
+    /*MY SCHEDULE*/
+    GET_USER_SCHEDULE: (userId) => `${API_BASE_URL}/meetings/user/${userId}/`,
+
 }

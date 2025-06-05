@@ -18,12 +18,19 @@ import TutorList from "./pages/TutorList";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// import Payment from "./pages/payment/payment";
-// import SuccessPayment from "./pages/payment/success";
-// import Confirmation from "./pages/payment/Confirm";
+import Payment from "./pages/payment/payment";
+import SuccessPayment from "./pages/payment/success";
+import Confirmation from "./pages/payment/Confirm";
+import CancelPayment from "./pages/payment/cancel";
+
+import ScheduleDashboard from "./pages/Schedule/dashboard";
+
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
 
   return (
     <BrowserRouter>
@@ -82,9 +89,20 @@ function App() {
 
         <Route path="/listing" element={<TutorList />} />
 
-        {/* <Route path="/payment" element={<Payment />}/>
+        <Route path="/payment" element={ <Elements stripe={stripePromise}><Payment /></Elements>}/>
         <Route path="/success" element={<SuccessPayment />}/>
-        <Route path="/confirmation" element={<Confirmation />}/> */}
+        <Route path="/cancel" element={<CancelPayment />}/>
+        <Route path="/confirmation" element={<Elements stripe={stripePromise}><Confirmation /></Elements>}/>
+
+        {/* Need to add userID to this  */}
+        <Route 
+        path="/dashboard/:id" 
+        element={
+          <ProtectedRoute>
+            <ScheduleDashboard />
+          </ProtectedRoute>
+          }
+        />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

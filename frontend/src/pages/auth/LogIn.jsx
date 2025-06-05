@@ -4,6 +4,7 @@ import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
+import React from "react";
 
 const LogIn = (props) => {
   const [formData, setFormData] = useState({
@@ -14,8 +15,7 @@ const LogIn = (props) => {
   const [showPassword, setShowPassword] = useState(false);
   
   const renderEyeIcon = (isOpen) => {
-    const Icon = isOpen ? EyeOpenIcon : EyeCloseIcon;
-    return <Icon />;
+    return React.cloneElement(isOpen ? EyeOpenIcon : EyeCloseIcon);
   };
 
   const navigate = useNavigate();

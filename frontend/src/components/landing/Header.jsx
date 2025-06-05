@@ -29,7 +29,7 @@ const Header = (props) => {
       </div>
 
       {/* Center - Navigation */}
-      <div className="flex justify-center w-1/3 gap-4 font-semibold">
+      <div className="flex justify-center w-1/3 gap-6 font-semibold">
         <button
           className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
           onClick={() => navigate("/")}
@@ -51,6 +51,12 @@ const Header = (props) => {
           navigate('/listing')
         }>
           Tutors
+        </button>
+        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+        onClick={() =>
+          navigate(`/dashboard/${localStorage.getItem("userId")}`)
+        }>
+          Meetings
         </button>
         <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
           Contact

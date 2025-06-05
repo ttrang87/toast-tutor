@@ -1,11 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 import { angledownIcon, anglerightIcon } from '../../assets/icon';
 import tutorIcon1 from '../../assets/avatar/avatar18.jpg';
 import tutorIcon2 from '../../assets/avatar/avatar19.jpg';
+import axios from "axios";
+import { useStripe, useElements } from '@stripe/react-stripe-js';
+import { API_ROUTES } from "../../constant/APIRoutes";
 
 const Confirmation = () => {
     const [isInfoVisible, setIsInfoVisible] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [billingDetails, setBillingDetails] = useState({
+        firstName: '',
+        lastName: '',
+        country: '',
+        address: '',
+        city: '',
+        state: '',
+        email: '',
+        phone: ''
+    });
+
+   const [cardInfo, setCardInfo] = useState({
+    last4: '4242',
+    exp_month: '12',
+    exp_year: '2025'
+});
+
+const paymentMethodId = sessionStorage.getItem("paymentMethodId");
+
+useEffect(() => {
+   if (!paymentMethodId) return;
+
+const fetchCardInfo = async () => {
+    try {
+        const response = await axios.post(
+            API_ROUTES.GET_CARD_INFO,
+            { paymentMethodId },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        if (response.data) {
+            setCardInfo({
+                ...response.data,
+                exp_month: response.data.exp_month.toString().padStart(2, '0')
+            });
+        }
+    } catch (error) {
+        console.error("Error fetching card info:", error.response?.data || error.message);
+    }
+};
+
+fetchCardInfo();
+
+}, [paymentMethodId]);
+
+    useEffect(() => {
+        // Retrieve billing details from sessionStorage when component mounts
+        const storedDetails = sessionStorage.getItem('billingDetails');
+        
+        if (storedDetails) {
+            try {
+                const parsedDetails = JSON.parse(storedDetails);
+
+                 // Check if billingDetails is nested or direct
+                if (parsedDetails.billingDetails) {
+                    setBillingDetails(parsedDetails.billingDetails);
+                } else if (parsedDetails.billing_details) {
+                    setBillingDetails(parsedDetails.billing_details);
+                } else {
+                    setBillingDetails(parsedDetails);
+                }
+                
+            } catch (error) {
+                console.error("Error parsing billing details:", error);
+            }
+        }
+    }, []);
 
     const toggleInfo = () => {
         setIsInfoVisible(!isInfoVisible);
@@ -30,8 +105,100 @@ const Confirmation = () => {
 
     const totalPrice = orders.reduce((sum, order) => sum + order.price, 0);
 
+    // Format full name from billing details
+    const fullName = `${billingDetails?.firstName || ''} ${billingDetails?.lastName || ''}`.trim();
+    
+    // Format full address from billing details
+    const fullAddress = billingDetails ? 
+        `${billingDetails.address || ''}, ${billingDetails.city || ''}, ${billingDetails.state || ''}, ${billingDetails.country || ''}`.replace(/^,\s*|,\s*(?=,)|,\s*$/g, '') : 
+        '';
+
+    const stripe = useStripe();
+    const elements = useElements();
+
+   const handlePayment = async () => {
+    if (!stripe || !elements) {
+        alert("Stripe has not been properly initialized");
+        window.location.href = '/cancel';
+        return;
+    }
+
+    setIsLoading(true); // Start loading
+
+    try {
+        const paymentMethodId = sessionStorage.getItem("paymentMethodId");
+        const billingDetails = JSON.parse(sessionStorage.getItem("billingDetails") || '{}');
+
+        // First, create the payment intent on your server
+        const response = await axios.post(API_ROUTES.CONFIRM_PAYMENT, {
+            paymentMethodId,
+            amount: totalPrice,
+            billingDetails
+        });
+
+        const { status, clientSecret } = response.data;
+
+        // If the payment requires confirmation (which it likely does)
+        if (status === 'requires_confirmation' || status === 'requires_payment_method' || status === 'requires_action') {
+            // Confirm the payment with stripe on the client side
+            const confirmResult = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: paymentMethodId
+            });
+
+            if (confirmResult.error) {
+                // Show error to customer
+                alert(`Payment failed: ${confirmResult.error.message}`);
+                window.location.href = '/cancel';
+                return;
+            } 
+            
+            if (confirmResult.paymentIntent.status === 'succeeded') {
+                // Payment succeeded
+                // Clear storage
+                sessionStorage.removeItem('paymentMethodId');
+                sessionStorage.removeItem('billingDetails');
+                // Redirect to success page
+                window.location.href = '/success';
+                return;
+            }
+        } else if (status === 'succeeded') {
+            // Payment already succeeded
+            // Clear storage
+            sessionStorage.removeItem('paymentMethodId');
+            sessionStorage.removeItem('billingDetails');
+            // Redirect to success page
+            window.location.href = '/success';
+            return;
+        }
+
+        // Handle other status cases
+        alert("Payment status: " + status);
+        
+        } catch (err) {
+            console.error("Payment error:", err.response?.data || err.message);
+            alert("Payment failed. Please check your card or try again.");
+            window.location.href = '/cancel';
+        } finally {
+            setIsLoading(false); // End loading
+        }
+    };
+
+
     return (
-        <div className="bg-yellow-50 min-h-screen w-full pt-4">
+        <div className="bg-yellow-50 min-h-screen w-full pt-4 relative">
+            {/* Loading Overlay */}
+            {isLoading && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-8 shadow-xl">
+                        <div className="text-center">
+                            <div className="w-16 h-16 border-4 border-yellow-100 border-t-yellow-400 rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-gray-600 text-lg">Processing your payment...</p>
+                            <p className="text-gray-500 text-sm mt-2">Please don't close this window</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="mx-10 rounded-t-2xl min-h-screen flex flex-row">
                 {/* Left Panel */}
                 <div className="flex-[1.75] bg-white py-5 px-7 rounded-t-2xl">
@@ -56,34 +223,40 @@ const Confirmation = () => {
                             </button>
                         </div>
                         <div className="flex-[12] text-gray-600">
-                            <p className="text-lg text-gray-500"><strong>Xuan Gia Han, Nguyen</strong></p>
-                            <p className="text-md">4111 Cedar Circle USF, Tampa, Fl, USA</p>
-                            <p className="text-md">xuangiahannguyen@gmail.com</p>
+                            <p className="text-lg text-gray-500"><strong>{fullName || "Xuan Gia Han, Nguyen"}</strong></p>
+                            <p className="text-md">{fullAddress || "4111 Cedar Circle USF, Tampa, Fl, USA"}</p>
+                            <p className="text-md">{billingDetails.email || "xuangiahannguyen@gmail.com"}</p>
                         </div>
                     </div>
 
                     {isInfoVisible && (
-                        <div className="bg-gray-50 ml-16 p-3 animate-fadeIn mb-5">
-                            <h3 className="font-bold mb-2 text-gray-500">Additional Payment Details</h3>
-                            <div className="grid grid-cols-2 gap-2">
-                                <div>
-                                    <p className="text-sm text-gray-500">Payment Method</p>
-                                    <p className="font-medium text-gray-600">Visa ending in 4242</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-500">Phone Number</p>
-                                    <p className="font-medium text-gray-600">+1 234 4533451</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-500">Expiration</p>
-                                    <p className="font-medium text-gray-600">04/2025</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-500">Contact Preference</p>
-                                    <p className="font-medium text-gray-600">Email</p>
-                                </div>
+                    <div className="bg-gray-50 ml-20 p-3 animate-fadeIn mb-5">
+                        <h3 className="font-bold mb-2 text-gray-500">Additional Payment Details</h3>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>
+                                <p className="text-sm text-gray-500">Payment Method</p>
+                                <p className="font-medium text-gray-600">
+                                    Visa ending in {cardInfo.last4}
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Phone Number</p>
+                                <p className="font-medium text-gray-600">
+                                    {(billingDetails && billingDetails.phone) || '+1 234 4533451'}
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Expiration</p>
+                                <p className="font-medium text-gray-600">
+                                    {cardInfo.exp_month}/{cardInfo.exp_year}
+                                </p>
+                            </div>
+                            <div>
+                                <p className="text-sm text-gray-500">Contact Preference</p>
+                                <p className="font-medium text-gray-600">Email</p>
                             </div>
                         </div>
+                    </div>
                     )}
 
                     <div className="flex flex-row gap-2 mt-2">
@@ -137,9 +310,17 @@ const Confirmation = () => {
                                 <p className="text-2xl"><strong>${totalPrice}</strong></p>
                             </div>
                             <div className="flex mt-1">
-                                <Link to="/success" className="text-center w-full py-2 rounded-lg bg-yellow-100 font-bold text-yellow-600 hover:bg-yellow-200 transition-colors">
-                                    Continue
-                                </Link>
+                                <button
+                                    onClick={handlePayment}
+                                    disabled={isLoading}
+                                    className={`text-center w-full py-2 rounded-lg font-bold transition-colors ${
+                                        isLoading 
+                                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                                            : 'bg-yellow-100 text-yellow-600 hover:bg-yellow-200'
+                                    }`}
+                                >
+                                    {isLoading ? 'Processing...' : 'Continue'}
+                                </button>
                             </div>
                         </div>   
                     </div>    
