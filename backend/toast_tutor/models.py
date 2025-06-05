@@ -116,9 +116,6 @@ class Meeting(models.Model):
         self.payment_expires_at = timezone.now() + timedelta(minutes=5)
         self.save(update_fields=["student", "status", "payment_expires_at"])
 
-    class Meta:
-        ordering = ["-start_time"]
-
     def __str__(self):
         return f"{self.title} - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
 
