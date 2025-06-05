@@ -9,7 +9,7 @@ from .models import (
     TutorProfile,
     TutorRequest,
     User,
-    Meeting
+    Meeting,
 )
 
 
@@ -129,26 +129,35 @@ class ResetTokenSerializer(serializers.ModelSerializer):
         fields = ["token", "created_at", "expiry_at"]
         read_only_fields = ["token", "created_at", "expiry_at"]
 
+
 class MeetingSerializer(serializers.ModelSerializer):
-    organizer_name = serializers.CharField(source='organizer.get_full_name', read_only=True)
-    student_name = serializers.CharField(source='student.get_full_name', read_only=True)
-    
+    organizer_name = serializers.CharField(source="organizer.get_full_name", read_only=True)
+    student_name = serializers.CharField(source="student.get_full_name", read_only=True)
+
     class Meta:
         model = Meeting
         fields = [
-            'id', 'status', 'start_time', 'end_time', 
-            'google_event_id', 'google_meet_link', 'created_at',
-            'organizer', 'student', 'organizer_name', 'student_name'
+            "id",
+            "status",
+            "start_time",
+            "end_time",
+            "google_event_id",
+            "google_meet_link",
+            "created_at",
+            "organizer",
+            "student",
+            "organizer_name",
+            "student_name",
         ]
-    
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        
+
         # Transform to match frontend format
         if instance.start_time:
-            data['date'] = instance.start_time.strftime('%Y-%m-%d')
-            data['time'] = instance.start_time.strftime('%H:%M')
-        
+            data["date"] = instance.start_time.strftime("%Y-%m-%d")
+            data["time"] = instance.start_time.strftime("%H:%M")
+
         # Calculate duration
         if instance.start_time and instance.end_time:
             duration = instance.end_time - instance.start_time
@@ -156,46 +165,54 @@ class MeetingSerializer(serializers.ModelSerializer):
             hours = duration_minutes // 60
             minutes = duration_minutes % 60
             if hours > 0:
-                data['duration'] = f"{hours}h {minutes}m"
+                data["duration"] = f"{hours}h {minutes}m"
             else:
-                data['duration'] = f"{minutes}m"
-        
+                data["duration"] = f"{minutes}m"
+
+        # Status titles fallback
+        status_titles = {
+            "scheduled": "Scheduled Meeting",
+            "booked": "Booked Meeting",
+            "completed": "Completed Meeting",
+        }
+
         # Set title based on attendees
         if instance.student and instance.organizer:
             if instance.student != instance.organizer:
-                data['title'] = f"Meeting with {instance.student.get_full_name() or instance.student.username}"
+                data["title"] = (
+                    f"Meeting with {instance.student.get_full_name() or instance.student.username}"
+                )
             else:
-                data['title'] = "Personal Meeting"
+                data["title"] = "Personal Meeting"
         else:
-            data['title'] = status_titles.get(instance.status, 'Meeting')
-        
-        # Status titles fallback
-        status_titles = {
-            'scheduled': 'Scheduled Meeting',
-            'booked': 'Booked Meeting', 
-            'completed': 'Completed Meeting'
-        }
-        
+            data["title"] = status_titles.get(instance.status, "Meeting")
+
         # Set type based on google_meet_link
-        data['type'] = 'Online Meeting' if instance.google_meet_link else 'Meeting'
-        
+        data["type"] = "Online Meeting" if instance.google_meet_link else "Meeting"
+
         # Set location - keep it as display name, not the full URL
-        data['location'] = 'Google Meet' if instance.google_meet_link else 'TBD'
-        
+        data["location"] = "Google Meet" if instance.google_meet_link else "TBD"
+
         # Create attendees list
         attendees = []
         if instance.organizer:
             attendees.append(instance.organizer.get_full_name() or instance.organizer.username)
         if instance.student and instance.student != instance.organizer:
             attendees.append(instance.student.get_full_name() or instance.student.username)
-        data['attendees'] = attendees
-        
+        data["attendees"] = attendees
+
         # Set organizer name for display
-        data['organizer'] = instance.organizer.get_full_name() or instance.organizer.username if instance.organizer else ''
-        
+        data["organizer"] = (
+            instance.organizer.get_full_name() or instance.organizer.username
+            if instance.organizer
+            else ""
+        )
+
         # Add description
         meeting_type = "online" if instance.google_meet_link else "in-person"
-        data['description'] = f"{meeting_type.title()} meeting scheduled for {data.get('date', '')} at {data.get('time', '')}"
-        
-        return data
+        data["description"] = (
+            f"{meeting_type.title()} meeting scheduled for {
+                data.get('date', '')} at {data.get('time', '')}"
+        )
 
+        return data

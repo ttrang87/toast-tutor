@@ -193,7 +193,7 @@ fetchCardInfo();
                         <div className="text-center">
                             <div className="w-16 h-16 border-4 border-yellow-100 border-t-yellow-400 rounded-full animate-spin mx-auto mb-4"></div>
                             <p className="text-gray-600 text-lg">Processing your payment...</p>
-                            <p className="text-gray-500 text-sm mt-2">Please don't close this window</p>
+                            <p className="text-gray-500 text-sm mt-2">Please don&apos;t close this window</p>
                         </div>
                     </div>
                 </div>

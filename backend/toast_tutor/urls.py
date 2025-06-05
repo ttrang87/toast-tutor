@@ -4,7 +4,6 @@ from .controller import matching, profile, auth, payment
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
 from .controller import tutorlist
-from .controller.payment import create_setup_intent, get_card_info
 from .controller.meeting import get_user_meetings, get_user_meetings_by_status
 
 urlpatterns = [
@@ -96,17 +95,18 @@ urlpatterns = [
         name="request_password_reset",
     ),
     path("reset-password/", auth.reset_password, name="reset_password"),
-
-    #Checking Stripe 
-    path('payment/create-setup-intent/', payment.create_setup_intent, name='create_setup_intent'),
-    path('payment/get-card-info/', payment.get_card_info, name='get_card_info'),
-    path('payment/confirm-payment/', payment.confirm_payment, name='confirm_payment'),
-    path('stripe/webhook/', payment.stripe_webhook, name='stripe_webhook'),
-
+    # Checking Stripe
+    path("payment/create-setup-intent/", payment.create_setup_intent, name="create_setup_intent"),
+    path("payment/get-card-info/", payment.get_card_info, name="get_card_info"),
+    path("payment/confirm-payment/", payment.confirm_payment, name="confirm_payment"),
+    path("stripe/webhook/", payment.stripe_webhook, name="stripe_webhook"),
     # DISPLAY ALL TUTORS
     path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
-
-    #MY MEETING DISPLAY 
-    path('meetings/user/<int:user_id>/', get_user_meetings, name='user_meetings'),
-    path('meetings/user/<int:user_id>/status/<str:meeting_status>/', get_user_meetings_by_status, name='user_meetings_by_status'),
+    # MY MEETING DISPLAY
+    path("meetings/user/<int:user_id>/", get_user_meetings, name="user_meetings"),
+    path(
+        "meetings/user/<int:user_id>/status/<str:meeting_status>/",
+        get_user_meetings_by_status,
+        name="user_meetings_by_status",
+    ),
 ]

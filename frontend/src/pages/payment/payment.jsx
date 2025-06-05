@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -60,7 +60,7 @@ const CheckoutForm = ({ billingDetails, setBillingDetails }) => {
   const [error, setError] = useState(null);
 
   // Calculate order total
-  const orderTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
+  // const orderTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
