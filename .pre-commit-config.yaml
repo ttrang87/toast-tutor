@@ -1,0 +1,48 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: autoflake
+        name: autoflake
+        entry: autoflake
+        language: system
+        args: ["--in-place", "--remove-all-unused-imports", "--remove-unused-variables"]
+        exclude: "(migrations/|auth.py)"
+        files: ^backend/
+        types: [python]
+
+    -   id: autopep8
+        name: autopep8
+        entry: autopep8
+        language: system
+        args: ["--in-place", "--aggressive", "--select=E101,E501,W291", "--max-line-length=100"]
+        exclude: "(migrations/|auth.py)"
+        files: ^backend/
+        types: [python]
+
+    -   id: black
+        name: black
+        entry: black
+        language: system
+        args: ["--line-length=100"]
+        exclude: "(migrations/|auth.py)"
+        files: ^backend/
+        types: [python]
+
+    -   id: flake8
+        name: flake8
+        entry: flake8
+        language: system
+        args: ["--max-line-length=100"]
+        exclude: "(migrations/|auth.py)"
+        files: ^backend/
+        types: [python]
+    
+    # frontend hooks
+    
+    -   id: eslint-frontend
+        name: eslint-frontend
+        entry: bash -c "cd frontend && npx eslint . --fix"
+        language: system
+        pass_filenames: false
+        files: ^frontend/.*\.(js|jsx)$
+        exclude: node_modules/
