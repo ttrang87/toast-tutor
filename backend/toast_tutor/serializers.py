@@ -211,8 +211,8 @@ class MeetingSerializer(serializers.ModelSerializer):
         # Add description
         meeting_type = "online" if instance.google_meet_link else "in-person"
         data["description"] = (
-            f"{meeting_type.title()} meeting scheduled for {
-                data.get('date', '')} at {data.get('time', '')}"
+            f"{meeting_type.title()} meeting scheduled for "
+            f"{data.get('date', '')} at {data.get('time', '')}"
         )
 
         return data
