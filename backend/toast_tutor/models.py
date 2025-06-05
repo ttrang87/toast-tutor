@@ -83,6 +83,7 @@ class Award(models.Model):
     def __str__(self):
         return f"{self.name} ({self.year})"
 
+
 class Meeting(models.Model):
     STATUS_SCHEDULED = "scheduled"
     STATUS_PENDING = "pending"
@@ -94,20 +95,14 @@ class Meeting(models.Model):
         (STATUS_BOOKED, "Booked"),
     ]
 
-    organizer = models.ForeignKey(
-        User, related_name="organized_meetings", on_delete=models.CASCADE
-    )
+    organizer = models.ForeignKey(User, related_name="organized_meetings", on_delete=models.CASCADE)
     student = models.ForeignKey(
         User, related_name="booked_meetings", null=True, blank=True, on_delete=models.SET_NULL
     )
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default=STATUS_SCHEDULED
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_SCHEDULED)
 
     payment_expires_at = models.DateTimeField(null=True, blank=True)
     google_event_id = models.CharField(max_length=128, blank=True, null=True)
@@ -120,18 +115,13 @@ class Meeting(models.Model):
         self.status = self.STATUS_PENDING
         self.payment_expires_at = timezone.now() + timedelta(minutes=5)
         self.save(update_fields=["student", "status", "payment_expires_at"])
-        
+
     class Meta:
         ordering = ["-start_time"]
 
     def __str__(self):
         return f"{self.title} - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
 
-    class Meta:
-        ordering = ["start_time"]
-
-    def __str__(self):
-        return f"{self.title} - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
 
 class ResetToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reset_tokens")
