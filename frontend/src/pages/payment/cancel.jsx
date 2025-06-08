@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { closeIcon } from "../../assets/icon"; 
 import "./SuccessPayment.css";
 
-const CancelPayment = () => {
+const Cancel = () => {
   return (
     <div className="bg-yellow-50 w-full min-h-screen pb-10 pt-4">
       <div className="bg-white mx-10 rounded-t-xl min-h-screen flex flex-col items-center justify-center">
@@ -32,4 +32,4 @@ const CancelPayment = () => {
   );
 };
 
-export default CancelPayment;
+export default Cancel;

@@ -24,10 +24,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import TutorList from "./pages/TutorList";
 
-import Payment from "./pages/payment/payment";
-import SuccessPayment from "./pages/payment/success";
-import Confirmation from "./pages/payment/confirm";
-import CancelPayment from "./pages/payment/cancel";
+import Payment from "./pages/payment/Payment";
+import Success from "./pages/payment/Success";
+import Confirm from "./pages/payment/Confirm";
+import Cancel from "./pages/payment/Cancel"; 
 
 import ScheduleDashboard from "./pages/Schedule/dashboard";
 
@@ -173,9 +173,9 @@ function App() {
         <Route path="/listing" element={<TutorList />} />
 
         <Route path="/payment/:meetingId/" element={ <Elements stripe={stripePromise}><Payment /></Elements>}/>
-        <Route path="/success" element={<SuccessPayment />}/>
-        <Route path="/cancel" element={<CancelPayment />}/>
-        <Route path="/confirmation/:meetingId/" element={<Elements stripe={stripePromise}><Confirmation /></Elements>}/>
+        <Route path="/success" element={<Success />}/>
+        <Route path="/cancel" element={<Cancel />}/>
+        <Route path="/confirmation/:meetingId/" element={<Elements stripe={stripePromise}><Confirm /></Elements>}/>
 
         {/* Need to add userID to this  */}
         <Route 

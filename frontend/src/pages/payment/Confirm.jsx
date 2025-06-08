@@ -9,7 +9,7 @@ import PaymentInfo from "./confirmation/PaymentInfo";
 import OrderDetails from "./confirmation/OrderDetails";
 import PurchaseSummary from "./confirmation/PurchaseSummary";
 
-const Confirmation = () => {
+const Confirm = () => {
     const { meetingId } = useParams();
     const navigate = useNavigate();
     const [meeting, setMeeting] = useState(null);
@@ -307,4 +307,4 @@ const Confirmation = () => {
     );
 }; 
 
-export default Confirmation;
+export default Confirm;
