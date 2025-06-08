@@ -18,6 +18,7 @@ import Waiting from "./pages/auth/password/Waiting";
 import LogIn from "./pages/auth/LogIn";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TutorList from "./pages/TutorList";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (

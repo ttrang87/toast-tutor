@@ -12,11 +12,6 @@ const LogIn = (props) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  
-  const renderEyeIcon = (isOpen) => {
-    const Icon = isOpen ? EyeOpenIcon : EyeCloseIcon;
-    return <Icon />;
-  };
 
   const navigate = useNavigate();
 
@@ -112,7 +107,7 @@ const LogIn = (props) => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                 >
-                  {renderEyeIcon(showPassword)}
+                  {showPassword ? EyeOpenIcon : EyeCloseIcon}
                 </button>
               </div>
             </div>

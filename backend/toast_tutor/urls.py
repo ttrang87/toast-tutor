@@ -2,6 +2,7 @@ from django.urls import path
 from .controller import matching, profile, auth, meeting
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
+from .controller import tutorlist
 
 urlpatterns = [
     # Specific
@@ -109,7 +110,7 @@ urlpatterns = [
         "tutor/profile/<int:tutorId>/getreview/",
         profile.get_review,
         name="get_review",
-    )
+    ),
     # DISPLAY ALL TUTORS
     path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
 ]
