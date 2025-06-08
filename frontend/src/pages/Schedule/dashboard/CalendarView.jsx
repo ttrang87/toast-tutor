@@ -7,7 +7,7 @@ const months = [
 
 const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export default function CalendarView({ currentDate, setCurrentDate, events, onEventClick, convertToLocalTime }) {
+export default function CalendarView({ currentDate, setCurrentDate, events, onEventClick}) {
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
     const month = date.getMonth();

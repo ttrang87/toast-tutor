@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_ROUTES } from "../../constant/APIRoutes";
@@ -19,7 +19,10 @@ const BookingMeetingPage = () => {
   const timerRef = useRef(null);
   const studentId = Number(localStorage.getItem("userId") || "0") || null;
 
-  const fetchMeeting = async () => {
+  // Wrap fetchMeeting in useCallback to make it stable for useEffect dependencies
+  const fetchMeeting = useCallback(async () => {
+    if (!meetingId) return;
+    
     const { data } = await axios.get(API_ROUTES.VIEW_MEETING(meetingId));
     setMeeting(data);
     if (data.status === "pending" && data.payment_expires_at) {
@@ -27,7 +30,7 @@ const BookingMeetingPage = () => {
       const secsLeft = Math.max(0, Math.floor((expiry - Date.now()) / 1000));
       setCountdown(secsLeft);
     }
-  };
+  }, [meetingId]);
 
   useEffect(() => {
     if (!meetingId) {
@@ -43,7 +46,7 @@ const BookingMeetingPage = () => {
         setLoading(false);
       }
     })();
-  }, [meetingId]);
+  }, [meetingId, fetchMeeting]);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -62,7 +65,7 @@ const BookingMeetingPage = () => {
         await fetchMeeting();
       })();
     }
-  }, [countdown, isNavigatingToPayment]);
+  }, [countdown, isNavigatingToPayment, meeting?.status, meetingId, fetchMeeting]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {

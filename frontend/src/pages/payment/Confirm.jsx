@@ -12,7 +12,6 @@ import PurchaseSummary from "./confirmation/PurchaseSummary";
 const Confirm = () => {
     const { meetingId } = useParams();
     const navigate = useNavigate();
-    const [meeting, setMeeting] = useState(null);
     const timerRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
     const stripe = useStripe();
@@ -245,9 +244,7 @@ const Confirm = () => {
                     return;
                 }
             } else if (status === 'succeeded') {
-                const { data } = await axios.post(API_ROUTES.CONFIRM_PAYMENT(meetingId));
-                    
-                setMeeting(data);
+                await axios.post(API_ROUTES.CONFIRM_PAYMENT(meetingId));
 
                 if (timerRef.current) {
                     clearInterval(timerRef.current);
@@ -262,9 +259,9 @@ const Confirm = () => {
 
             alert("Payment status: " + status);
             
-        } catch (err) {
+        } catch (error) {
             await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
-            alert("Payment failed. Please check your card or try again.");
+            alert(`Payment failed. Please check your card or try again: ${error.message}`);
             window.location.href = '/cancel';
         } finally {
             setIsLoading(false);

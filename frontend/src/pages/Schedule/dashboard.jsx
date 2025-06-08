@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Calendar, List, Users, X } from "lucide-react";
 import axios from "axios";
 
@@ -18,48 +18,48 @@ export default function ScheduleDashboard() {
   const userId = typeof window !== 'undefined' ? localStorage.getItem("userId") : null;
 
   // Helper function to convert GMT/UTC datetime to local timezone
-  const convertToLocalTime = (dateStr, timeStr) => {
+  const convertToLocalTime = useCallback((dateStr, timeStr) => {
     const utcDateTime = new Date(`${dateStr}T${timeStr}:00.000Z`);
     return utcDateTime;
-  };
+  }, []);
 
   // Helper function to format local time from UTC
-  const formatLocalTime = (dateStr, timeStr) => {
+  const formatLocalTime = useCallback((dateStr, timeStr) => {
     const localDateTime = convertToLocalTime(dateStr, timeStr);
     return localDateTime.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
       hour12: true
     });
-  };
+  }, [convertToLocalTime]);
 
   // Helper function to get local date string from UTC datetime
-  const getLocalDateString = (dateStr, timeStr) => {
+  const getLocalDateString = useCallback((dateStr, timeStr) => {
     const localDateTime = convertToLocalTime(dateStr, timeStr);
     const year = localDateTime.getFullYear();
     const month = String(localDateTime.getMonth() + 1).padStart(2, "0");
     const day = String(localDateTime.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
-  };
+  }, [convertToLocalTime]);
 
-  // Function to fetch meetings from API
-  const fetchUserMeetings = async (userId) => {
+  // Move fetchUserMeetings outside useEffect and make it a useCallback
+  const fetchUserMeetings = useCallback(async (userId) => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await axios.get(API_ROUTES.GET_USER_SCHEDULE(userId));
-      
+
       const eventsWithLocalTime = response.data
-      .filter(event => event.status !== 'pending')
-      .map(event => ({
-        ...event,
-        localDate: getLocalDateString(event.date, event.time),
-        localTime: formatLocalTime(event.date, event.time),
-        originalDate: event.date,
-        originalTime: event.time
-      }));
-      
+        .filter(event => event.status !== 'pending')
+        .map(event => ({
+          ...event,
+          localDate: getLocalDateString(event.date, event.time),
+          localTime: formatLocalTime(event.date, event.time),
+          originalDate: event.date,
+          originalTime: event.time,
+        }));
+
       setEvents(eventsWithLocalTime);
     } catch (err) {
       if (err.response) {
@@ -73,12 +73,12 @@ export default function ScheduleDashboard() {
       } else {
         setError(err.message || 'An unexpected error occurred');
       }
-      
+
       setEvents([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [formatLocalTime, getLocalDateString]);
 
   useEffect(() => {
     if (userId) {
@@ -87,7 +87,7 @@ export default function ScheduleDashboard() {
       setEvents([]);
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, fetchUserMeetings]);
 
   const refreshMeetings = () => {
     if (userId) {
@@ -238,5 +238,5 @@ export default function ScheduleDashboard() {
         </div>
       </div>
     </div>
-  );
-}
+    );
+  }
