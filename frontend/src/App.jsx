@@ -23,10 +23,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import TutorList from "./pages/TutorList";
 
-import Payment from "./pages/payment/Payment";
-import Success from "./pages/payment/Success.jsx";
+import Payment from "./pages/payment/payment";
+import Success from "./pages/payment/success.jsx";
 import Confirm from "./pages/payment/Confirm";
-import Cancel from "./pages/payment/Cancel"; 
+import Cancel from "./pages/payment/cancel"; 
 
 import ScheduleDashboard from "./pages/Schedule/dashboard";
 
