@@ -24,7 +24,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import TutorList from "./pages/TutorList";
 
 import Payment from "./pages/payment/Payment";
-import Success from "./pages/payment/Success";
+import Success from "./pages/payment/Success.jsx";
 import Confirm from "./pages/payment/Confirm";
 import Cancel from "./pages/payment/Cancel"; 
 
