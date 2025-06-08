@@ -54,7 +54,7 @@ def get_card_info(request):
 
 @csrf_exempt
 @api_view(["POST"])
-def confirm_payment(request):
+def confirm_stripe_payment(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -64,9 +64,9 @@ def confirm_payment(request):
 
             # 1. Create customer in Stripe
             stripe_customer = stripe.Customer.create(
-                name=f'''{
+                name=f"""{
                     billing_details.get('firstName', '')} {
-                    billing_details.get('lastName', '')}'''.strip(),
+                    billing_details.get('lastName', '')}""".strip(),
                 email=billing_details.get("email", ""),
                 phone=billing_details.get("phone", ""),
                 address={

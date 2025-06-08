@@ -16,6 +16,7 @@ from pathlib import Path
 
 from decouple import config
 from dotenv import load_dotenv
+from celery.schedules import crontab
 
 # Load environment variables from .env file
 load_dotenv()
@@ -200,3 +201,10 @@ STRIPE_WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 # EMAIL_HOST_PASSWORD = 'wupofgoejcngvwob'
 
 # FRONTEND_BASE_URL = 'http://localhost:5173'
+
+CELERY_BEAT_SCHEDULE = {
+    "expire-pending-payments": {
+        "task": "your_app.tasks.expire_pending_payments",
+        "schedule": crontab(minute="*/1"),  # Run every minute
+    },
+}

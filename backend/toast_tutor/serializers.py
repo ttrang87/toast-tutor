@@ -8,8 +8,8 @@ from .models import (
     ResetToken,
     TutorProfile,
     TutorRequest,
-    User,
     Meeting,
+    User,
 )
 
 
@@ -176,12 +176,32 @@ class MeetingSerializer(serializers.ModelSerializer):
             "completed": "Completed Meeting",
         }
 
-        # Set title based on attendees
+        # Set title based on attendees and current user's perspective
         if instance.student and instance.organizer:
             if instance.student != instance.organizer:
-                data["title"] = (
-                    f"Meeting with {instance.student.get_full_name() or instance.student.username}"
-                )
+                # Get the user from context (the user whose meetings we're fetching)
+                current_user = self.context.get("user") or self.context["request"].user
+
+                if current_user == instance.student:
+                    # Current user is student, show organizer
+                    data["title"] = (
+                        f"""Meeting with {
+                            instance.organizer.get_full_name() or instance.organizer.username
+                        }"""
+                    )
+                elif current_user == instance.organizer:
+                    # Current user is organizer, show student
+                    data["title"] = (
+                        f"""Meeting with {
+                            instance.student.get_full_name() or instance.student.username
+                        }"""
+                    )
+                else:
+                    # Fallback for other users (admin, etc.)
+                    data["title"] = (
+                        f"Meeting: {instance.student.get_full_name() or instance.student.username} "
+                        f"& {instance.organizer.get_full_name() or instance.organizer.username}"
+                    )
             else:
                 data["title"] = "Personal Meeting"
         else:

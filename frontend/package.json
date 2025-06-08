@@ -14,11 +14,14 @@
   "dependencies": {
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.3.0",
+    "@supabase/auth-helpers-react": "^0.5.0",
+    "@supabase/supabase-js": "^2.49.10",
     "axios": "^1.7.9",
     "flowbite": "^2.5.2",
     "flowbite-react": "^0.10.2",
     "lucide-react": "^0.511.0",
     "react": "^18.3.1",
+    "react-calendar": "^6.0.0",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.1",
     "react-icons": "^5.4.0",
@@ -41,6 +44,7 @@
     "postcss": "^8.4.49",
     "postcss-cli": "^11.0.0",
     "tailwindcss": "^3.4.17",
-    "vite": "^6.0.5"
+    "vite": "^6.0.5",
+    "vite-plugin-svgr": "^4.3.0"
   }
 }
