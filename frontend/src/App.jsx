@@ -1,4 +1,3 @@
-/*  src/App.jsx  – full file */
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import "./App.css";
@@ -24,10 +23,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 import TutorList from "./pages/TutorList";
 
-import Payment from "./pages/payment/Payment";
-import Success from "./pages/payment/Success";
-import Confirm from "./pages/payment/Confirm";
-import Cancel from "./pages/payment/Cancel"; 
+import Payment from "./pages/payment/Payment.jsx";
+import Success from "./pages/payment/Success.jsx";
+import Confirm from "./pages/payment/Confirm.jsx";
+import Cancel from "./pages/payment/Cancel.jsx"; 
 
 import ScheduleDashboard from "./pages/Schedule/dashboard";
 
