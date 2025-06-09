@@ -9,7 +9,7 @@ const PurchaseSummary = ({ orders, totalPrice, isLoading, onPayment }) => {
                     {orders.map((order, index) => (
                         <div key={index} className="flex justify-between pb-2">
                             <p className="pl-1">{order.tutorName}</p>
-                            <p>{order.price ? `$${order.price / 100}` : 'Calculating...'}</p>
+                            <p>{order.price ? `$${order.price}` : 'Calculating...'}</p>
                         </div>
                     ))}
                     <div className="flex justify-between pb-2 text-orange-800 font-semibold">
@@ -19,7 +19,7 @@ const PurchaseSummary = ({ orders, totalPrice, isLoading, onPayment }) => {
                     <hr className="pb-2"/>
                     <div className="flex justify-between pb-2 text-gray-500">
                         <p className="pl-1 text-2xl"><strong>Total</strong></p>
-                        <p className="text-2xl"><strong>{totalPrice ? `$${totalPrice / 100}` : 'Calculating...'}</strong></p>
+                        <p className="text-2xl"><strong>{totalPrice ? `$${totalPrice}` : 'Calculating...'}</strong></p>
                     </div>
                     <div className="flex mt-1">
                         <button

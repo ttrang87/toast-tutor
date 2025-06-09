@@ -27,7 +27,7 @@ const OrderDetails = ({ orders, avatar }) => {
                             <p className="text-gray-600"><strong className="text-gray-600">Tutor: </strong>{order.tutorName}</p>
                             <p className="text-gray-600"><strong className="text-gray-600">Subject: </strong>{order.subject}</p>
                             <p className="text-gray-600"><strong className="text-gray-600">Timeslot: </strong>{order.timeslot}</p>
-                            <p className="text-gray-600"><strong className="text-gray-600">Price: </strong>{order.price ? `$${order.price / 100}` : 'Calculating...'}</p>
+                            <p className="text-gray-600"><strong className="text-gray-600">Price: </strong>{order.price ? `$${order.price}` : 'Calculating...'}</p>
                         </div>
                     </div>
                     {index < orders.length - 1 && <hr className="mx-2" />}
