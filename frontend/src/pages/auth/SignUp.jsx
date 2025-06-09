@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { register } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
 
 const SignUp = () => {
@@ -113,7 +113,6 @@ const SignUp = () => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-yellow-50 -mt-10">
-      <Toaster position="top-center" reverseOrder={false} />
       <div className="relative w-full max-w-md">
         {/* Card Container */}
         <div className="bg-white border-yellow-200 border rounded-2xl shadow-lg px-10 py-10 relative z-10">

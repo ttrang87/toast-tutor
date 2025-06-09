@@ -12,6 +12,10 @@ const LogIn = (props) => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  
+  const renderEyeIcon = (isOpen) => {
+    return isOpen ? <EyeOpenIcon /> : <EyeCloseIcon />;
+  };
 
   const navigate = useNavigate();
 

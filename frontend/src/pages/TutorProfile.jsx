@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { API_ROUTES } from "../constant/APIRoutes";
-import { toast, Toaster } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import BasicInfor from "../components/tutor_profile/watch/BasicInfor";
 import BasicInforEdit from "../components/tutor_profile/edit/BasicInforEdit";
 import Education from "../components/tutor_profile/watch/Education";
@@ -58,24 +58,32 @@ const TutorProfile = () => {
   const awardsData = profileData.award;
 
   const showToast = (status) => {
-    if (status === 'success') {
-      toast.success('Updated Successfully', { duration: 1500 });
-    } else if (status === 'username_exists') {
-      toast.error('This username already exists. Please try a different one.', { duration: 1500 });
-    } else if (status === 'email_exists') {
-      toast.error('This email already exists. Please try a different one.', { duration: 1500 });
+    if (status === "success") {
+      toast.success("Updated Successfully", { duration: 1500 });
+    } else if (status === "username_exists") {
+      toast.error("This username already exists. Please try a different one.", {
+        duration: 1500,
+      });
+    } else if (status === "email_exists") {
+      toast.error("This email already exists. Please try a different one.", {
+        duration: 1500,
+      });
     } else {
-      toast.error('Failed to save changes. Please try again.', { duration: 1500 });
+      toast.error("Failed to save changes. Please try again.", {
+        duration: 1500,
+      });
     }
   };
 
   return (
     <div className="bg-yellow-50 h-auto px-24 py-1 space-y-6 pb-8">
-      <Toaster position="top-right" reverseOrder={false} />
-      {/* Basic Information */}
       <div className="rounded-xl h-auto bg-white">
         {isOwner ? (
-          <BasicInforEdit data={basicprofileData} userId={id} showToast={showToast} />
+          <BasicInforEdit
+            data={basicprofileData}
+            userId={id}
+            showToast={showToast}
+          />
         ) : (
           <BasicInfor data={basicprofileData} />
         )}
@@ -84,7 +92,11 @@ const TutorProfile = () => {
       {/* Education Section */}
       <div className="rounded-xl h-auto bg-white px-10 py-8">
         {isOwner ? (
-          <EducationEdit data={educationData} userId={id} showToast={showToast} />
+          <EducationEdit
+            data={educationData}
+            userId={id}
+            showToast={showToast}
+          />
         ) : (
           <Education data={educationData} />
         )}

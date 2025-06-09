@@ -1,133 +1,197 @@
-import { Link } from 'react-router-dom';
-import {creditcardIcon} from '../../assets/icon';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
+import { API_ROUTES } from '../../constant/APIRoutes';
 
-import icon from '../../assets/avatar/avatar18.jpg';
-import icon2 from '../../assets/avatar/avatar19.jpg';
+import CheckoutForm from './info/CheckoutForm';
+import CartSummary from './info/CartSummary';
+
+const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
 
 const Payment = () => {
-    return (
-        <div className="bg-yellow-50 min-h-screen w-full pt-4">
-            <div className="bg-white mx-10 rounded-t-2xl min-h-screen flex flex-row">
-                <div className="flex-[1.75] bg-white py-5 px-7 rounded-tl-2xl">
-                    <p className="font-semibold text-gray-600">Step 1 of 2</p>
-                    <h1 className="text-3xl font-black text-gray-500 pb-2">Check Out</h1>
-                    
-                    <div className="flex flex-row gap-2 mt-2">
-                        <button className="flex text-center justify-center font-bold text-yellow-700 py-2 flex-1 rounded-lg bg-orange-200">
-                            Payment Information
-                        </button>
-                    </div>         
+  const { meetingId } = useParams();
+  const navigate = useNavigate();
+  const timerRef = useRef(null);
+  
+  const [billingDetails, setBillingDetails] = useState({
+    firstName: '',
+    lastName: '',
+    country: '',
+    address: '',
+    city: '',
+    state: '',
+    email: '',
+    phone: ''
+  });
 
-                    <form action="submit" className="flex flex-col pt-5 gap-4 mx-1">
-                        <div className="flex flex-row gap-3 items-center">
-                            <div className="relative flex items-center flex-[2]">
-                                <input
-                                    type="text"
-                                    placeholder="Card Number"
-                                    className="border p-3 pl-10 rounded w-full"
-                                />
-                                <div className="absolute left-3">
-                                    {creditcardIcon}
-                                </div>
-                            </div>
-                        </div>
+  const [tutorData, setTutorData] = useState({
+    username: '',
+    hourlyRate: 0,
+    avatar: 0
+  });
 
-                        <div className="flex flex-row gap-3">
-                            <input type="text" placeholder="First Name" className="border p-2 rounded flex-1" />
-                            <input type="text" placeholder="Last Name" className="border p-2 rounded flex-1" />
-                        </div>
-                        <div className="flex flex-row gap-3">
-                            <input
-                                type="month"
-                                className="border p-2 rounded flex-1 text-gray-700"
-                            />
-                            <input type="number" placeholder="CVV" className="border p-2 rounded flex-1" />
-                        </div>
+  const [meetingData, setMeetingData] = useState({
+    date: null,
+    startTime: null,
+    endTime: null,
+    duration: null,
+    price: null
+  });
 
-                        <div className="flex flex-row gap-2 mt-2">
-                            <button className="flex text-center justify-center font-bold text-yellow-700 py-2 flex-1 rounded-lg bg-orange-200">
-                                Billing address
-                            </button>
-                        </div>  
-                        
-                        <input type="text" placeholder="Country / Region" className="border p-2 rounded" />
-                        <input type="text" placeholder="Billing Address" className="border p-2 rounded" />
+  const subject = localStorage.getItem("selectedSubject");
 
-                        <div className="flex flex-row gap-2">
-                            <input type="text" placeholder="City" className="border p-2 rounded flex-1" />
-                            <input type="text" placeholder="State" className="border p-2 rounded flex-1" />
-                        </div>
+  const parseDuration = (str) => {
+    const hourMatch = str.match(/(\d+)h/);
+    const minuteMatch = str.match(/(\d+)m/);
+    const hours = hourMatch ? parseInt(hourMatch[1]) : 0;
+    const minutes = minuteMatch ? parseInt(minuteMatch[1]) : 0;
+    return hours + minutes / 60;
+  };
 
-                        <input type="text" placeholder="Email" className="border p-2 rounded" />
-                        <input type="number" placeholder="Phone Number" className="border p-2 rounded" />
-                        
-                        <div className="flex flex-row gap-3 pb-10">
-                            <Link to="/" className="px-5 py-2 rounded-lg bg-yellow-100 font-bold text-yellow-600 hover:bg-yellow-200 transition-colors">
-                                Back
-                            </Link>
-                            <Link to="/confirmation" className="px-5 py-2 rounded-lg bg-yellow-100 font-bold text-yellow-600 hover:bg-yellow-200 transition-colors">
-                                Continue
-                            </Link>
-                        </div>
-                    </form>
-                </div>
+  // Load tutor data
+  useEffect(() => {
+    const data = localStorage.getItem('matchedTutorsResponse'); 
+    if (data) {
+      try {
+        const parsedData = JSON.parse(data);
+        setTutorData({
+          username: parsedData[0].username,
+          hourlyRate: parsedData[0].hourlyRate,
+          avatar: parsedData[0].avatar
+        });
+      } catch (error) {
+        console.error('Error parsing tutor data:', error);
+      }
+    }
+  }, []);
 
-                <div className="flex-1 p-5 rounded-tr-2xl bg-[#FCFCFC]">
-                    <h2 className="text-2xl font-bold text-gray-500 pb-2 pt-8">Your Cart</h2>
+  // Load meeting timing data
+  useEffect(() => {
+    const timing = localStorage.getItem("MeetingTiming");
+    if (timing) {
+      try {
+        const parseData = JSON.parse(timing);
+        
+        const formatted = new Date(parseData.date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        
+        const startTime = new Date(parseData.start_time).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        });
 
-                    <div className="flex flex-col bg-white shadow-sm rounded-xl mb-3">
-                        <div className="flex flex-row">
-                            <div className="flex-1 pl-5 pt-4 pb-3">
-                                <img src={icon} alt="icon" className="w-20"/>
-                            </div>
-                            <div className="flex-[3] py-4 pl-2">
-                                <p className="text-gray-700"><strong className="text-gray-600">Tutor: </strong>HanNotSoCute</p>
-                                <p className="text-gray-700"><strong className="text-gray-600">Subject: </strong>Biology</p>
-                                <p><strong className="text-gray-600">Timeslot: </strong></p>
-                               <div className="font-semibold text-gray-700 mr-4 text-center rounded-lg bg-orange-100  py-1 my-1">Mar 14, 2024</div>
-                                <div className="font-semibold text-yellow-800  mr-4 text-center rounded-lg bg-yellow-100 py-1">3:15 - 5:00</div> 
-                            </div>
-                        </div>
-                        <div className="px-5 flex flex-col gap-1 pb-3">
-                            <hr />
-                            <p className="px-2 text-gray-700"><strong className="text-gray-600">Price: </strong> $20</p>
-                        </div>
-                    </div>
+        const endTime = new Date(parseData.end_time).toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        });
 
-                    <div className="flex flex-col bg-white shadow-sm rounded-xl mb-3">
-                        <div className="flex flex-row">
-                            <div className="flex-1 pl-5 pt-4 pb-3">
-                                <img src={icon2} alt="icon" className="w-20"/>
-                            </div>
-                            <div className="flex-[3] py-4 pl-2">
-                                <p className="text-gray-700"><strong className="text-gray-600">Tutor: </strong>HeoLeuLeu</p>
-                                <p className="text-gray-700"><strong className="text-gray-600">Subject: </strong>Mathematics</p>
-                                <p><strong className="text-gray-600">Timeslot: </strong></p>
-                                <div className="font-semibold text-gray-700 mr-4 text-center rounded-lg bg-orange-100 py-1 my-1">Mar 19, 2024</div>
-                                <div className="font-semibold text-yellow-800 mr-4 text-center rounded-lg bg-yellow-100 py-1">5:15 - 7:00</div>
-                            </div>
-                        </div>
-                        <div className="px-5 flex flex-col gap-1 pb-3">
-                            <hr />
-                            <p className="px-2 text-gray-700"><strong className="text-gray-600">Price: </strong> $30</p>
-                        </div>
-                    </div>
+        setMeetingData({
+          date: formatted,
+          startTime: startTime,
+          endTime: endTime,
+          duration: parseData.duration,
+          price: null
+        });
+      } catch (error) {
+        console.error('Error parsing meeting data:', error);
+      }
+    }
+  }, []);
 
-                    <div className="flex flex-col px-3 text-gray-500">
-                        <div className="flex justify-between pb-2">
-                            <p className="pl-1"><strong>Subtotal</strong></p>
-                            <p>$50</p>
-                        </div>
-                        <hr className="pb-2"/>
-                        <div className="flex justify-between pb-2 text-gray-600">
-                            <p className="pl-1 text-2xl"><strong>Total</strong></p>
-                            <p className="text-2xl"><strong>$50</strong></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  // Calculate price when both hourlyRate and duration are available
+  useEffect(() => {
+    if (tutorData.hourlyRate > 0 && meetingData.duration) {
+      const hour = parseDuration(meetingData.duration);
+      const pay = tutorData.hourlyRate * 100 * hour;
+      setMeetingData(prev => ({ ...prev, price: pay }));
+    }
+  }, [tutorData.hourlyRate, meetingData.duration]);
+
+  // Payment timer logic
+  useEffect(() => {
+    const timerData = localStorage.getItem('paymentTimer');
+    if (!timerData) return;
+
+    try {
+      const { meetingId: storedMeetingId, expiresAt } = JSON.parse(timerData);
+      if (storedMeetingId !== meetingId) return;
+
+      const checkTimer = async () => {
+        const now = Date.now();
+        const timeRemaining = expiresAt - now;
+        
+        console.log('Timer check:', {
+          timeRemainingMinutes: Math.floor(timeRemaining / 60000),
+          timeRemainingSeconds: Math.floor((timeRemaining % 60000) / 1000)
+        });
+        
+        if (now >= expiresAt) {
+          try {
+            await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+            localStorage.removeItem('paymentTimer');
+            toast("Payment window expired. Slot released.", { icon: "⏲️", duration: 10000 });
+            navigate("/");
+          } catch (error) {
+            console.error('Failed to cancel payment:', error);
+          }
+        }
+      };
+
+      checkTimer();
+      timerRef.current = setInterval(checkTimer, 1000);
+
+      return () => {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+        }
+      };
+    } catch (error) {
+      console.error('Error parsing timer data:', error);
+      localStorage.removeItem('paymentTimer');
+    }
+  }, [meetingId, navigate]);
+
+  const cartItems = [
+    {
+      id: meetingId,
+      tutor: tutorData.username,
+      subject: subject,
+      date: meetingData.date,
+      time: `${meetingData.startTime} - ${meetingData.endTime}`,
+      price: meetingData.price,
+      avatar: tutorData.avatar
+    }
+  ];
+
+  return (
+    <div className="bg-yellow-50 min-h-screen w-full pt-4">
+      <div className="bg-white mx-10 rounded-t-2xl min-h-screen flex flex-row">
+        <div className="flex-[1.75] bg-white py-5 px-7 rounded-tl-2xl">
+          <p className="font-semibold text-gray-600">Step 1 of 2</p>
+          <h1 className="text-3xl font-black text-gray-500 pb-2">Check Out</h1>
+          
+          <Elements stripe={stripePromise}>
+            <CheckoutForm 
+              billingDetails={billingDetails} 
+              setBillingDetails={setBillingDetails}
+              meetingId={meetingId}
+              cart={cartItems}
+            />
+          </Elements>
         </div>
-    );
-}; 
+
+        <CartSummary cartItems={cartItems} />
+      </div>
+    </div>
+  );
+};
 
 export default Payment;

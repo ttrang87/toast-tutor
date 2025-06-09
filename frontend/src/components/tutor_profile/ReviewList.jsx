@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import Review from './watch/Review';
 import ReviewPosting from './edit/ReviewPosting'
 import { useParams } from 'react-router-dom';
