@@ -5,6 +5,6 @@ __pycache__/
 backend/env/
 env/
 
-.venv/
+.venv
 
 
