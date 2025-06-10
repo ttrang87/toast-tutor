@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { tickIcon } from "../../assets/icon";
 import "./SuccessPayment.css";
 
-const SuccessPayment = () => {
+const Success = () => {
     return (
         <div className="bg-yellow-50 w-full min-h-screen pb-10 pt-4">
             <div className="bg-white mx-10 rounded-t-xl min-h-screen flex flex-col items-center justify-center">
@@ -33,5 +33,5 @@ const SuccessPayment = () => {
     );
 };
 
-export default SuccessPayment;
+export default Success;
 

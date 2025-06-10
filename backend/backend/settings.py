@@ -96,6 +96,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+]
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # If using Vite
     "http://127.0.0.1:8000",  # Alternative localhost format
@@ -185,7 +189,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Stripe
 STRIPE_PUBLIC_KEY = os.getenv("PUBLIC_KEY")
 STRIPE_SECRET_KEY = os.getenv("SECRET_KEY")
-STRIPE_WEBHOOK_SECRET = ""
+STRIPE_WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 
 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

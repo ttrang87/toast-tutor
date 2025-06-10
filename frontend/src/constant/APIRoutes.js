@@ -27,9 +27,32 @@ export const API_ROUTES = {
     DELETE_AWARD_INFOR: (awardId) => `${API_BASE_URL}/tutor/profile/deleteaward/${awardId}/`,
     ADD_AWARD: (userId) => `${API_BASE_URL}/tutor/profile/addaward/${userId}/`,
 
-    FIND_TUTORS:`${API_BASE_URL}/find_tutors/`,
+    
+    /*MEETING SECTION*/
+    GET_MEETINGS  :                 `${API_BASE_URL}/meetings/`,              
+    CREATE_MEETING:                 `${API_BASE_URL}/meetings/create/`,       
+    VIEW_MEETING   : (id) => `${API_BASE_URL}/meetings/${id}/`,   
+    GET_TUTOR_MEETINGS: (tutorId) => `${API_BASE_URL}/meetings/tutor/${tutorId}/`, // NEW
+    BOOK_MEETING        : (id) => `${API_BASE_URL}/meetings/${id}/book/`,
+    CONFIRM_PAYMENT     : (id) => `${API_BASE_URL}/meetings/${id}/confirm_payment/`,
+    CANCEL_PAYMENT      : (id) => `${API_BASE_URL}/meetings/${id}/cancel_payment/`,
+    UPDATE_MEETING: (id) => `${API_BASE_URL}/meetings/${id}/update/`,
+    DELETE_MEETING : (id) => `${API_BASE_URL}/meetings/${id}/delete/`,
+    
+     /*TUTOR SORTING*/
+    FIND_TUTORS: `${API_BASE_URL}/find_tutors/`,
     GET_ALL_TUTORS:`${API_BASE_URL}/get_all_tutor/`,
 
+    /*FORGOT PASSWORD*/
     FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
-    RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`
+    RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`,
+
+    /*STRIPE PAYMENT*/
+    CONFIRM_CARD_SETUP: `${API_BASE_URL}/payment/create-setup-intent/`,
+    GET_CARD_INFO: `${API_BASE_URL}/payment/get-card-info/`,
+    CONFIRM_STRIPE_PAYMENT: `${API_BASE_URL}/payment/confirm-payment/`,
+
+    /*MY SCHEDULE*/
+    GET_USER_SCHEDULE: (userId) => `${API_BASE_URL}/meetings/user/${userId}/`,
+
 }

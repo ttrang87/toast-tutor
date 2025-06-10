@@ -1,9 +1,10 @@
 from django.urls import path
-from .controller import matching, profile, auth
+from .controller import matching, profile, auth, meeting, payment
 
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
 from .controller import tutorlist
+from .controller.meeting import get_user_meetings, get_user_meetings_by_status
 
 urlpatterns = [
     # Specific
@@ -12,6 +13,19 @@ urlpatterns = [
     path("auth/register/", register_user, name="register"),
     path("auth/login/", login_user, name="login"),
     path("auth/logout/", logout_user, name="logout"),
+    # MEETINGS
+    path("meetings/", meeting.get_meetings, name="meetings_list"),
+    path("meetings/create/", meeting.create_meeting, name="meeting_create"),
+    path("meetings/<int:pk>/", meeting.get_meeting, name="meeting_detail"),
+    # GET
+    path("meetings/<int:pk>/update/", meeting.update_meeting, name="meeting_update"),
+    # PATCH
+    path("meetings/<int:pk>/delete/", meeting.delete_meeting, name="meeting_delete"),
+    # DELETE
+    path("meetings/<int:pk>/book/", meeting.book_meeting, name="meeting_book"),
+    path("meetings/<int:pk>/confirm_payment/", meeting.confirm_payment, name="meeting_confirm"),
+    path("meetings/<int:pk>/cancel_payment/", meeting.cancel_payment, name="meeting_cancel"),
+    path("meetings/tutor/<int:tutor_id>/", meeting.get_meetings_by_tutor, name="meetings_by_tutor"),
     # AWARD SECTION
     path(
         "tutor/profile/addaward/<int:userId>/",
@@ -94,6 +108,18 @@ urlpatterns = [
         name="request_password_reset",
     ),
     path("reset-password/", auth.reset_password, name="reset_password"),
+    # Checking Stripe
+    path("payment/create-setup-intent/", payment.create_setup_intent, name="create_setup_intent"),
+    path("payment/get-card-info/", payment.get_card_info, name="get_card_info"),
+    path("payment/confirm-payment/", payment.confirm_stripe_payment, name="confirm_stripe_payment"),
+    path("stripe/webhook/", payment.stripe_webhook, name="stripe_webhook"),
     # DISPLAY ALL TUTORS
     path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
+    # MY MEETING DISPLAY
+    path("meetings/user/<int:user_id>/", get_user_meetings, name="user_meetings"),
+    path(
+        "meetings/user/<int:user_id>/status/<str:meeting_status>/",
+        get_user_meetings_by_status,
+        name="user_meetings_by_status",
+    ),
 ]
