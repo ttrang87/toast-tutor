@@ -23,7 +23,7 @@ const ReviewPosting = ({ onAddReview }) => {
         };
         if (onAddReview) onAddReview(clientReview);
         try {
-            const response = await axios.post(API_ROUTES.REVIEW_POSTING(id), reviewData);
+            await axios.post(API_ROUTES.REVIEW_POSTING(id), reviewData);
         } catch (error) {
             console.error('Error submitting review:', error);
         }

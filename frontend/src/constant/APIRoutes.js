@@ -45,7 +45,6 @@ export const API_ROUTES = {
 
     /*FORGOT PASSWORD*/
     FORGOT_PASSWORD: () => `${API_BASE_URL}/password-reset/`,
-    RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`,
 
     /*STRIPE PAYMENT*/
     CONFIRM_CARD_SETUP: `${API_BASE_URL}/payment/create-setup-intent/`,
@@ -54,8 +53,6 @@ export const API_ROUTES = {
 
     /*MY SCHEDULE*/
     GET_USER_SCHEDULE: (userId) => `${API_BASE_URL}/meetings/user/${userId}/`,
-
-    RESET_PASSWORD: () => `${API_BASE_URL}/reset-password/`,
 
     /*REVIEW SECTION */
     REVIEW_POSTING: (tutorId) => `${API_BASE_URL}/tutor/profile/${tutorId}/addreview/`,

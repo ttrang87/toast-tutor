@@ -29,11 +29,11 @@ const TutorMeetingPage = () => {
     } finally {
       setLoading(false);
     }
-  });
+  }, [tutorId]); // Added 'tutorId' as a dependency
 
   useEffect(() => {
     fetchMeetings();
-  }, [tutorId]);
+  }, [fetchMeetings, tutorId]);
 
   return (
     <PageContainer>
