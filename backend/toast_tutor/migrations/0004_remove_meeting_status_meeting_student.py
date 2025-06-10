@@ -8,7 +8,8 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('toast_tutor', '0003_remove_meeting_participants'),
+        ('toast_tutor', '0003_alter_meeting_options'),
+        # ('toast_tutor'),
     ]
 
     operations = [

@@ -14,8 +14,4 @@ class Migration(migrations.Migration):
             model_name='meeting',
             name='description',
         ),
-        migrations.RemoveField(
-            model_name='meeting',
-            name='title',
-        ),
     ]

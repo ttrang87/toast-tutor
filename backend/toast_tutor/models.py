@@ -117,7 +117,7 @@ class Meeting(models.Model):
         self.save(update_fields=["student", "status", "payment_expires_at"])
 
     def __str__(self):
-        return f"{self.title} - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
+        return f"Meeting - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
 
 
 class ResetToken(models.Model):
