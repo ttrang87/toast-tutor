@@ -64,12 +64,13 @@ def update_meeting(request, pk):
     if request.data.get("google_meet_link"):
         reminder_time = meeting.start_time - timedelta(minutes=5)
         if (
-            meeting.organizer and getattr(meeting.organizer, "email", None)
+            meeting.organizer
+            and getattr(meeting.organizer, "email", None)
             and reminder_time > timezone.now()
         ):
             send_reminder.apply_async(
                 args=[meeting.organizer.email, reminder_time, request.data["google_meet_link"]],
-                eta=reminder_time
+                eta=reminder_time,
             )
     return Response(serializer.data, status=status.HTTP_200_OK)
 

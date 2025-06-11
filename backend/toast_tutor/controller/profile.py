@@ -259,11 +259,11 @@ def get_review(request, tutorId):
                 {
                     "comment": review.comment,
                     "user_name": review.user.username,  # Use 'username' for the review's user
-                    "date": review.created_at.strftime('%Y-%m-%d'),  # Format the date of the review
-                    "rating": review.rating  # Include the rating in the response
+                    "date": review.created_at.strftime("%Y-%m-%d"),  # Format the date of the review
+                    "rating": review.rating,  # Include the rating in the response
                 }
                 for review in reviews
-            ]
+            ],
         }
         return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:

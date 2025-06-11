@@ -38,7 +38,6 @@ import { Elements } from '@stripe/react-stripe-js';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
-
   return (
     <BrowserRouter>
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />

@@ -40,6 +40,7 @@ const BookingMeeting = () => {
   if (loading) return <p className="p-8">Loading…</p>;
   if (!meeting) return <p className="p-8 text-red-600">Meeting not found</p>;
 
+
   return (
     <div className="max-w-xl mx-auto mt-10 bg-white p-8 rounded shadow">
       <h2 className="text-2xl font-semibold mb-4 text-[#8b5e34]">

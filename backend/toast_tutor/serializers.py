@@ -10,7 +10,6 @@ from .models import (
     TutorRequest,
     Meeting,
     User,
-    Meeting,
     Review,
 )
 
@@ -43,6 +42,7 @@ class AwardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Award
         fields = ["id", "name", "year"]  # Include 'id' here
+
 
 class TutorProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email")
@@ -123,28 +123,7 @@ class UserSerializer(serializers.ModelSerializer):
             "award",
         ]
 
-class MeetingSerializer(serializers.ModelSerializer):
-    organizer_id   = serializers.IntegerField(source="organizer.id",  read_only=True)
-    organizer_name = serializers.CharField(source="organizer.username", read_only=True)
-    class Meta:
-        model  = Meeting
-        fields = [
-            "id",
-            "organizer_id",
-            "organizer_name",
-            "organizer",        
-            "student",
-            "start_time",
-            "end_time",
-            "status",
-            "google_event_id",
-            "google_meet_link",
-            "created_at",
-        ]  
-        extra_kwargs = {
-            "student": {"required": False, "allow_null": True},
-        }
-        
+
 class ResetTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResetToken
@@ -258,10 +237,10 @@ class MeetingSerializer(serializers.ModelSerializer):
         )
 
         return data
-    
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ["id", "tutor", "user", "comment", "created_at", "rating"]
         read_only_fields = ["id", "created_at"]
-    

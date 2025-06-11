@@ -158,7 +158,7 @@ class ResetToken(models.Model):
 
 
 class TutorRequest(models.Model):
-    STATUS_CHOICES = [  
+    STATUS_CHOICES = [
         ("pending", "Pending"),
         ("matched", "Matched"),
         ("completed", "Completed"),
@@ -198,16 +198,13 @@ class Payment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True)
 
+
 class Review(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_reviews") 
-    comment = models.TextField(default="No comment provided")  
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_reviews")
+    comment = models.TextField(default="No comment provided")
     created_at = models.DateTimeField(auto_now_add=True)
-    rating = models.IntegerField(default=0) 
+    rating = models.IntegerField(default=0)
 
     class Meta:
         ordering = ["-created_at"]
-
-
-
-

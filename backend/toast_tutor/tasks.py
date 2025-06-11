@@ -1,10 +1,12 @@
 from celery import shared_task
 from django.core.mail import EmailMultiAlternatives
 
+
 @shared_task
 def send_reminder(userEmail, date, url):
+    formatted_date = date.strftime('%B %d, %Y at %I:%M %p %Z')
     subject = "Reminder: Upcoming Booking"
-    text_content = f"Hello, this is a reminder for your upcoming booking on {date}."
+    text_content = f"Hello, this is a reminder for your upcoming booking on {formatted_date} (Pacific Time)."
     html_content = f"""
 
             <!DOCTYPE html>
@@ -103,7 +105,7 @@ def send_reminder(userEmail, date, url):
                                                         <tr>
                                                             <td class="pad" style="padding-bottom:10px;padding-left:40px;padding-right:40px;padding-top:10px;">
                                                                 <div style="color:#444a5b;direction:ltr;font-family:Arial, 'Helvetica Neue', Helvetica, sans-serif;font-size:16px;font-weight:700;letter-spacing:0px;line-height:150%;text-align:center;mso-line-height-alt:24px;">
-                                                                    <p style="margin: 0;">Hello, this is a reminder for your upcoming booking on {date}. Please click the link below to join your class:</p>
+                                                                    <p style="margin: 0;">Hello, this is a reminder for your upcoming booking on {formatted_date} (Pacific Time). Please click the link below to join your class:</p>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -162,5 +164,5 @@ def send_reminder(userEmail, date, url):
     )
     email.attach_alternative(html_content, "text/html")
     email.send()
-    
+
     return "Done"

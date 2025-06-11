@@ -40,7 +40,6 @@ const Meeting = () => {
       setIsLoading(true);
       const startDateTime = combineDateAndTime(startDate, startTime);
       const endDateTime = combineDateAndTime(startDate, endTime);
-
       await createCalendarEvent({
         userId,
         session,
