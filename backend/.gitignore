@@ -6,6 +6,6 @@ backend/env/
 env/
 
 .venv/
-
+backend/settings.py
 
 
