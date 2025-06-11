@@ -11,6 +11,10 @@ urlpatterns = [
     path("find_tutors/", matching.find_tutors, name="find_tutors"),
     # AUTHENTICATION
     path("auth/register/", register_user, name="register"),
+    path("auth/meeting/", meeting.get_meetings, name="meeting"),
+    path("meetings/", meeting.get_meetings, name="meetings_list"),
+    path("meetings/create/", meeting.create_meeting, name="meeting_create"),
+    path("meetings/<int:pk>/book/", meeting.book_meeting, name="meeting_book"),
     path("auth/login/", login_user, name="login"),
     path("auth/logout/", logout_user, name="logout"),
     # MEETINGS
@@ -113,6 +117,17 @@ urlpatterns = [
     path("payment/get-card-info/", payment.get_card_info, name="get_card_info"),
     path("payment/confirm-payment/", payment.confirm_stripe_payment, name="confirm_stripe_payment"),
     path("stripe/webhook/", payment.stripe_webhook, name="stripe_webhook"),
+    # Add and get review section
+    path(
+        "tutor/profile/<int:tutorId>/addreview/",
+        profile.add_review,
+        name="add_review",
+    ),
+    path(
+        "tutor/profile/<int:tutorId>/getreview/",
+        profile.get_review,
+        name="get_review",
+    ),
     # DISPLAY ALL TUTORS
     path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
     # MY MEETING DISPLAY

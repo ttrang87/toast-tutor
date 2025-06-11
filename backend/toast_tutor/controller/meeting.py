@@ -3,10 +3,12 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from datetime import timedelta
 
 from ..serializers import MeetingSerializer
 from django.db.models import Q
 from ..models import Meeting, User
+from ..tasks import send_reminder
 
 
 # pk = primary key
@@ -59,6 +61,17 @@ def update_meeting(request, pk):
     )
     serializer.is_valid(raise_exception=True)
     serializer.save()
+    if request.data.get("google_meet_link"):
+        reminder_time = meeting.start_time - timedelta(minutes=5)
+        if (
+            meeting.organizer
+            and getattr(meeting.organizer, "email", None)
+            and reminder_time > timezone.now()
+        ):
+            send_reminder.apply_async(
+                args=[meeting.organizer.email, reminder_time, request.data["google_meet_link"]],
+                eta=reminder_time,
+            )
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

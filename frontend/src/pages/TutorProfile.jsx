@@ -13,12 +13,12 @@ import Exams from "../components/tutor_profile/watch/Exam";
 import ExamsEdit from "../components/tutor_profile/edit/ExamEdit";
 import Awards from "../components/tutor_profile/watch/Award";
 import AwardsEdit from "../components/tutor_profile/edit/AwardEdit";
+import ReviewList from "../components/tutor_profile/ReviewList";
 
 const TutorProfile = () => {
   const { id } = useParams(); // Get the tutor ID from URL params
   const [loggedInUserId, setLoggedInUserId] = useState(null);
   const [profileData, setProfileData] = useState(null);
-
   useEffect(() => {
     // Get logged-in user's ID from localStorage
     const storedUserId = localStorage.getItem("userId");
@@ -127,6 +127,11 @@ const TutorProfile = () => {
         ) : (
           <Awards data={awardsData} />
         )}
+      </div>
+
+      {/* Reviews section */}
+      <div className="rounded-xl h-auto bg-white px-10 py-8">
+        <ReviewList />
       </div>
     </div>
   );

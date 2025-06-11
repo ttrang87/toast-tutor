@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "toast_tutor",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -180,10 +181,8 @@ STATIC_URL = "static/"
 
 DEBUG = True
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # Stripe
@@ -191,12 +190,13 @@ STRIPE_PUBLIC_KEY = os.getenv("PUBLIC_KEY")
 STRIPE_SECRET_KEY = os.getenv("SECRET_KEY")
 STRIPE_WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 
-
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'toasttutorreach@gmail.com'
-# EMAIL_HOST_PASSWORD = 'wupofgoejcngvwob'
-
 # FRONTEND_BASE_URL = 'http://localhost:5173'
+
+# Celery settings
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+CELERY_RESULT_BACKEND = "django-db"

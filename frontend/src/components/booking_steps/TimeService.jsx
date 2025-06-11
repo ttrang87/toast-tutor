@@ -9,7 +9,7 @@ const TimeService = ({ selectOption, setSelectOption }) => {
         } text-yellow-700 font-semibold rounded-lg px-14 py-3 hover:bg-yellow-100 border-2 border-yellow-400`}
         onClick={() => setSelectOption("sos")}
       >
-        <button className='w-8 h-8 rounded-full bg-yellow-200 p-2'>{LightIcon}</button>
+        <div className='w-8 h-8 rounded-full bg-yellow-200 p-2'>{LightIcon}</div>
         <div className='flex flex-col text-left'>
           <div className='text-yellow-700 font-semibold text-lg'>SOS Tutor</div>
           <div className='text-yellow-500 font-semibold text-sm'>Get immediate help with available tutors</div>
@@ -22,7 +22,7 @@ const TimeService = ({ selectOption, setSelectOption }) => {
         } text-yellow-700 font-semibold rounded-lg px-14 py-3 hover:bg-yellow-100 border-2 border-yellow-400`}
         onClick={() => setSelectOption("class")}
       >
-        <button className='w-8 h-8 rounded-full bg-yellow-200 p-2'>{CalendarIcon}</button>
+        <div className='w-8 h-8 rounded-full bg-yellow-200 p-2'>{CalendarIcon}</div>
         <div className='flex flex-col text-left'>
           <div className='text-yellow-700 font-semibold text-lg'>Class Schedule</div>
           <div className='text-yellow-500 font-semibold text-sm'>Book sessions with your best matched tutors</div>

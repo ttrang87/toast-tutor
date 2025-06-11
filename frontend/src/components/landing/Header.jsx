@@ -46,10 +46,22 @@ const Header = (props) => {
             Profile
           </button>
         )}
+        <button
+          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+          onClick={() => navigate("/meetings/create")}
+        >
+          Schedule
+        </button>
+        <button
+          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+          onClick={() => navigate("/meetings")}
+        >
+          Calendar
+        </button>
         <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-        onClick={() =>
-          navigate('/listing')
-        }>
+          onClick={() =>
+            navigate('/listing')
+          }>
           Tutors
         </button>
         <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
@@ -86,3 +98,4 @@ const Header = (props) => {
 };
 
 export default Header;
+

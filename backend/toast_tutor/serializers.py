@@ -10,6 +10,7 @@ from .models import (
     TutorRequest,
     Meeting,
     User,
+    Review,
 )
 
 
@@ -236,3 +237,10 @@ class MeetingSerializer(serializers.ModelSerializer):
         )
 
         return data
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ["id", "tutor", "user", "comment", "created_at", "rating"]
+        read_only_fields = ["id", "created_at"]
