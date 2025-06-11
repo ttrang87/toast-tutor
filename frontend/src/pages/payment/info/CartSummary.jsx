@@ -2,7 +2,7 @@ import avatars from "../../../components/tutor_profile/AvatarList";
 
 const CartSummary = ({ cartItems }) => {
   const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.price || 0), 0) / 100;
+    return cartItems.reduce((sum, item) => sum + (item.price || 0), 0);
   };
 
   return (
@@ -34,7 +34,7 @@ const CartSummary = ({ cartItems }) => {
               <hr />
               <p className="px-2 text-gray-700">
                 <strong className="text-gray-600">Price: </strong>
-                {item.price ? `$${item.price / 100}` : 'Calculating...'}
+                {item.price ? `$${item.price}` : 'Calculating...'}
               </p>
             </div>
           </div>

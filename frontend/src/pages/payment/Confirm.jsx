@@ -51,11 +51,14 @@ const Confirm = () => {
         if (data) {
             try {
                 const parsedData = JSON.parse(data);
+                
+                console.log('Raw cart data loaded:', parsedData[0]);
+                
                 setOrderData({
                     avatar: parsedData[0].avatar,
                     tutor: parsedData[0].tutor,
                     date: parsedData[0].date,
-                    price: parsedData[0].price,
+                    price: parsedData[0].price, // Use price as-is since it's now correctly calculated
                     subject: parsedData[0].subject,
                     time: parsedData[0].time
                 });
@@ -210,6 +213,11 @@ const Confirm = () => {
             const paymentMethodId = sessionStorage.getItem("paymentMethodId");
             const billingDetails = JSON.parse(sessionStorage.getItem("billingDetails") || '{}');
 
+            console.log('Payment processing:', {
+                amount: totalPrice,
+                paymentMethodId: paymentMethodId
+            });
+
             const response = await axios.post(API_ROUTES.CONFIRM_STRIPE_PAYMENT, {
                 paymentMethodId,
                 amount: totalPrice,
@@ -250,6 +258,7 @@ const Confirm = () => {
                     clearInterval(timerRef.current);
                 }
                 localStorage.removeItem('paymentTimer');
+                sessionStorage.removeItem('paymentTimer');
                 sessionStorage.removeItem('paymentMethodId');
                 sessionStorage.removeItem('billingDetails');
                 

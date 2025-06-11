@@ -110,7 +110,16 @@ const Payment = () => {
   useEffect(() => {
     if (tutorData.hourlyRate > 0 && meetingData.duration) {
       const hour = parseDuration(meetingData.duration);
-      const pay = tutorData.hourlyRate * 100 * hour;
+      
+      // Calculate price in dollars (not cents)
+      const pay = Math.round(tutorData.hourlyRate * hour);
+      
+      console.log('Price calculation:', {
+        hourlyRate: tutorData.hourlyRate,
+        hours: hour,
+        finalPriceInDollars: pay
+      });
+      
       setMeetingData(prev => ({ ...prev, price: pay }));
     }
   }, [tutorData.hourlyRate, meetingData.duration]);
@@ -170,6 +179,14 @@ const Payment = () => {
       avatar: tutorData.avatar
     }
   ];
+
+  // Store cart items in localStorage for the Confirm component
+  useEffect(() => {
+    if (cartItems[0].price && cartItems[0].price > 0) {
+      localStorage.setItem("tutorCart", JSON.stringify(cartItems));
+      console.log('Cart items stored:', cartItems);
+    }
+  }, [meetingData.price]);
 
   return (
     <div className="bg-yellow-50 min-h-screen w-full pt-4">
