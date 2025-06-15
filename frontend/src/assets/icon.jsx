@@ -283,7 +283,7 @@ export const ArrowIcon = (
   </svg>
 );
 
-export function EyeCloseIcon(props) {
+export const EyeCloseIcon = (props) => {
   return (
     <svg
       className="w-5 h-5 text-yellow-900 dark:text-white"
@@ -298,9 +298,9 @@ export function EyeCloseIcon(props) {
       <path d="m19.821 8.605-2.857 2.857a4.952 4.952 0 0 1-5.514 5.514l-1.785 1.785c.767.166 1.55.25 2.335.251 6.453 0 10-5.258 10-7 0-1.166-1.637-2.874-2.179-3.407Z" />
     </svg>
   );
-}
+};
 
-export function EyeOpenIcon(props) {
+export const EyeOpenIcon = (props) => {
   return (
     <svg
       className="w-5 h-5 text-yellow-900 dark:text-white"
@@ -312,12 +312,12 @@ export function EyeOpenIcon(props) {
     >
       <path
         fillRule="evenodd"
-        d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78..."
+        d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78 1.281.84 2.147 1.618 2.147 2.22 0 .602-.866 1.38-2.147 2.22C17.27 13.655 14.802 15 12 15c-2.802 0-5.27-1.345-7.002-2.78C3.717 11.38 2.851 10.602 2.851 10c0-.602.866-1.38 2.147-2.22ZM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
         clipRule="evenodd"
       />
     </svg>
   );
-}
+};
 
 /* scheduler / refresh ------------------------------------------------------ */
 
@@ -409,3 +409,71 @@ export function confirmToast(message, onConfirm) {
     { duration: Infinity }
   );
 }
+
+
+export const closeIcon = (
+  <svg className="w-28 h-28 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+</svg>
+)
+
+export const tickIcon = (
+  <svg className="w-40 h-40 text-green-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 11.917 9.724 16.5 19 7.5"/>
+  </svg>
+); 
+
+export const creditcardIcon1 = (
+  <svg className="w-8 h-8 text-yellow-700 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+    <path fillRule="evenodd" d="M4 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4Zm0 6h16v6H4v-6Z" clipRule="evenodd"/>
+    <path fillRule="evenodd" d="M5 14a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Zm5 0a1 1 0 0 1 1-1h5a1 1 0 1 1 0 2h-5a1 1 0 0 1-1-1Z" clipRule="evenodd"/>
+  </svg>
+);
+
+export const anglerightIcon = (
+  <svg className="w-5 h-5 text-gray-700 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/>
+  </svg>
+); 
+
+export const angledownIcon = (
+  <svg className="w-5 h-5 text-gray-700 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 9-7 7-7-7"/>
+  </svg>
+);
+
+export const cartIcon = (
+  <svg className="w-8 h-8 text-yellow-700 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+    <path fillRule="evenodd" d="M4 4a1 1 0 0 1 1-1h1.5a1 1 0 0 1 .979.796L7.939 6H19a1 1 0 0 1 .979 1.204l-1.25 6a1 1 0 0 1-.979.796H9.605l.208 1H17a3 3 0 1 1-2.83 2h-2.34a3 3 0 1 1-4.009-1.76L5.686 5H5a1 1 0 0 1-1-1Z" clipRule="evenodd"/>
+  </svg>
+);
+
+// export const closeIcon = (
+//   <svg className="w-28 h-28 text-red-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+//   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18 17.94 6M18 18 6.06 6"/>
+// </svg>
+// )
+
+export const SearchIcon = (
+  <svg className="w-5 h-5 dark:text-white absolute top-2.5 left-3" style={{ color: '#747474' }} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+  </svg>
+);
+
+export const filterIcon = (
+  <svg className="w-5 h-6 text-gray-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M5.05 3C3.291 3 2.352 5.024 3.51 6.317l5.422 6.059v4.874c0 .472.227.917.613 1.2l3.069 2.25c1.01.742 2.454.036 2.454-1.2v-7.124l5.422-6.059C21.647 5.024 20.708 3 18.95 3H5.05Z"/>
+  </svg>
+);
+
+export const trashIcon = (
+  <svg className="w-6 h-6 text-yellow-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+    <path fillRule="evenodd" d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z" clipRule="evenodd"/>
+  </svg>
+);
+
+export const pfpIcon = (
+  <svg className="w-5 h-5 text-orange-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+    <path fillRule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clipRule="evenodd"/>
+  </svg>
+);

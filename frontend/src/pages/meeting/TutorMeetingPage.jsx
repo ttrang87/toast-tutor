@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -16,7 +16,7 @@ const TutorMeetingPage = () => {
   const [meetings, setMeetings] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-  const fetchMeetings = async () => {
+  const fetchMeetings = useCallback(async () => {
     setLoading(true);
     try {
       const { data } = await axios.get(API_ROUTES.GET_TUTOR_MEETINGS(tutorId), {
@@ -29,11 +29,11 @@ const TutorMeetingPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tutorId]); // Added 'tutorId' as a dependency
 
   useEffect(() => {
     fetchMeetings();
-  }, [tutorId]);
+  }, [fetchMeetings, tutorId]);
 
   return (
     <PageContainer>

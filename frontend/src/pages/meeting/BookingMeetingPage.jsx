@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_ROUTES } from "../../constant/APIRoutes";
@@ -15,10 +15,14 @@ const BookingMeetingPage = () => {
   const [meeting, setMeeting] = useState(null);
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(0);
+  const [isNavigatingToPayment, setIsNavigatingToPayment] = useState(false);
   const timerRef = useRef(null);
   const studentId = Number(localStorage.getItem("userId") || "0") || null;
 
-  const fetchMeeting = async () => {
+  // Wrap fetchMeeting in useCallback to make it stable for useEffect dependencies
+  const fetchMeeting = useCallback(async () => {
+    if (!meetingId) return;
+    
     const { data } = await axios.get(API_ROUTES.VIEW_MEETING(meetingId));
     setMeeting(data);
     if (data.status === "pending" && data.payment_expires_at) {
@@ -26,7 +30,7 @@ const BookingMeetingPage = () => {
       const secsLeft = Math.max(0, Math.floor((expiry - Date.now()) / 1000));
       setCountdown(secsLeft);
     }
-  };
+  }, [meetingId]);
 
   useEffect(() => {
     if (!meetingId) {
@@ -42,7 +46,7 @@ const BookingMeetingPage = () => {
         setLoading(false);
       }
     })();
-  }, [meetingId]);
+  }, [meetingId, fetchMeeting]);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -53,25 +57,27 @@ const BookingMeetingPage = () => {
   }, [countdown]);
 
   useEffect(() => {
-    if (countdown === 0 && meeting?.status === "pending") {
+    if (countdown === 0 && meeting?.status === "pending" && !isNavigatingToPayment) {
       (async () => {
         await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
         toast("Payment window expired. Slot released.", { icon: "⏲️" });
+        localStorage.removeItem('paymentTimer'); // Clean up
         await fetchMeeting();
       })();
     }
-  }, [countdown]);
+  }, [countdown, isNavigatingToPayment, meeting?.status, meetingId, fetchMeeting]);
 
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      if (meeting?.status === "pending") {
+      // Don't prevent navigation if going to payment page
+      if (meeting?.status === "pending" && !isNavigatingToPayment) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [meeting]);
+  }, [meeting, isNavigatingToPayment]);
 
   async function handleBook() {
     if (studentId === meeting.organizer_id) {
@@ -84,22 +90,34 @@ const BookingMeetingPage = () => {
       student: studentId,
     });
     setMeeting(data);
+
+    localStorage.setItem("MeetingTiming",JSON.stringify(meeting))
+
     const secsLeft = 300;
     setCountdown(secsLeft);
     toast("Slot reserved — complete payment within 5 min.", { icon: "💳" });
   }
 
   async function handlePayNow() {
-    const { data } = await axios.post(API_ROUTES.CONFIRM_PAYMENT(meetingId));
-    setMeeting(data);
+    setIsNavigatingToPayment(true);
+    
+    // Store timer data with more precise timing
+    localStorage.setItem('paymentTimer', JSON.stringify({
+      meetingId: meetingId,
+      expiresAt: Date.now() + (countdown * 1000),
+      originalExpiry: meeting.payment_expires_at
+    }));
+    
+    // Clear the current timer
     clearInterval(timerRef.current);
-    toast.success("Payment accepted. Meeting booked!");
-    navigate("/", { replace: true });
+    
+    navigate(`/payment/${meetingId}`);
   }
 
   async function handleCancel() {
     await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
     clearInterval(timerRef.current);
+    localStorage.removeItem('paymentTimer'); // Clean up
     toast("Reservation canceled.", { icon: "🚫" });
     await fetchMeeting();
   }

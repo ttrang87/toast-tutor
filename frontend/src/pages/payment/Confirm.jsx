@@ -1,152 +1,316 @@
-import React, { useState } from "react";
-import { Link } from 'react-router-dom';
-import { angledownIcon, anglerightIcon } from '../../assets/icon';
-import tutorIcon1 from '../../assets/avatar/avatar18.jpg';
-import tutorIcon2 from '../../assets/avatar/avatar19.jpg';
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from "axios";
+import { useStripe, useElements } from '@stripe/react-stripe-js';
+import { toast } from 'react-hot-toast';
+import { API_ROUTES } from "../../constant/APIRoutes";
 
-const Confirmation = () => {
-    const [isInfoVisible, setIsInfoVisible] = useState(true);
+import PaymentInfo from "./confirmation/PaymentInfo";
+import OrderDetails from "./confirmation/OrderDetails";
+import PurchaseSummary from "./confirmation/PurchaseSummary";
 
-    const toggleInfo = () => {
-        setIsInfoVisible(!isInfoVisible);
-    };
+const Confirm = () => {
+    const { meetingId } = useParams();
+    const navigate = useNavigate();
+    const timerRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const stripe = useStripe();
+    const elements = useElements();
+
+    const [billingDetails, setBillingDetails] = useState({
+        firstName: '',
+        lastName: '',
+        country: '',
+        address: '',
+        city: '',
+        state: '',
+        email: '',
+        phone: ''
+    });
+
+    const [cardInfo, setCardInfo] = useState({
+        last4: '4242',
+        exp_month: '12',
+        exp_year: '2025'
+    });
+
+    const [orderData, setOrderData] = useState({
+        avatar: 0,
+        tutor: "",
+        date: "",
+        price: 0,
+        subject: "",
+        time: ""
+    });
+
+    const paymentMethodId = sessionStorage.getItem("paymentMethodId");
+
+    // Load cart data
+    useEffect(() => {
+        const data = localStorage.getItem("tutorCart");
+        if (data) {
+            try {
+                const parsedData = JSON.parse(data);
+                
+                console.log('Raw cart data loaded:', parsedData[0]);
+                
+                setOrderData({
+                    avatar: parsedData[0].avatar,
+                    tutor: parsedData[0].tutor,
+                    date: parsedData[0].date,
+                    price: parsedData[0].price, // Use price as-is since it's now correctly calculated
+                    subject: parsedData[0].subject,
+                    time: parsedData[0].time
+                });
+            } catch (error) {
+                console.error('Error parsing cart data:', error);
+            }
+        }
+    }, []);
+
+    // Timer management
+    useEffect(() => {
+        const initializeTimer = async () => {
+            const timerData = localStorage.getItem('paymentTimer');
+            
+            if (!timerData) {
+                await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+                toast("No timer data found, exiting effect", { icon: "⏲️", duration: 10000 });
+                navigate("/");
+                return;
+            }
+
+            try {
+                const { meetingId: storedMeetingId, expiresAt } = JSON.parse(timerData); 
+                
+                if (storedMeetingId !== meetingId) {
+                    await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+                    localStorage.removeItem('paymentTimer');
+                    toast("Mismatch Stored Meeting Id with those in Headers", { icon: "📅", duration: 10000 });
+                    navigate("/");
+                    return;
+                }
+
+                const checkTimer = async () => {
+                    const now = Date.now();
+                    const timeRemaining = expiresAt - now;
+                    
+                    console.log('Timer check:', {
+                        timeRemainingMinutes: Math.floor(timeRemaining / 60000),
+                        timeRemainingSeconds: Math.floor((timeRemaining % 60000) / 1000)
+                    });
+                    
+                    if (now >= expiresAt) {
+                        try {
+                            await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+                            localStorage.removeItem('paymentTimer');
+                            toast("Payment window expired. Slot released.", { icon: "⏲️", duration: 10000 });
+                            navigate("/");
+                        } catch (error) {
+                            console.error('Failed to cancel payment:', error);
+                        }
+                    }
+                };
+
+                await checkTimer();
+                timerRef.current = setInterval(checkTimer, 1000);
+
+            } catch (error) {
+                console.error('Error in timer initialization:', error);
+                try {
+                    await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+                    localStorage.removeItem('paymentTimer');
+                } catch (cancelError) {
+                    console.error('Error canceling payment:', cancelError);
+                }
+            }
+        };
+
+        initializeTimer();
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+        };
+    }, [meetingId, navigate]);
+
+    // Fetch card info
+    useEffect(() => {
+        if (!paymentMethodId) return;
+
+        const fetchCardInfo = async () => {
+            try {
+                const response = await axios.post(
+                    API_ROUTES.GET_CARD_INFO,
+                    { paymentMethodId },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    }
+                );
+
+                if (response.data) {
+                    setCardInfo({
+                        ...response.data,
+                        exp_month: response.data.exp_month.toString().padStart(2, '0')
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching card info:", error.response?.data || error.message);
+            }
+        };
+
+        fetchCardInfo();
+    }, [paymentMethodId]);
+
+    // Load billing details
+    useEffect(() => {
+        const storedDetails = sessionStorage.getItem('billingDetails');
+        
+        if (storedDetails) {
+            try {
+                const parsedDetails = JSON.parse(storedDetails);
+
+                if (parsedDetails.billingDetails) {
+                    setBillingDetails(parsedDetails.billingDetails);
+                } else if (parsedDetails.billing_details) {
+                    setBillingDetails(parsedDetails.billing_details);
+                } else {
+                    setBillingDetails(parsedDetails);
+                }
+            } catch (error) {
+                console.error("Error parsing billing details:", error);
+            }
+        }
+    }, []);
 
     const orders = [
         {
-            tutorName: "HanNotSoCute",
-            icon: tutorIcon1,
-            subject: "Biology",
-            timeslot: "3:15PM - 5:00PM (Mar 14, 2024)",  
-            price: 20
-        },
-        {
-            tutorName: "HeoLeuLeu",
-            icon: tutorIcon2,
-            subject: "Mathematics",
-            timeslot: "5:15PM - 7:00PM (Mar 19, 2024)",
-            price: 30
+            tutorName: orderData.tutor,
+            icon: orderData.avatar,
+            subject: orderData.subject,
+            timeslot: `${orderData.time} (${orderData.date})`,  
+            price: orderData.price
         }
     ];
 
     const totalPrice = orders.reduce((sum, order) => sum + order.price, 0);
 
+    const handlePayment = async () => {
+        if (!stripe || !elements) {
+            alert("Stripe has not been properly initialized");
+            await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+            window.location.href = '/cancel';
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const paymentMethodId = sessionStorage.getItem("paymentMethodId");
+            const billingDetails = JSON.parse(sessionStorage.getItem("billingDetails") || '{}');
+
+            console.log('Payment processing:', {
+                amount: totalPrice,
+                paymentMethodId: paymentMethodId
+            });
+
+            const response = await axios.post(API_ROUTES.CONFIRM_STRIPE_PAYMENT, {
+                paymentMethodId,
+                amount: totalPrice,
+                billingDetails
+            });
+
+            const { status, clientSecret } = response.data;
+
+            if (status === 'requires_confirmation' || status === 'requires_payment_method' || status === 'requires_action') {
+                const confirmResult = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: paymentMethodId
+                });
+
+                if (confirmResult.error) {
+                    alert(`Payment failed: ${confirmResult.error.message}`);
+                    await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+                    window.location.href = '/cancel';
+                    return;
+                } 
+                
+                if (confirmResult.paymentIntent.status === 'succeeded') {
+                    await axios.post(API_ROUTES.CONFIRM_PAYMENT(meetingId));
+
+                    if (timerRef.current) {
+                        clearInterval(timerRef.current);
+                    }
+                    localStorage.removeItem('paymentTimer');
+                    sessionStorage.removeItem('paymentMethodId');
+                    sessionStorage.removeItem('billingDetails');
+                    
+                    window.location.href = '/success';
+                    return;
+                }
+            } else if (status === 'succeeded') {
+                await axios.post(API_ROUTES.CONFIRM_PAYMENT(meetingId));
+
+                if (timerRef.current) {
+                    clearInterval(timerRef.current);
+                }
+                localStorage.removeItem('paymentTimer');
+                sessionStorage.removeItem('paymentTimer');
+                sessionStorage.removeItem('paymentMethodId');
+                sessionStorage.removeItem('billingDetails');
+                
+                window.location.href = '/success';
+                return;
+            }
+
+            alert("Payment status: " + status);
+            
+        } catch (error) {
+            await axios.post(API_ROUTES.CANCEL_PAYMENT(meetingId));
+            alert(`Payment failed. Please check your card or try again: ${error.message}`);
+            window.location.href = '/cancel';
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <div className="bg-yellow-50 min-h-screen w-full pt-4">
+        <div className="bg-yellow-50 min-h-screen w-full pt-4 relative">
+            {/* Loading Overlay */}
+            {isLoading && (
+                <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50 flex items-center justify-center">
+                    <div className="bg-white rounded-lg p-8 shadow-xl">
+                        <div className="text-center">
+                            <div className="w-16 h-16 border-4 border-yellow-100 border-t-yellow-400 rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-gray-600 text-lg">Processing your payment...</p>
+                            <p className="text-gray-500 text-sm mt-2">Please don&apos;t close this window</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="mx-10 rounded-t-2xl min-h-screen flex flex-row">
                 {/* Left Panel */}
                 <div className="flex-[1.75] bg-white py-5 px-7 rounded-t-2xl">
                     <p className="font-semibold text-gray-600">Step 2 of 2</p>
                     <h1 className="text-3xl font-black text-gray-500 pb-2">Confirmation</h1>
 
-                    <div className="flex flex-row gap-2 my-2">
-                        <button className="flex text-center justify-center font-bold text-yellow-700 py-2 flex-1 rounded-lg bg-orange-200">
-                            Payment Information
-                        </button>
-                    </div>   
-
-                    {/* User Information */}
-                    <div className="rounded-md p-3 flex flex-row gap-2">
-                        <div className="pt-1 pl-2 flex-1">
-                            <button 
-                                onClick={toggleInfo} 
-                                className="cursor-pointer hover:bg-gray-100 p-1 rounded-full transition-colors"
-                                aria-label={isInfoVisible ? "Hide details" : "Show details"}
-                            >
-                                {isInfoVisible ? angledownIcon : anglerightIcon}
-                            </button>
-                        </div>
-                        <div className="flex-[12] text-gray-600">
-                            <p className="text-lg text-gray-500"><strong>Xuan Gia Han, Nguyen</strong></p>
-                            <p className="text-md">4111 Cedar Circle USF, Tampa, Fl, USA</p>
-                            <p className="text-md">xuangiahannguyen@gmail.com</p>
-                        </div>
-                    </div>
-
-                    {isInfoVisible && (
-                        <div className="bg-gray-50 ml-16 p-3 animate-fadeIn mb-5">
-                            <h3 className="font-bold mb-2 text-gray-500">Additional Payment Details</h3>
-                            <div className="grid grid-cols-2 gap-2">
-                                <div>
-                                    <p className="text-sm text-gray-500">Payment Method</p>
-                                    <p className="font-medium text-gray-600">Visa ending in 4242</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-500">Phone Number</p>
-                                    <p className="font-medium text-gray-600">+1 234 4533451</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-500">Expiration</p>
-                                    <p className="font-medium text-gray-600">04/2025</p>
-                                </div>
-                                <div>
-                                    <p className="text-sm text-gray-500">Contact Preference</p>
-                                    <p className="font-medium text-gray-600">Email</p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="flex flex-row gap-2 mt-2">
-                        <button className="flex text-center justify-center font-bold text-yellow-700 py-2 flex-1 rounded-lg bg-orange-200">
-                            Order Details
-                        </button>
-                    </div> 
-
-                    {orders.map((order, index) => (
-                        <React.Fragment key={index}>
-                            <div className="my-2 mx-2 flex flex-row p-2 rounded-md">
-                                <div>
-                                    <img src={order.icon} alt={`${order.tutorName} icon`} className="w-28" />
-                                </div>
-                                <div className="mx-2 w-full">
-                                    <p className="text-gray-600"><strong className="text-gray-600">Tutor: </strong>{order.tutorName}</p>
-                                    <p className="text-gray-600"><strong className="text-gray-600">Subject: </strong>{order.subject}</p>
-                                    <p className="text-gray-600"><strong className="text-gray-600">Timeslot: </strong>{order.timeslot}</p>
-                                    <p className="text-gray-600"><strong className="text-gray-600">Price: </strong>${order.price}</p>
-                                </div>
-                            </div>
-                            {index < orders.length - 1 && <hr className="mx-2" />}
-                        </React.Fragment>
-                    ))}
-                    <hr className="mx-2 mb-4" />
-
-                    <Link to="/payment" className="text-center w-full py-2 px-8 ml-3 rounded-lg bg-yellow-100 font-bold text-yellow-600 hover:bg-yellow-200 transition-colors">
-                        Back
-                    </Link>
+                    <PaymentInfo billingDetails={billingDetails} cardInfo={cardInfo} />
+                    <OrderDetails orders={orders} avatar={orderData.avatar} />
                 </div>
 
-                {/* Right Panel - Purchase Summary */}
-                <div className="flex-1 rounded-tr-2xl">
-                    <div className="mx-3 px-2 pb-8 pt-6 rounded-lg bg-white">
-                        <h2 className="text-2xl font-bold text-gray-500 pb-2 pl-3">Purchase Details</h2>
-       
-                        <div className="flex flex-col px-3 text-gray-600">
-                            {orders.map((order, index) => (
-                                <div key={index} className="flex justify-between pb-2">
-                                    <p className="pl-1">{order.tutorName}</p>
-                                    <p>${order.price}</p>
-                                </div>
-                            ))}
-                            <div className="flex justify-between pb-2 text-orange-800 font-semibold">
-                                <p className="pl-1">Voucher</p>
-                                <p>- $0</p>
-                            </div>
-                            <hr className="pb-2"/>
-                            <div className="flex justify-between pb-2 text-gray-500">
-                                <p className="pl-1 text-2xl"><strong>Total</strong></p>
-                                <p className="text-2xl"><strong>${totalPrice}</strong></p>
-                            </div>
-                            <div className="flex mt-1">
-                                <Link to="/success" className="text-center w-full py-2 rounded-lg bg-yellow-100 font-bold text-yellow-600 hover:bg-yellow-200 transition-colors">
-                                    Continue
-                                </Link>
-                            </div>
-                        </div>   
-                    </div>    
-                </div>
+                <PurchaseSummary 
+                    orders={orders} 
+                    totalPrice={totalPrice} 
+                    isLoading={isLoading} 
+                    onPayment={handlePayment} 
+                />
             </div>
         </div>
     );
 }; 
 
-export default Confirmation;
+export default Confirm;

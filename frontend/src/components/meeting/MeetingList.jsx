@@ -15,6 +15,7 @@ const MeetingList = ({ meetings, isStudentView }) => {
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      timeZoneName: "short",
     });
 
   if (meetings.filter((m) => m.status === "scheduled").length === 0) {

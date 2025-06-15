@@ -3,7 +3,7 @@ const CountdownTimer = ({ seconds }) => {
   const ss = String(seconds % 60).padStart(2, "0");
 
   return (
-    <div className="text-center text-lg font-semibold text-red-600">
+    <div className="text-center text-lg font-semibold text-white border-2 py-1 rounded-xl bg-yellow-600">
       Complete payment within&nbsp;
       <span className="font-mono">
         {mm}:{ss}

@@ -117,7 +117,7 @@ class Meeting(models.Model):
         self.save(update_fields=["student", "status", "payment_expires_at"])
 
     def __str__(self):
-        return f"{self.title} - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
+        return f"Meeting - {self.start_time.strftime('%Y-%m-%d %H:%M')}"
 
 
 class ResetToken(models.Model):
@@ -173,10 +173,38 @@ class TutorRequest(models.Model):
     # grade = models.CharField(max_length=20)
     # aim = models.CharField(max_length=40)
     # teaching_styles = models.CharField(max_length=200)
-
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+
+    class Meta:
+        ordering = ["-created_at"]
+
+
+class Customer(models.Model):
+    stripe_customer_id = models.CharField(max_length=255, unique=True)
+    email = models.EmailField()
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Payment(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    stripe_payment_intent_id = models.CharField(max_length=255, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True)
+
+
+class Review(models.Model):
+    tutor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="reviews")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_reviews")
+    comment = models.TextField(default="No comment provided")
+    created_at = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(default=0)
 
     class Meta:
         ordering = ["-created_at"]

@@ -10,6 +10,7 @@ from .models import (
     TutorRequest,
     Meeting,
     User,
+    Review,
 )
 
 
@@ -123,57 +124,123 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 
-class MeetingSerializer(serializers.ModelSerializer):
-    organizer_id = serializers.IntegerField(source="organizer.id", read_only=True)
-    organizer_name = serializers.CharField(source="organizer.username", read_only=True)
-
-    # Custom method to conditionally hide google fields based on status and user
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        request = self.context.get("request")
-        current_user_id = None
-        if request and hasattr(request, "user") and request.user.is_authenticated:
-            current_user_id = request.user.ud
-
-        # Hide google_event_id and google_meet_link for non-participants when status is not booked
-        # or when the meeting is scheduled/pending and user is not the organizer
-        if instance.status in ["scheduled", "pending"]:
-            if current_user_id != instance.organizer_id:
-                data["google_event_id"] = None
-                data["google_meet_link"] = None
-        elif instance.status == "booked":
-            if current_user_id not in [
-                instance.organizer_id,
-                instance.student_id if instance.student else None,
-            ]:
-                data["google_event_id"] = None
-                data["google_meet_link"] = None
-
-        return data
-
-    class Meta:
-        model = Meeting
-        fields = [
-            "id",
-            "organizer_id",
-            "organizer_name",
-            "organizer",
-            "student",
-            "start_time",
-            "end_time",
-            "status",
-            "google_event_id",
-            "google_meet_link",
-            "created_at",
-            "payment_expires_at",
-        ]
-        extra_kwargs = {
-            "student": {"required": False, "allow_null": True},
-        }
-
-
 class ResetTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResetToken
         fields = ["token", "created_at", "expiry_at"]
         read_only_fields = ["token", "created_at", "expiry_at"]
+
+
+class MeetingSerializer(serializers.ModelSerializer):
+    organizer_name = serializers.CharField(source="organizer.get_full_name", read_only=True)
+    student_name = serializers.CharField(source="student.get_full_name", read_only=True)
+
+    class Meta:
+        model = Meeting
+        fields = [
+            "id",
+            "status",
+            "start_time",
+            "end_time",
+            "google_event_id",
+            "google_meet_link",
+            "created_at",
+            "organizer",
+            "student",
+            "organizer_name",
+            "student_name",
+        ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        # Transform to match frontend format
+        if instance.start_time:
+            data["date"] = instance.start_time.strftime("%Y-%m-%d")
+            data["time"] = instance.start_time.strftime("%H:%M")
+
+        # Calculate duration
+        if instance.start_time and instance.end_time:
+            duration = instance.end_time - instance.start_time
+            duration_minutes = int(duration.total_seconds() / 60)
+            hours = duration_minutes // 60
+            minutes = duration_minutes % 60
+            if hours > 0:
+                data["duration"] = f"{hours}h {minutes}m"
+            else:
+                data["duration"] = f"{minutes}m"
+
+        # Status titles fallback
+        status_titles = {
+            "scheduled": "Scheduled Meeting",
+            "booked": "Booked Meeting",
+            "completed": "Completed Meeting",
+        }
+
+        # Set title based on attendees and current user's perspective
+        if instance.student and instance.organizer:
+            if instance.student != instance.organizer:
+                # Get the user from context (the user whose meetings we're fetching)
+                current_user = self.context.get("user") or self.context["request"].user
+
+                if current_user == instance.student:
+                    # Current user is student, show organizer
+                    data["title"] = (
+                        f"""Meeting with {
+                            instance.organizer.get_full_name() or instance.organizer.username
+                        }"""
+                    )
+                elif current_user == instance.organizer:
+                    # Current user is organizer, show student
+                    data["title"] = (
+                        f"""Meeting with {
+                            instance.student.get_full_name() or instance.student.username
+                        }"""
+                    )
+                else:
+                    # Fallback for other users (admin, etc.)
+                    data["title"] = (
+                        f"Meeting: {instance.student.get_full_name() or instance.student.username} "
+                        f"& {instance.organizer.get_full_name() or instance.organizer.username}"
+                    )
+            else:
+                data["title"] = "Personal Meeting"
+        else:
+            data["title"] = status_titles.get(instance.status, "Meeting")
+
+        # Set type based on google_meet_link
+        data["type"] = "Online Meeting" if instance.google_meet_link else "Meeting"
+
+        # Set location - keep it as display name, not the full URL
+        data["location"] = "Google Meet" if instance.google_meet_link else "TBD"
+
+        # Create attendees list
+        attendees = []
+        if instance.organizer:
+            attendees.append(instance.organizer.get_full_name() or instance.organizer.username)
+        if instance.student and instance.student != instance.organizer:
+            attendees.append(instance.student.get_full_name() or instance.student.username)
+        data["attendees"] = attendees
+
+        # Set organizer name for display
+        data["organizer"] = (
+            instance.organizer.get_full_name() or instance.organizer.username
+            if instance.organizer
+            else ""
+        )
+
+        # Add description
+        meeting_type = "online" if instance.google_meet_link else "in-person"
+        data["description"] = (
+            f"{meeting_type.title()} meeting scheduled for "
+            f"{data.get('date', '')} at {data.get('time', '')}"
+        )
+
+        return data
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ["id", "tutor", "user", "comment", "created_at", "rating"]
+        read_only_fields = ["id", "created_at"]

@@ -61,9 +61,9 @@ def request_password_reset(request):
         # Print first 10 chars for security
         print(f"Token obtained: {token[:10]}...")
 
-        # Create reset URL
+        # Create reset URL without trailing slash for React Router match
         reset_url = f"{settings.FRONTEND_BASE_URL}/reset-password/{token}/"
-        print(f"Reset URL generated (base): {settings.FRONTEND_BASE_URL}/reset-password/...")
+        print(f"Reset URL generated: {reset_url}")
 
         # Send email
         print("Preparing to send email")

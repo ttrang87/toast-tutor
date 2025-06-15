@@ -45,7 +45,7 @@ const MeetingActions = ({
               Processing...
             </>
           ) : (
-            "Pay now (stub)"
+            "Pay now"
           )}
         </Button>
         <Button

@@ -1,4 +1,3 @@
-/*  src/App.jsx  – full file */
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import "./App.css";
@@ -22,9 +21,23 @@ import LogIn from "./pages/auth/LogIn";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import TutorList from "./pages/TutorList";
+
+import Payment from "./pages/payment/payment";
+import Success from "./pages/payment/success.jsx";
+import Confirm from "./pages/payment/Confirm";
+import Cancel from "./pages/payment/cancel"; 
+
+import ScheduleDashboard from "./pages/Schedule/dashboard";
+
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
+
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
   return (
     <BrowserRouter>
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
@@ -80,6 +93,7 @@ function App() {
           }
         />
 
+  
         <Route
           path="/meetings/create"
           element={
@@ -153,6 +167,23 @@ function App() {
         <Route path="/reset-password/:token" element={<NewPassword />} />
         <Route path="/auth/waiting" element={<Waiting />} />
         <Route path="/auth/redirect" element={<RedirectPage />} />
+
+        <Route path="/listing" element={<TutorList />} />
+
+        <Route path="/payment/:meetingId/" element={ <Elements stripe={stripePromise}><Payment /></Elements>}/>
+        <Route path="/success" element={<Success />}/>
+        <Route path="/cancel" element={<Cancel />}/>
+        <Route path="/confirmation/:meetingId/" element={<Elements stripe={stripePromise}><Confirm /></Elements>}/>
+
+        {/* Need to add userID to this  */}
+        <Route 
+        path="/dashboard/:id" 
+        element={
+          <ProtectedRoute>
+            <ScheduleDashboard />
+          </ProtectedRoute>
+          }
+        />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

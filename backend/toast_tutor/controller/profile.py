@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from ..models import Award, Course, Education, Exam, TutorProfile, User
+from ..models import Award, Course, Education, Exam, TutorProfile, User, Review
 from ..serializers import (
     AwardSerializer,
     CourseSerializer,
@@ -11,6 +11,7 @@ from ..serializers import (
     ExamSerializer,
     TutorProfileSerializer,
     UserSerializer,
+    ReviewSerializer,
 )
 
 # GET PROFILE
@@ -226,5 +227,44 @@ def delete_award(request, awardId):
             {"message": "Award deleted successfully."},
             status=status.HTTP_204_NO_CONTENT,
         )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def add_review(request, tutorId):
+    try:
+        tutor = get_object_or_404(User, id=tutorId)
+        review_data = request.data
+        review_data["tutor"] = tutor.id  # Associate the review with the tutor
+
+        serializer = ReviewSerializer(data=review_data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+def get_review(request, tutorId):
+    try:
+        tutor = get_object_or_404(User, id=tutorId)
+        reviews = Review.objects.filter(tutor=tutor).select_related("user")
+        response_data = {
+            "tutor_name": tutor.username,  # Use 'username' instead of 'name'
+            "reviews": [
+                {
+                    "comment": review.comment,
+                    "user_name": review.user.username,  # Use 'username' for the review's user
+                    "date": review.created_at.strftime("%Y-%m-%d"),  # Format the date of the review
+                    "rating": review.rating,  # Include the rating in the response
+                }
+                for review in reviews
+            ],
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
