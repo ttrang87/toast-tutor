@@ -130,6 +130,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
+REDIS_URL = 'redis://localhost:6379/0'  # Change from 'redis:6379'
+
+# Or if using django-redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://localhost:6379/1',  # Change from 'redis://redis:6379/1'
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# If using Celery with Redis
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Change from 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

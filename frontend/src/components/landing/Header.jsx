@@ -13,7 +13,7 @@ const Header = (props) => {
     if (userId) {
       setIsLoggedIn(true);
     }
-  }, [setIsLoggedIn])
+  }, [setIsLoggedIn]);
 
   const handleLogout = () => {
     props.setIsLoggedIn(false);
@@ -54,20 +54,16 @@ const Header = (props) => {
         </button>
         <button
           className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-          onClick={() => navigate("/meetings")}
+          onClick={() => navigate("/listing")}
         >
-          Calendar
-        </button>
-        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-          onClick={() =>
-            navigate('/listing')
-          }>
           Tutors
         </button>
-        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-        onClick={() =>
-          navigate(`/dashboard/${localStorage.getItem("userId")}`)
-        }>
+        <button
+          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+          onClick={() =>
+            navigate(`/dashboard/${localStorage.getItem("userId")}`)
+          }
+        >
           Meetings
         </button>
         <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
@@ -98,4 +94,3 @@ const Header = (props) => {
 };
 
 export default Header;
-
