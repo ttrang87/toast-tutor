@@ -124,7 +124,7 @@ const BasicInforEdit = ({ data, showToast }) => {
           </div>
         </div>
         <div className="flex justify-between">
-          <div className="flex flex-wrap w-3/5 gap-3 mt-3">
+          <div className="flex w-3/5 gap-3 mt-3">
             {tutorTeachingStyle?.map((style, index) => (
               <div
                 key={index}
