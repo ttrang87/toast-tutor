@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   EmailIcon,
-  StarIcon,
   EditIcon,
   CameraIcon,
   CalendarIcon,

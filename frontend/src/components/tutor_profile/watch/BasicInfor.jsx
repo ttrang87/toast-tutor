@@ -1,4 +1,4 @@
-import { EmailIcon, StarIcon, CalendarIcon } from "../../../assets/icon";
+import { EmailIcon, CalendarIcon } from "../../../assets/icon";
 import { useNavigate, useParams } from "react-router-dom";
 import avatars from "../AvatarList";
 import covers from "../CoverList";

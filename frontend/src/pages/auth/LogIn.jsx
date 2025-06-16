@@ -2,7 +2,7 @@ import { useState } from "react";
 import { login } from "../../services/authService";
 import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
 
 const LogIn = (props) => {
