@@ -19,7 +19,6 @@ urlpatterns = [
     path("auth/logout/", logout_user, name="logout"),
     # MEETINGS
     path("meetings/", meeting.get_meetings, name="meetings_list"),
-    path("meetings/create/", meeting.create_meeting, name="meeting_create"),
     path("meetings/<int:pk>/", meeting.get_meeting, name="meeting_detail"),
     # GET
     path("meetings/<int:pk>/update/", meeting.update_meeting, name="meeting_update"),

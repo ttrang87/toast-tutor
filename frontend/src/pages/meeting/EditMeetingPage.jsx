@@ -22,7 +22,7 @@ const EditMeetingPage = () => {
   const navigate = useNavigate();
   const session = useSession();
   const supabase = useSupabaseClient();
-
+  const userId = localStorage.getItem("userId")
   const [startDate, setStartDate] = useState(new Date());
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -34,7 +34,7 @@ const EditMeetingPage = () => {
       try {
         const { data } = await axios.get(API_ROUTES.VIEW_MEETING(meetingId));
         setMeeting(data);
-
+        console.log(data)
         const s = new Date(data.start_time);
         const e = new Date(data.end_time);
 
@@ -96,7 +96,7 @@ const EditMeetingPage = () => {
         toast.success("Meeting updated successfully.");
       }
 
-      navigate(`/meetings/tutor/${meeting.organizer_id ?? meeting.organizer}`);
+      navigate(`/meetings/tutor/${userId}`);
     } catch (error) {
       toast.error("Failed to update meeting. Please try again.");
       console.error("Update error:", error);
@@ -123,7 +123,7 @@ const EditMeetingPage = () => {
 
       await axios.delete(API_ROUTES.DELETE_MEETING(meetingId));
       toast.success("Meeting deleted.");
-      navigate(`/meetings/tutor/${meeting.organizer}`, { replace: true });
+      navigate(`/meetings/tutor/${userId}`, { replace: true });
     } catch {
       toast.error("Failed to delete meeting.");
     }

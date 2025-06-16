@@ -18,7 +18,7 @@ const ReviewPosting = ({ onAddReview }) => {
         };
         const clientReview = {
             ...reviewData,
-            date: new Date().toISOString(),
+            date: new Date().toLocaleString(), // Changed to local time
             user_name: 'You'
         };
         if (onAddReview) onAddReview(clientReview);

@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.7.0",
-    "@stripe/stripe-js": "^7.3.0",
+    "@stripe/stripe-js": "^7.3.1",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@supabase/supabase-js": "^2.49.10",
     "axios": "^1.7.9",
