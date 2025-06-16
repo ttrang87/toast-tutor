@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { login } from "../../services/authService";
-import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
+import { login } from "../../services/authService";
+import toastpic from "../../assets/landingpic.jpg";
 import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
 
 const LogIn = (props) => {
@@ -22,19 +22,20 @@ const LogIn = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(formData); // Replace with your API logic
+      await login(formData);
       props.setIsLoggedIn(true);
 
-      // Show success toast
       toast.success("Logged in successfully!", {
-        duration: 2000, // Optional: duration for the toast
+        duration: 2000,
       });
 
-      navigate(`/tutor/profile/${localStorage.getItem("userId")}`);
+      // Navigate after a short delay to allow the toast to be seen
+      setTimeout(() => {
+        navigate(`/tutor/profile/${localStorage.getItem("userId")}`);
+      }, 1000);
     } catch (err) {
-      // Show error toast
       toast.error(
-        `Login failed: ${err.response?.data?.error || "Unknown error"}`,
+        `Login failed: ${err.response?.data?.detail || "Invalid credentials."}`,
         {
           duration: 2000,
         }
@@ -48,8 +49,8 @@ const LogIn = (props) => {
       <div className="relative w-full max-w-md">
         {/* Image Block */}
         <div
-          className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-50"
-          style={{ zIndex: 50 }}
+          className="absolute -top-12 left-1/2 transform -translate-x-1/2"
+          style={{ zIndex: 20 }}
         >
           <img
             src={toastpic}
@@ -59,7 +60,7 @@ const LogIn = (props) => {
         </div>
 
         {/* Card Container */}
-        <div className="bg-white border-yellow-200 border rounded-3xl shadow-lg px-8 py-12 relative z-10">
+        <div className="bg-white border-yellow-200 border rounded-3xl shadow-lg px-8 pt-20 pb-12 relative">
           <h2 className="text-2xl font-bold text-center text-yellow-800 mb-3">
             Welcome Back!
           </h2>
@@ -78,6 +79,7 @@ const LogIn = (props) => {
               <input
                 name="username"
                 id="username"
+                value={formData.username}
                 placeholder="Enter your username"
                 onChange={handleChange}
                 className="w-full px-3 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
@@ -97,6 +99,7 @@ const LogIn = (props) => {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   id="password"
+                  value={formData.password}
                   placeholder="Enter your password"
                   onChange={handleChange}
                   className="w-full px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-md text-gray-700 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
@@ -107,7 +110,8 @@ const LogIn = (props) => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                 >
-                  {showPassword ? EyeOpenIcon : EyeCloseIcon}
+                  {/* --- FIXED: Render icon components correctly --- */}
+                  {showPassword ? <EyeOpenIcon /> : <EyeCloseIcon />}
                 </button>
               </div>
             </div>
@@ -123,6 +127,7 @@ const LogIn = (props) => {
           <p className="text-center text-xs text-gray-600 mt-4">
             Don&apos;t have an account?{" "}
             <button
+              type="button"
               className="text-yellow-600 font-medium hover:underline focus:outline-none"
               onClick={() => navigate("/signup")}
             >
@@ -131,6 +136,7 @@ const LogIn = (props) => {
           </p>
           <div className="text-center">
             <button
+              type="button"
               className="text-yellow-600 text-xs hover:underline mt-2"
               onClick={() => navigate("/auth/enteremail")}
             >

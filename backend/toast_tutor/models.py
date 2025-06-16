@@ -9,6 +9,16 @@ from django.utils import timezone
 
 
 class User(AbstractUser):
+    STATUS_CHOICES = [
+        ('Offline', 'Offline'),
+        ('Online', 'Online'),
+    ]
+    status = models.CharField(
+        max_length=20, 
+        choices=STATUS_CHOICES, 
+        default='Offline',
+        help_text="User account status"
+    )
     email = models.EmailField(unique=True)
     groups = models.ManyToManyField(
         "auth.Group",
