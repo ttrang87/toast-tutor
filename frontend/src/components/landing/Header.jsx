@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/authService";
-
+import { MessageIcon } from "../../assets/icon";
 const Header = (props) => {
   const navigate = useNavigate();
   const { setIsLoggedIn } = props; // Destructure the specific prop
@@ -29,16 +29,16 @@ const Header = (props) => {
       </div>
 
       {/* Center - Navigation */}
-      <div className="flex justify-center w-1/3 gap-6 font-semibold">
+      <div className="flex justify-center w-1/3 gap-8 font-semibold">
         <button
-          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+          className="py-2 px-4 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
           onClick={() => navigate("/")}
         >
           Home
         </button>
         {props.isLoggedIn && (
           <button
-            className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+            className="py-2 px-4 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
             onClick={() =>
               navigate(`/tutor/profile/${localStorage.getItem("userId")}`)
             }
@@ -47,36 +47,37 @@ const Header = (props) => {
           </button>
         )}
         <button
-          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+          className="py-2 px-4 w-24 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
           onClick={() => navigate("/meetings/create")}
-        >
-          Schedule
-        </button>
-        <button
-          className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-          onClick={() => navigate("/meetings")}
         >
           Calendar
         </button>
-        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+        <button className="py-2 px-4 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
           onClick={() =>
             navigate('/listing')
           }>
           Tutors
         </button>
-        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
-        onClick={() =>
-          navigate(`/dashboard/${localStorage.getItem("userId")}`)
-        }>
+        <button className="py-2 px-4 w-24 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+          onClick={() =>
+            navigate(`/dashboard/${localStorage.getItem("userId")}`)
+          }>
           Meetings
         </button>
-        <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
+        {/* <button className="py-2 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200">
           Contact
-        </button>
+        </button> */}
       </div>
 
       {/* Right - Log In/Log Out */}
-      <div className="flex justify-end w-1/3">
+      <div className="flex justify-end w-1/3 gap-4">
+        <button
+          // onClick={() => setIsModalOpen(true)}
+          className="py-1 px-4 rounded-full bg-gray-300/30 hover:bg-gray-400/40 transition-all duration-200"
+          aria-label="Messenger"
+        >
+          {MessageIcon}
+        </button>
         {props.isLoggedIn ? (
           <button
             className="py-1 px-4 text-sm font-semibold rounded-full bg-yellow-800 text-white hover:bg-yellow-900 transition-color duration-200"

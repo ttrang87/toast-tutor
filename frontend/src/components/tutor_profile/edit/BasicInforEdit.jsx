@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   EmailIcon,
-  StarIcon,
   EditIcon,
   CameraIcon,
   CalendarIcon,
@@ -77,7 +76,7 @@ const BasicInforEdit = ({ data, showToast }) => {
           <button
             type="button"
             onClick={() => navigate(`/meetings/tutor/${id}`)}
-            className="p-2 rounded-full bg-transparent hover:bg-yellow-100 focus:outline-none focus:ring-1 focus:ring-yellow-600"
+            className="p-2 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
             aria-label="Open tutor calendar"
           >
             {CalendarIcon}
@@ -117,25 +116,22 @@ const BasicInforEdit = ({ data, showToast }) => {
               {EmailIcon}
               <div>{tutorEmail}</div>
             </div>
-            <div className="flex gap-1">
+            {/* <div className="flex gap-1">
               Rated {5}
               {StarIcon}by 5 students
-            </div>
+            </div> */}
           </div>
         </div>
-        <div className="flex justify-between">
-          <div className="flex flex-wrap w-3/5 gap-3 mt-3">
+        <div className='flex justify-between items-end mt-5'>
+          <div className='flex flex-wrap gap-3 max-w-4xl'>
             {tutorTeachingStyle?.map((style, index) => (
-              <div
-                key={index}
-                className="px-4 py-1 bg-gray-200 rounded-xl text-center hover:bg-gray-300"
-              >
+              <div key={index} className='px-4 py-2 bg-gray-100 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors'>
                 {style}
               </div>
             ))}
           </div>
-          <div className="text-3xl font-bold pb-2 text-yellow-800">
-            {tutorHourlyRate}$/h
+          <div className='text-4xl font-bold text-yellow-800 whitespace-nowrap ml-6'>
+            ${tutorHourlyRate}/h
           </div>
         </div>
       </div>

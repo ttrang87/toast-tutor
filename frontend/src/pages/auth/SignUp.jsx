@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { register } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
 
 const SignUp = () => {
@@ -10,9 +10,6 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
-  const renderEyeIcon = (isOpen) => {
-    return React.cloneElement(isOpen ? EyeOpenIcon : EyeCloseIcon);
-  };
 
   const [formData, setFormData] = useState({
     username: "",
@@ -185,7 +182,7 @@ const SignUp = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                 >
-                  {renderEyeIcon(showPassword)}
+                  {showPassword ? EyeOpenIcon : EyeCloseIcon}
                 </button>
               </div>
             </div>
