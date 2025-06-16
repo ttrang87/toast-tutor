@@ -31,14 +31,10 @@ const ReviewList = () => {
     const isOwner = storedUserId === id;
 
     useEffect(() => {
-        const cacheKey = `reviews_${id}`;
-        const cached = localStorage.getItem(cacheKey);
-        setReviews(cached ? JSON.parse(cached) : []);
         (async () => {
             try {
                 const { data: { reviews: fetched = [] } } = await axios.get(API_ROUTES.GET_REVIEW(id));
                 setReviews(fetched);
-                localStorage.setItem(cacheKey, JSON.stringify(fetched));
             } catch (error) {
                 console.error('Error fetching reviews:', error);
             }

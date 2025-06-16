@@ -20,11 +20,20 @@ export const TutorListTable = ({ currentRows, getAvatarPath }) => {
             <div className="grid grid-cols-5 gap-4 px-8 py-3 items-center">
               {/* Avatar Column */}
               <div className="flex justify-center">
-                <img
-                  src={tutor.avatar ? getAvatarPath(tutor.avatar) : pfpIcon}
-                  alt={`${tutor.name}'s avatar`}
-                  className="w-14 h-14 rounded-full object-cover"
-                />
+                <div className="relative">
+                  <img
+                    src={tutor.avatar ? getAvatarPath(tutor.avatar) : pfpIcon}
+                    alt={`${tutor.name}'s avatar`}
+                    className="w-14 h-14 rounded-full object-cover"
+                  />
+                  {/* Online Status Indicator */}
+                  <div
+                    className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white ${
+                      tutor.status == "Online" ? "bg-green-500" : "bg-gray-400"
+                    }`}
+                    title={tutor.status == "Online" ? "Online" : "Offline"}
+                  ></div>
+                </div>
               </div>
 
               {/* Tutor Name Column */}

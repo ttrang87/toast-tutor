@@ -68,13 +68,14 @@ def process_single_user(user):
             "exams": exam_list,
             "hourly_rate": hourly_rate,
             "avatar": avatar,
+            "status": user.status,
         }
     except Exception as e:
         print(f"Error processing user {user.username}: {str(e)}")
         return None
 
 
-def get_user_data():
+def  get_user_data():
     """Get all user details with related data"""
     try:
         # Get all users with related data

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -250,21 +251,28 @@ def add_review(request, tutorId):
 
 @api_view(["GET"])
 def get_review(request, tutorId):
+    cache_key = f"reviews_{tutorId}"
+    cached_reviews = cache.get(cache_key)
+
+    if cached_reviews:
+        return Response(cached_reviews, status=status.HTTP_200_OK)
+
     try:
         tutor = get_object_or_404(User, id=tutorId)
         reviews = Review.objects.filter(tutor=tutor).select_related("user")
         response_data = {
-            "tutor_name": tutor.username,  # Use 'username' instead of 'name'
+            "tutor_name": tutor.username,
             "reviews": [
                 {
                     "comment": review.comment,
-                    "user_name": review.user.username,  # Use 'username' for the review's user
-                    "date": review.created_at.strftime("%Y-%m-%d"),  # Format the date of the review
-                    "rating": review.rating,  # Include the rating in the response
+                    "user_name": review.user.username,
+                    "date": review.created_at.strftime("%Y-%m-%d"),
+                    "rating": review.rating,
                 }
                 for review in reviews
             ],
         }
+        cache.set(cache_key, response_data, timeout=3600)  # Cache for 1 hour
         return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

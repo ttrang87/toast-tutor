@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API_ROUTES } from '../constant/APIRoutes';
@@ -46,7 +45,6 @@ const TutorList = () => {
       try {
         setLoading(true);
         const response = await axios.get(API_ROUTES.GET_ALL_TUTORS);
-
         // Set filter options from API response
         setFilterOptions({
           available_courses: response.data.filter_options.available_courses,
