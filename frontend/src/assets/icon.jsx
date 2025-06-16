@@ -78,7 +78,7 @@ export const StarIcon = (
 /* ---------- deep accent (#8B5E34) --------------------------------------- */
 
 export const HomeIcon = (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke={DEEP}>
+  <svg className="w-5 h-5 text-[#E9967A]" viewBox="0 0 24 24" fill="none" stroke={PRIMARY}>
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -133,7 +133,7 @@ export const ExamIcon = (
 );
 
 export const EditIcon = (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke={PRIMARY}>
+  <svg className="w-6 h-6 text-[#E9967A]" viewBox="0 0 24 24" fill="none" stroke={PRIMARY}>
     {strokeIcon(
       "M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"
     )}
@@ -141,7 +141,7 @@ export const EditIcon = (
 );
 
 export const SmallEditIcon = (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke={PRIMARY}>
+  <svg className="w-4 h-4 text-[#E9967A]" viewBox="0 0 24 24" fill="none" stroke={PRIMARY}>
     {strokeIcon(
       "M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28"
     )}
@@ -175,7 +175,7 @@ export const LightIcon = (
 /* Calendar and navigation icons ------------------------------------------- */
 export const CalendarIcon = (
   <svg
-    className="w-4 h-4 text-yellow-600 dark:text-white"
+    className="w-6 h-6 text-yellow-600 dark:text-white"
     aria-hidden="true"
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
@@ -477,3 +477,10 @@ export const pfpIcon = (
     <path fillRule="evenodd" d="M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm-2 9a4 4 0 0 0-4 4v1a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-1a4 4 0 0 0-4-4h-4Z" clipRule="evenodd"/>
   </svg>
 );
+
+export const MessageIcon = (<svg class="w-7 h-7 text-yellow-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 10.5h.01m-4.01 0h.01M8 10.5h.01M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-6.6a1 1 0 0 0-.69.275l-2.866 2.723A.5.5 0 0 1 8 18.635V17a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+</svg>
+
+
+)

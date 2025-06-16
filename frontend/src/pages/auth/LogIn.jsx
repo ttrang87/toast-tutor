@@ -44,7 +44,7 @@ const LogIn = (props) => {
 
   return (
     <div className="flex items-center justify-center h-screen bg-yellow-50 -mt-6">
-      <Toaster position="top-center" reverseOrder={false} />
+      {/* <Toaster position="top-center" reverseOrder={false} /> */}
       <div className="relative w-full max-w-md">
         {/* Image Block */}
         <div
