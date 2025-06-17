@@ -6,6 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.timezone import now
 from django.utils import timezone
+from django.db.models import UniqueConstraint
 
 
 class User(AbstractUser):
@@ -208,3 +209,37 @@ class Review(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class ChatBox(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatboxes_user1')
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatboxes_user2')
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['user1', 'user2'], name='unique_user1_user2_pair')
+        ]
+    
+    def clean(self):
+        # user1 and user2 must be different
+        if self.user1 == self.user2:
+            raise ValidationError("user1 and user2 must be different users.")
+
+        # enforce smaller user ID is user1
+        if self.user1.id > self.user2.id:
+            self.user1, self.user2 = self.user2, self.user1
+
+    #override to enforce check
+    def save(self, *args, **kwargs):
+        self.clean() 
+        super().save(*args, **kwargs)
+
+
+class Message(models.Model):
+    chatbox = models.ForeignKey(ChatBox, on_delete=models.CASCADE, related_name="messages")
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        ordering = ['-created_at']
+

@@ -54,7 +54,7 @@ def find_tutors(request):
                 continue
 
         if tutors:
-            cache.set(cache_key, tutors, timeout=120)
+            cache.set(cache_key, tutors, timeout=360)
         else:
             return Response([], status=status.HTTP_200_OK)
 

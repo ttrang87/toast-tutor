@@ -11,6 +11,8 @@ from .models import (
     Meeting,
     User,
     Review,
+    ChatBox,
+    Message
 )
 
 
@@ -244,3 +246,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ["id", "tutor", "user", "comment", "created_at", "rating"]
         read_only_fields = ["id", "created_at"]
+
+
+class ChatBoxSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatBox
+        fields = ["user1", "user2"]
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ["chatbox", "sender", "content", "created_at"]

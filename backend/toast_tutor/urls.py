@@ -1,10 +1,9 @@
 from django.urls import path
-from .controller import matching, profile, auth, meeting, payment
-
+from .controller import matching, profile, auth, meeting, payment, tutorlist
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
-from .controller import tutorlist
 from .controller.meeting import get_user_meetings, get_user_meetings_by_status
+from .controller.message import get_user_chats
 
 urlpatterns = [
     # Specific
@@ -130,6 +129,7 @@ urlpatterns = [
     ),
     # DISPLAY ALL TUTORS
     path("get_all_tutor/", tutorlist.get_user_details, name="get_user_details"),
+
     # MY MEETING DISPLAY
     path("meetings/user/<int:user_id>/", get_user_meetings, name="user_meetings"),
     path(
@@ -137,4 +137,8 @@ urlpatterns = [
         get_user_meetings_by_status,
         name="user_meetings_by_status",
     ),
+    
+    #SHOW ALL MESSAGES
+    path("chat/<int:user_id>", get_user_chats, name="get_user_chats")
+
 ]
