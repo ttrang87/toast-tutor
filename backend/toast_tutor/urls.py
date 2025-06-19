@@ -139,6 +139,6 @@ urlpatterns = [
     ),
     
     #SHOW ALL MESSAGES
-    path("chat/<int:user_id>", get_user_chats, name="get_user_chats")
+    path("chat", get_user_chats, name="get_user_chats")
 
 ]

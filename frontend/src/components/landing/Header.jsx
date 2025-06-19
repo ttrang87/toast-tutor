@@ -29,7 +29,7 @@ const Header = (props) => {
       </div>
 
       {/* Center - Navigation */}
-      <div className="flex justify-center w-1/3 gap-8 font-semibold">
+      <div className="flex justify-center gap-8 font-semibold">
         <button
           className="py-2 px-4 w-20 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
           onClick={() => navigate("/")}
@@ -58,7 +58,7 @@ const Header = (props) => {
           }>
           Tutors
         </button>
-        <button className="py-2 px-4 w-24 rounded-full bg-transparent hover:bg-gray-400/20 transition-all duration-200"
+         <button className="py-2 px-5 rounded-full bg-transparent hover:bg-gray-400/20 transition-colors duration-200"
           onClick={() =>
             navigate(`/dashboard/${localStorage.getItem("userId")}`)
           }>
@@ -72,7 +72,7 @@ const Header = (props) => {
       {/* Right - Log In/Log Out */}
       <div className="flex justify-end w-1/3 gap-4">
         <button
-          // onClick={() => setIsModalOpen(true)}
+          onClick={() =>  navigate('/chat')}
           className="py-1 px-4 rounded-full bg-gray-300/30 hover:bg-gray-400/40 transition-all duration-200"
           aria-label="Messenger"
         >

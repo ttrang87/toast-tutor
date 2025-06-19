@@ -12,19 +12,23 @@ from ..serializers import (
 
 
 @api_view(["GET"])
-def get_user_chats(request, user_id):
+def get_user_chats(request):
+    user_id = request.query_params.get("user_id")
     user = get_object_or_404(User, id=user_id)
     chat_boxes = ChatBox.objects.filter(user1=user) | ChatBox.objects.filter(user2=user)
+    result = []
 
-    result = [
-        {
+    for cb in chat_boxes:
+        other_user = cb.user2 if cb.user1.id == user.id else cb.user1
+        data = {
             "chat_box_id": cb.id,
-            "other_user_id": cb.user2.id if cb.user1.id == user.id else cb.user1.id,
+            "other_user_id": other_user.id,
+            "name": other_user.username,
+            "avatar": other_user.tutor_profile.avatar,
             "hot_messages": get_hot_message(cb.id)
         }
-        for cb in chat_boxes
-    ]
-
+        result.append(data)
+    
     return Response({"chat_boxes": result}, status=200)
 
 
@@ -35,7 +39,7 @@ def get_hot_message(chat_box_id):
     if cached:
         messages_data = json.loads(cached)
     else:
-        messages = chat_box.messages.all()[:20]  # latest 20 messages
+        messages = chat_box.messages.all()[:10]  # latest 10 messages
         serializer = MessageSerializer(messages, many=True)
         messages_data = serializer.data
         cache.set(cache_key, json.dumps(messages_data), timeout=3600)  # 1 hour cache TTL
@@ -43,7 +47,7 @@ def get_hot_message(chat_box_id):
 
  
 
-#from 20-40 messages
+#from 10-20 messages
 @api_view(["GET"])
 def get_warm_message(request, chat_box_id):
     chat_box = get_object_or_404(ChatBox, id = chat_box_id)
@@ -52,7 +56,7 @@ def get_warm_message(request, chat_box_id):
     if cached:
         messages_data = json.loads(cached)
     else: 
-        messages = chat_box.messages.all()[20 : 40]  # next 20 messages
+        messages = chat_box.messages.all()[10 : 20]  # next 20 messages
         serializer = MessageSerializer(messages, many=True)
         messages_data = serializer.data
         cache.set(cache_key, json.dumps(messages_data), timeout=300)  
@@ -108,10 +112,10 @@ def sent_message(request, chat_box_id):
     hot_messages.insert(0, serialized_new)
 
     # handle overflow from hot to warm
-    if len(hot_messages) > 20:
+    if len(hot_messages) > 10:
         overflow = hot_messages.pop()
         warm_messages.insert(0, overflow)
-        warm_messages = warm_messages[:20] 
+        warm_messages = warm_messages[:10] 
 
     cache.set(hot_cache_key, json.dumps(hot_messages), timeout=3600)
     cache.set(warm_cache_key, json.dumps(warm_messages), timeout=300)

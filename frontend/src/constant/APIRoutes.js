@@ -57,4 +57,7 @@ export const API_ROUTES = {
     /*REVIEW SECTION */
     REVIEW_POSTING: (tutorId) => `${API_BASE_URL}/tutor/profile/${tutorId}/addreview/`,
     GET_REVIEW: (tutorId) => `${API_BASE_URL}/tutor/profile/${tutorId}/getreview/`,
+
+    /*CHAT SECTION*/
+    GET_CHATS: `${API_BASE_URL}/chat`
 }
