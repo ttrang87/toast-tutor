@@ -65,7 +65,7 @@ CACHES = {
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-_*wh%jg(pq5n3=$*14px-o+p=bf6nqxtso1s7o%^iipik^nh%0"
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: don't run with debug turned on in production!a
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -74,6 +74,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -165,6 +166,10 @@ SIMPLE_JWT = {
 
 AUTH_USER_MODEL = "toast_tutor.User"
 
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -208,6 +213,9 @@ CELERY_RESULT_BACKEND = "django-db"
 # Define channel layers (using in-memory backend for simplicity)
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        }
+    }
 }

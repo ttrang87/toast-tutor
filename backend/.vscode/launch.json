@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "Daphne Server",
+            "program": "${workspaceFolder}/venv/bin/daphne", // Adjust path if necessary
+            "args": ["-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"],
+            "console": "integratedTerminal"
+        }
+    ]
+}

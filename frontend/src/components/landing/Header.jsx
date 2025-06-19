@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/authService";
+import { initializeWebSocket } from "../../services/websocketService";
 
 const Header = (props) => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const Header = (props) => {
     const userId = localStorage.getItem("userId");
     if (userId) {
       setIsLoggedIn(true);
+      // Initialize WebSocket connection if user is logged in
+      initializeWebSocket();
     }
   }, [setIsLoggedIn])
 

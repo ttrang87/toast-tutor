@@ -1,4 +1,5 @@
 import axios from "axios";
+import { closeWebSocket } from "./websocketService";
 
 const API_URL = "http://127.0.0.1:8000/auth/";
 
@@ -16,6 +17,9 @@ export const login = async (userData) => {
 };
 
 export const logout = () => {
+  // Close WebSocket connection
+  closeWebSocket();
+  
   // localStorage.removeItem("user");
   localStorage.clear();
 };

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
 import Header from "./components/landing/Header";
@@ -20,6 +20,7 @@ import Waiting from "./pages/auth/password/Waiting";
 import LogIn from "./pages/auth/LogIn";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { initializeWebSocket } from "./services/websocketService";
 
 import TutorList from "./pages/TutorList";
 
@@ -38,6 +39,17 @@ import { Elements } from '@stripe/react-stripe-js';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
+  
+  useEffect(() => {
+    // Check if the user is already logged in
+    const userId = localStorage.getItem("userId");
+    if (userId) {
+      setIsLoggedIn(true);
+      // Initialize WebSocket if user is already logged in
+      initializeWebSocket();
+    }
+  }, []);
+  
   return (
     <BrowserRouter>
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />

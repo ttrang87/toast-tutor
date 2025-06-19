@@ -1,9 +1,11 @@
 import { EmailIcon, StarIcon } from '../../../assets/icon'
 import avatars from '../AvatarList'
 import covers from '../CoverList'
+import { useIsUserOnline } from '../../../hooks/useWebSocket';
 
 const BasicInfor = ({ data }) => {
     const { username, email, bio, teaching_style, hourly_rate, avatar, cover } = data
+    const isOnline = useIsUserOnline(username);
 
     const parseTeachingStyle = (styleData) => {
         if (Array.isArray(styleData)) {
@@ -42,7 +44,11 @@ const BasicInfor = ({ data }) => {
             <div className='flex flex-col px-10 py-10 mt-4 gap-1'>
                 <div className='flex justify-between'>
                     <div className='flex flex-col gap-4'>
-                        <div className='text-4xl text-yellow-800 font-bold'>{username}</div>
+                        <div className='flex items-center gap-3'>
+                            <div className='text-4xl text-yellow-800 font-bold'>{username}</div>
+                            <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                            <div className='text-sm text-gray-600'>{isOnline ? 'Online' : 'Offline'}</div>
+                        </div>
                         <div className='ml-1'>{bio}</div>
                     </div>
                     <div className='flex flex-col gap-4 items-end mt-3'>
@@ -69,4 +75,4 @@ const BasicInfor = ({ data }) => {
     )
 }
 
-export default BasicInfor 
+export default BasicInfor

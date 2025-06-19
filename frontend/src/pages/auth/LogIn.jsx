@@ -4,6 +4,7 @@ import toastpic from "../../assets/landingpic.jpg";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { EyeCloseIcon, EyeOpenIcon } from "../../assets/icon";
+import { initializeWebSocket } from "../../services/websocketService";
 
 const LogIn = (props) => {
   const [formData, setFormData] = useState({
@@ -24,6 +25,9 @@ const LogIn = (props) => {
     try {
       await login(formData); // Replace with your API logic
       props.setIsLoggedIn(true);
+
+      // Initialize WebSocket connection
+      initializeWebSocket();
 
       // Show success toast
       toast.success("Logged in successfully!", {
@@ -107,7 +111,7 @@ const LogIn = (props) => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                 >
-                  {showPassword ? EyeOpenIcon : EyeCloseIcon}
+                  {showPassword ? <EyeOpenIcon /> : <EyeCloseIcon />}
                 </button>
               </div>
             </div>
