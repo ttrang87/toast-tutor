@@ -2,6 +2,7 @@ import { EmailIcon, CalendarIcon } from "../../../assets/icon";
 import { useNavigate, useParams } from "react-router-dom";
 import avatars from "../AvatarList";
 import covers from "../CoverList";
+import { MessageCircleMore } from "lucide-react";
 
 const BasicInfor = ({ data }) => {
     const { id } = useParams();
@@ -75,10 +76,7 @@ const BasicInfor = ({ data }) => {
                             {EmailIcon}
                             <div>{email}</div>
                         </div>
-                        {/* <div className="flex gap-1">
-                            Rated {5}
-                            {StarIcon}by 5 students
-                        </div> */}
+                        <button className="px-4 py-2 bg-gradient-to-r from-[#E9967A] to-[#cf4f1d] rounded-xl text-white flex gap-2 items-center hover:scale-105 transition duration-200"> <MessageCircleMore className="h-5 w-5"/> Message </button>
                     </div>
                 </div>
                 <div className='flex justify-between items-end mt-5'>
