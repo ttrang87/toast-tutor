@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import avatars from "../AvatarList";
 import covers from "../CoverList";
 import { MessageCircleMore } from "lucide-react";
+import FirstMessageModal from "../../messenger/FirstMessageModal";
+import { useState } from "react";
 
 const BasicInfor = ({ data }) => {
     const { id } = useParams();
@@ -28,7 +30,7 @@ const BasicInfor = ({ data }) => {
     const teachingStyle = parseTeachingStyle(teaching_style);
     const fetchAvatar = avatars.find((ava) => ava.id === avatar);
     const fetchCover = covers.find((cov) => cov.id === cover);
-
+    const [messageOpen, setMessageOpen] = useState(false)
     return (
         <div>
             <div
@@ -76,7 +78,11 @@ const BasicInfor = ({ data }) => {
                             {EmailIcon}
                             <div>{email}</div>
                         </div>
-                        <button className="px-4 py-2 bg-gradient-to-r from-[#E9967A] to-[#cf4f1d] rounded-xl text-white flex gap-2 items-center hover:scale-105 transition duration-200"> <MessageCircleMore className="h-5 w-5"/> Message </button>
+                        <button
+                            onClick={() => setMessageOpen(true)}
+                            className="px-4 py-2 bg-gradient-to-r from-[#E9967A] to-[#cf4f1d] rounded-xl text-white flex gap-2 items-center hover:scale-105 transition duration-200">
+                            <MessageCircleMore className="h-5 w-5" /> Message
+                        </button>
                     </div>
                 </div>
                 <div className='flex justify-between items-end mt-5'>
@@ -92,6 +98,10 @@ const BasicInfor = ({ data }) => {
                     </div>
                 </div>
             </div>
+
+            {messageOpen && (
+                <FirstMessageModal onClose={() => setMessageOpen(false)} tutorName={username}/>
+            )}
         </div>
     );
 };
