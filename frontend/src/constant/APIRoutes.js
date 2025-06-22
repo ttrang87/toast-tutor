@@ -59,5 +59,6 @@ export const API_ROUTES = {
     GET_REVIEW: (tutorId) => `${API_BASE_URL}/tutor/profile/${tutorId}/getreview/`,
 
     /*CHAT SECTION*/
-    GET_CHATS: `${API_BASE_URL}/chat`
+    GET_CHATS: `${API_BASE_URL}/chat`,
+    POST_NEW_MESSAGE: `${API_BASE_URL}/send-message`
 }

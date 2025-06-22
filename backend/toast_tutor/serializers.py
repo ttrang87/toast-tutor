@@ -257,4 +257,4 @@ class ChatBoxSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ["chatbox", "sender", "content", "created_at"]
+        fields = ["id", "chatbox", "sender", "content", "created_at"]

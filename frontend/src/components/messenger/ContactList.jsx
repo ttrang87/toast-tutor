@@ -9,7 +9,16 @@ export default function ContactsList({ contacts, selectedContactId, onSelectCont
     contact.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const formatTime = (date) => {
+  const formatTime = (dateInput) => {
+     if (!dateInput) return "now";
+
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput
+    
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      return "unknown"
+    }
+    
     const now = new Date()
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
 
@@ -27,7 +36,7 @@ export default function ContactsList({ contacts, selectedContactId, onSelectCont
   return (
     <div className="h-full flex flex-col bg-yellow-50">
       {/* Header */}
-      <div className="rounded-t-xl p-4 border-b-2 border-orange-300 bg-[#de7321]">
+      <div className="rounded-t-xl p-4 border-b-2 border-orange-300 bg-[#d46d47]">
         <h2 className="text-xl font-bold text-white mb-3 drop-shadow-sm">Messages</h2>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-700 h-4 w-4" />

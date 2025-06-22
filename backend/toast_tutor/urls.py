@@ -3,7 +3,7 @@ from .controller import matching, profile, auth, meeting, payment, tutorlist
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
 from .controller.meeting import get_user_meetings, get_user_meetings_by_status
-from .controller.message import get_user_chats
+from .controller.message import get_user_chats, send_message
 
 urlpatterns = [
     # Specific
@@ -138,7 +138,7 @@ urlpatterns = [
         name="user_meetings_by_status",
     ),
     
-    #SHOW ALL MESSAGES
-    path("chat", get_user_chats, name="get_user_chats")
-
+    #MESSAGES
+    path("chat", get_user_chats, name="get_user_chats"),
+    path("send-message", send_message, name="send_message")
 ]

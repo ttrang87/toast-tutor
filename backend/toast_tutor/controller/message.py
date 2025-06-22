@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
@@ -83,15 +84,17 @@ def get_cold_message(request, chat_box_id):
 
 
 @api_view(["POST"])
-def sent_message(request, chat_box_id):
+def send_message(request):
     try:
-        content = request.GET.get("content")
-        sender_id = request.GET.get("userID")
-        if not content or not sender_id:
+        data = request.data  # rest_framework's request.data parses JSON automatically
+        chat_box_id = data.get("chat_box_id")
+        content = data.get("content")
+        sender_id = data.get("sender_id")
+        if not content or not sender_id or not chat_box_id:
             raise ValueError
         sender = get_object_or_404(User, id=sender_id)
     except (TypeError, ValueError):
-        return JsonResponse({"error": "Invalid or missing content or sender"}, status=400)
+        return JsonResponse({"error": "Invalid or missing content or sender or chat_box_id"}, status=400)
 
     chat_box = get_object_or_404(ChatBox, id=chat_box_id)
 

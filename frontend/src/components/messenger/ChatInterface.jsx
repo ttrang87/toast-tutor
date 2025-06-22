@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from "react"
 import { Send, MoreVertical, Phone, Video } from "lucide-react"
 import avatars from "../tutor_profile/AvatarList"
-
+import { API_ROUTES } from "../../constant/APIRoutes"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
 export default function ChatInterface({ contact, conversation }) {
+  const navigate = useNavigate()
   const [messages, setMessages] = useState(conversation.messages)
   const [newMessage, setNewMessage] = useState("")
   const messagesEndRef = useRef(null)
+  const userId = localStorage.getItem("userId")
 
   useEffect(() => {
     setMessages(conversation.messages)
@@ -24,42 +28,57 @@ export default function ChatInterface({ contact, conversation }) {
     return avatar ? avatar.src : null
   }
 
-  const handleSendMessage = (e) => {
-    e.preventDefault()
-    if (!newMessage.trim()) return
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
 
     const newMsg = {
-      id: Date.now().toString(),
-      text: newMessage,
-      sender: "user",
-      timestamp: new Date(),
-      senderName: "You"
+      chat_box_id: contact.id, // or contact.id if that's your chat ID
+      content: newMessage,
+      sender_id: parseInt(userId),
+    };
+
+    try {
+      const response = await axios.post(API_ROUTES.POST_NEW_MESSAGE, newMsg);
+      if (response.status !== 201) throw new Error("Failed to send")
+      setNewMessage("");
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
+  };
+
+
+  const formatTime = (dateInput) => {
+    let date
+
+    if (typeof dateInput === "string") {
+      // Truncate microseconds to milliseconds
+      const cleaned = dateInput.replace(/\.(\d{3})\d*Z?$/, '.$1Z')
+      date = new Date(cleaned)
     }
 
-    setMessages(prev => [...prev, newMsg])
-    setNewMessage("")
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   }
 
-  const formatTime = (date) => {
-    return new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-  }
 
   const contactAvatarSrc = getAvatarById(contact.avatar)
 
   return (
     <div className="flex flex-col h-full ml-3 mr-4">
       {/* Chat Header */}
-      <div className="rounded-t-xl bg-[#de7321] px-6 py-4 flex items-center justify-between border-b-2 border-orange-300 shadow-sm">
+      <div className="rounded-t-xl bg-[#d46d47] px-6 py-4 flex items-center justify-between border-b-2 border-orange-300 shadow-sm">
         <div className="flex items-center space-x-3">
           <div className="relative">
             <div className="h-12 w-12 rounded-full border-3 border-white shadow-md bg-gradient-to-br from-yellow-800 to-yellow-600 flex items-center justify-center">
-              {contactAvatarSrc ? (
-                <img src={contactAvatarSrc} alt={contact.name} className="h-full w-full rounded-full object-cover" />
-              ) : (
-                <span className="text-white font-bold">
-                  {contact.name.split(" ").map(n => n[0]).join("")}
-                </span>
-              )}
+              <button className="rounded-full" onClick={() => navigate(`/tutor/profile/${contact.other_user_id}`)}>
+                {contactAvatarSrc ? (
+                  <img src={contactAvatarSrc} alt={contact.name} className="h-full w-full rounded-full object-cover" />
+                ) : (
+                  <span className="text-white font-bold">
+                    {contact.name.split(" ").map(n => n[0]).join("")}
+                  </span>
+                )}
+              </button>
             </div>
             {contact.isOnline && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>
@@ -68,7 +87,7 @@ export default function ChatInterface({ contact, conversation }) {
           <div>
             <h2 className="text-white font-bold text-lg drop-shadow-sm">{contact.name}</h2>
             <p className="text-white/90 text-sm font-medium">
-              {contact.subject && `${contact.subject} • `}{contact.isOnline ? "Online" : "Offline"}
+              {contact.isOnline ? "Online" : "Offline"}
             </p>
           </div>
         </div>
@@ -89,7 +108,7 @@ export default function ChatInterface({ contact, conversation }) {
       <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-br from-yellow-50 to-orange-50">
         <div className="space-y-4">
           {messages.map((message) => {
-            const isUser = message.sender === "user"
+            const isUser = message.sender === parseInt(userId)
             const messageAvatarSrc = !isUser ? getAvatarById(contact.avatar) : null
 
             return (
@@ -108,16 +127,15 @@ export default function ChatInterface({ contact, conversation }) {
                   )}
                   <div className="flex flex-col">
                     <div
-                      className={`px-4 py-2 rounded-2xl shadow-sm ${
-                        isUser
-                          ? "bg-gradient-to-r from-orange-400 to-orange-300 text-white rounded-br-md font-medium"
-                          : "bg-white text-yellow-800 border-2 border-orange-200 rounded-bl-md font-medium shadow-sm"
-                      }`}
+                      className={`px-4 py-2 rounded-2xl shadow-sm ${isUser
+                        ? "bg-gradient-to-r from-orange-400 to-orange-300 text-white rounded-br-md font-medium"
+                        : "bg-white text-yellow-800 border-2 border-orange-200 rounded-bl-md font-medium shadow-sm"
+                        }`}
                     >
                       <p className="text-sm leading-relaxed">{message.text}</p>
                     </div>
                     <span className={`text-xs text-yellow-700 mt-1 font-medium ${isUser ? "text-right" : "text-left"}`}>
-                      {formatTime(message.timestamp)}
+                      {formatTime(message.created_at)}
                     </span>
                   </div>
                 </div>
