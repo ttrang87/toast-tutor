@@ -1,20 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { API_ROUTES } from '../constant/APIRoutes';
+import { createClient } from '@supabase/supabase-js';
 
 import { TutorListHeader } from "./Listing/TutorListHeader";
 import { TutorListFilter } from "./Listing/TutorListFilter";
 import { TutorListTable } from "./Listing/TutorListTable";
 import { TutorListPagination } from "./Listing/TutorListPagination";
 
-const TutorList = () => {
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const TutorList = (presenceState) => {
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filter states
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [selectedExams, setSelectedExams] = useState([]);
@@ -23,22 +27,42 @@ const TutorList = () => {
     available_exams: []
   });
 
-  // Price range and rating states
   const [_priceRange, setPriceRange] = useState({ min: 0, max: 200 });
   const [selectedPriceRange, setSelectedPriceRange] = useState({ min: 0, max: 200 });
   const [minimumRating, setMinimumRating] = useState(0);
 
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const ws = useRef(null);
+
   const rowsPerPage = 5;
+
   const getAvatarPath = (tutorId) => {
     const DEFAULT_AVATAR = '/src/assets/avatar/avatar.png';
-    
+
     if (!tutorId || tutorId < 1 || tutorId > 15) {
       return DEFAULT_AVATAR;
     }
-    
+
     const fileType = tutorId > 15 ? 'jpg' : 'png';
     return `/src/assets/avatar/avatar${tutorId}.${fileType}`;
   };
+  useEffect(() => {
+    const updateOnlineUsers = () => {
+      const newOnlineUsers = [];
+      for (const [key, presences] of Object.entries(presenceState.presenceState)) {
+        if (Array.isArray(presences)) {
+          presences.forEach(presence => {
+            if (presence.online_at) {
+              newOnlineUsers.push(presence.user);
+            }
+          });
+        }
+      }
+      setOnlineUsers(newOnlineUsers);
+    };
+
+    updateOnlineUsers();
+  }, [presenceState.presenceState]);
 
   useEffect(() => {
     const fetchTutors = async () => {
@@ -59,10 +83,8 @@ const TutorList = () => {
           rating: 5,
           courses: tutor.courses || [],
           avatar: tutor.avatar,
-          exams: tutor.exams || []
+          exams: tutor.exams || [],
         }));
-
-        // Calculate max price for range
         const maxPrice = Math.max(...transformedTutors.map(tutor => tutor.price));
         setPriceRange({ min: 0, max: maxPrice });
         setSelectedPriceRange({ min: 0, max: maxPrice });
@@ -77,9 +99,8 @@ const TutorList = () => {
     };
 
     fetchTutors();
-  }, []);
+  }, []);          
 
-  // Filtering logic
   const filteredTutors = tutors.filter(tutor =>
     (searchTerm === '' ||
       tutor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,14 +120,12 @@ const TutorList = () => {
       ))
   );
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredTutors.length / rowsPerPage);
   const currentRows = filteredTutors.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
 
-  // Event Handlers
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -148,7 +167,6 @@ const TutorList = () => {
     setCurrentPage(1);
   };
 
-  // Loading and Error States
   if (loading) {
     return (
       <div className="bg-yellow-50 h-full py-5">
@@ -172,19 +190,18 @@ const TutorList = () => {
       </div>
     );
   }
-  
+
+
   return (
     <div className="bg-yellow-50 h-full py-5">
       <div className="h-full mx-10 rounded-3xl p-5 bg-white shadow-md relative">
         <div className="flex py-5 px-5 flex-col gap-7">
-          <TutorListHeader 
+          <TutorListHeader
             searchTerm={searchTerm}
             handleSearchChange={handleSearchChange}
             showFilterDropdown={showFilterDropdown}
             setShowFilterDropdown={setShowFilterDropdown}
           />
-
-          {/* Add relative positioning here to anchor the dropdown */}
           <div className="relative">
             <TutorListFilter
               showFilterDropdown={showFilterDropdown}
@@ -200,11 +217,11 @@ const TutorList = () => {
             />
           </div>
 
-          <TutorListTable 
+          <TutorListTable
             currentRows={currentRows}
             getAvatarPath={getAvatarPath}
+            onlineUsers={onlineUsers}
           />
-
           {filteredTutors.length > 0 && (
             <TutorListPagination
               currentPage={currentPage}

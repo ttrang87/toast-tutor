@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom"
 import { StarIcon, pfpIcon } from "../../assets/icon"
 
-export const TutorListTable = ({ currentRows, getAvatarPath }) => {
+
+export const TutorListTable = ({ currentRows, getAvatarPath, onlineUsers = [] }) => {
   return (
     <div className="flex flex-col">
       {/* Header Row */}
@@ -12,6 +13,7 @@ export const TutorListTable = ({ currentRows, getAvatarPath }) => {
         <p className="text-yellow-700 font-semibold text-center">Price</p>
         <p className="text-yellow-700 font-semibold text-center">Rating</p>
       </div>
+
 
       {/* Data Rows */}
       {currentRows.length > 0 ? (
@@ -29,12 +31,13 @@ export const TutorListTable = ({ currentRows, getAvatarPath }) => {
                   {/* Online Status Indicator */}
                   <div
                     className={`absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border-2 border-white ${
-                      tutor.status == "Online" ? "bg-green-500" : "bg-gray-400"
+                      onlineUsers.includes(tutor.id.toString()) ? "bg-green-500" : "bg-gray-400"
                     }`}
-                    title={tutor.status == "Online" ? "Online" : "Offline"}
+                    title={onlineUsers.includes(tutor.id.toString()) ? "Online" : "Offline"}
                   ></div>
                 </div>
               </div>
+
 
               {/* Tutor Name Column */}
               <div>
@@ -43,15 +46,18 @@ export const TutorListTable = ({ currentRows, getAvatarPath }) => {
                 </Link>
               </div>
 
+
               {/* Education Column */}
               <div>
                 <p className="text-gray-700">{tutor.education}</p>
               </div>
 
+
               {/* Price Column */}
               <div className="text-center">
                 <p className="text-gray-700">${tutor.price}/hr</p>
               </div>
+
 
               {/* Rating Column */}
               <div className="flex items-center justify-center gap-2">
@@ -67,3 +73,4 @@ export const TutorListTable = ({ currentRows, getAvatarPath }) => {
     </div>
   )
 }
+

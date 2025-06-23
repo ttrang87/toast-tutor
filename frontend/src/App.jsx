@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
 import Header from "./components/landing/Header";
@@ -21,23 +21,90 @@ import LogIn from "./pages/auth/LogIn";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+
 import TutorList from "./pages/TutorList";
+
 
 import Payment from "./pages/payment/payment";
 import Success from "./pages/payment/success.jsx";
 import Confirm from "./pages/payment/Confirm";
-import Cancel from "./pages/payment/cancel"; 
+import Cancel from "./pages/payment/cancel";
+
 
 import ScheduleDashboard from "./pages/Schedule/dashboard";
 
+
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import { createClient } from "@supabase/supabase-js";
 
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userState, setPresenceState] = useState({});
   const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
+
+
+  const subscribeToPresence = useCallback(async (room) => {
+    if (isLoggedIn) {
+      const userId = localStorage.getItem('userId') || 'anonymous';
+      const userStatus = {
+        user: userId,
+        online_at: new Date().toISOString(),
+      };
+      await room.track(userStatus);
+    }
+  }, [isLoggedIn]);
+
+
+  const handleSync = useCallback((room) => {
+    const newState = room.presenceState();
+    setPresenceState(newState);
+    console.log(userState);
+  }, []);
+
+
+  const handleJoin = useCallback(({ newPresences }) => {
+    newPresences.forEach(presence => {
+      console.log(`User ${presence.user} joined at ${presence.online_at}`);
+    });
+  }, []);
+
+
+  const handleLeave = useCallback(({ leftPresences }) => {
+    leftPresences.forEach(presence => {
+      console.log(`User ${presence.user} left`);
+    });
+  }, []);
+
+
+  useEffect(() => {
+    const room = supabase.channel('tutors_presence');
+
+
+    room.on('presence', { event: 'sync' }, () => handleSync(room));
+    room.on('presence', { event: 'join' }, handleJoin);
+    room.on('presence', { event: 'leave' }, handleLeave);
+
+
+    room.subscribe(async (status) => {
+      if (status === 'SUBSCRIBED') {
+        await subscribeToPresence(room);
+      }
+    });
+
+
+    return () => {
+      room.unsubscribe();
+    };
+  }, [subscribeToPresence, handleSync, handleJoin, handleLeave]);
+
+
   return (
     <BrowserRouter>
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
@@ -63,8 +130,10 @@ function App() {
         }}
       />
 
+
       <Routes>
         <Route path="/" element={<LandingPage />} />
+
 
         <Route
           path="/tutor/profile/:id"
@@ -75,6 +144,7 @@ function App() {
           }
         />
 
+
         <Route
           path="/booking/:id"
           element={
@@ -83,6 +153,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
 
         <Route
           path="/waiting_match"
@@ -93,7 +164,8 @@ function App() {
           }
         />
 
-  
+
+ 
         <Route
           path="/meetings/create"
           element={
@@ -102,6 +174,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
 
         <Route
           path="/meetings/:meetingId/edit"
@@ -112,6 +185,7 @@ function App() {
           }
         />
 
+
         {/* ---------- VIEW/BOOK ROUTE AFTER ---------- */}
         <Route
           path="/meetings/:meetingId/book"
@@ -121,6 +195,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
 
         {/* tutor-scoped views */}
         <Route
@@ -140,6 +215,7 @@ function App() {
           }
         />
 
+
         {/* matched tutors */}
         <Route
           path="/matched_tutors/:id"
@@ -149,6 +225,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
 
         {/* auth */}
         <Route
@@ -168,16 +245,19 @@ function App() {
         <Route path="/auth/waiting" element={<Waiting />} />
         <Route path="/auth/redirect" element={<RedirectPage />} />
 
-        <Route path="/listing" element={<TutorList />} />
+
+        <Route path="/listing" element={<TutorList presenceState={userState} />} />
+
 
         <Route path="/payment/:meetingId/" element={ <Elements stripe={stripePromise}><Payment /></Elements>}/>
         <Route path="/success" element={<Success />}/>
         <Route path="/cancel" element={<Cancel />}/>
         <Route path="/confirmation/:meetingId/" element={<Elements stripe={stripePromise}><Confirm /></Elements>}/>
 
+
         {/* Need to add userID to this  */}
-        <Route 
-        path="/dashboard/:id" 
+        <Route
+        path="/dashboard/:id"
         element={
           <ProtectedRoute>
             <ScheduleDashboard />
@@ -185,10 +265,15 @@ function App() {
           }
         />
 
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
+
 export default App;
+
+
+
