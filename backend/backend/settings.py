@@ -47,6 +47,15 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG' : {
+            "hosts" : [('redis', 6379)], # You are supposed to use service name and not localhost
+            },
+        },
+}
+        
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -106,6 +115,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://127.0.0.1",
     "http://127.0.0.1:5173",  # Alternative localhost format
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -130,22 +141,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-REDIS_URL = 'redis://localhost:6379/0'  # Change from 'redis:6379'
-
-# Or if using django-redis
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://localhost:6379/1',  # Change from 'redis://redis:6379/1'
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
-}
-
-# If using Celery with Redis
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Change from 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

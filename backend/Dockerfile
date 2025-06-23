@@ -1,22 +1,22 @@
-# --- builder ---
-FROM python:3.12-slim AS builder
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
-WORKDIR /build
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev curl && rm -rf /var/lib/apt/lists/*
-COPY requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps -r requirements.txt -w /wheels
+FROM python:3.12-alpine
 
-# --- runtime ---
-FROM python:3.12-slim AS runtime
-ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED 1
+
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends libpq5 curl && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /wheels /wheels
-RUN pip install --no-cache-dir /wheels/* && rm -rf /wheels
-RUN adduser --disabled-password --gecos '' django
-COPY . .
-RUN chown -R django:django /app
-USER django
-RUN mkdir -p /app/staticfiles
+
+# Install bash and update packages
+RUN apk update && apk upgrade && apk add --no-cache bash
+
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+COPY . ./
+
+RUN echo '#!/bin/bash\n\
+  celery -A backend worker --loglevel=info -E &\n\
+  stripe listen --forward-to http://127.0.0.1:8000/stripe/webhook/ &\n\
+  python manage.py runserver 0.0.0.0:8000' > start.sh && chmod +x start.sh
+
 EXPOSE 8000
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+CMD ["./start.sh"]
