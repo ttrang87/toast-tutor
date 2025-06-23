@@ -22,7 +22,7 @@ const Booking = () => {
   const [selectGrade, setSelectGrade] = useState("");
   const [aimScore, setAimScore] = useState("");
   const [maxScore, setMaxScore] = useState("");
-  const [note, setNote] = useState(null);
+  const [note, setNote] = useState("");
   const [teachingStyles, setTeachingStyles] = useState([]);
 
   const navigate = useNavigate();
