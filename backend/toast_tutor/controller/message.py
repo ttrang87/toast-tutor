@@ -125,25 +125,55 @@ def send_message(request):
 
     return Response(serialized_new, status=201)
 
+@api_view(["GET"])
+def check_exist_box(request):
+    try:
+        user1 = request.query_params.get("user1")
+        user2 = request.query_params.get("user2")
 
+        if not user1 or not user2:
+            raise ValueError
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Invalid or missing data"}, status=400)
 
+    u1 = get_object_or_404(User, id=user1)
+    u2 = get_object_or_404(User, id=user2)
 
-#  try:
-#         user1 = int(request.GET.get("user1"))
-#         user2 = int(request.GET.get("user2"))
-#     except (TypeError, ValueError):
-#         return JsonResponse({"error": "Invalid or missing user1 or user2 parameter"}, status=400)
-#     u1 = get_object_or_404(User, id=user1)
-#     u2 = get_object_or_404(User, id=user2)
+    if u1.id > u2.id:
+        u1, u2 = u2, u1
 
-#     #make sure smaller id will go first to make chatbox unique
-#     if u1.id > u2.id:
-#         u1, u2 = u2, u1 
+    chatbox = ChatBox.objects.filter(user1=u1, user2=u2).first()
+    
+    if chatbox:
+        return JsonResponse({"exists": True, "chatbox_id": chatbox.id}, status=200)
+    
+    return JsonResponse({"exists": False}, status=200)
 
-   
-    # chat_box = ChatBox.objects.create(user1 = u1, user2 = u2)
-    # return Response({
-    #     'messages': [],
-    #     'chat_box_id': chat_box.id,
-    # }, status=status.HTTP_200_OK)
+@api_view(["POST"])
+def start_message(request):
+    try: 
+        data = request.data  # rest_framework's request.data parses JSON automatically
+        user1 = data.get("user1")
+        user2 = data.get("user2")
+        content = data.get("content")
+        sender_id = data.get("sender_id")
+        if not user1 or not user2 or not content or not sender_id:
+            raise ValueError
+        sender = get_object_or_404(User, id=sender_id)
+
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Invalid or missing data"}, status=400)
+        
+    u1 = get_object_or_404(User, id=user1)
+    u2 = get_object_or_404(User, id=user2)
+
+    #make sure smaller id will go first to make chatbox unique
+    if u1.id > u2.id:
+        u1, u2 = u2, u1 
+
+    #create new box and add first message => always have meaningful box
+    chat_box = ChatBox.objects.create(user1 = u1, user2 = u2)
+    first_message = Message.objects.create(chatbox=chat_box, content=content, sender=sender)
+
+    return JsonResponse({"chatbox_id": chat_box.id}, status=201)
 
