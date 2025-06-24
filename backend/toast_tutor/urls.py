@@ -3,7 +3,7 @@ from .controller import matching, profile, auth, meeting, payment, tutorlist
 # from .views import register_user, login_user, logout_user
 from .controller.userauth import login_user, logout_user, register_user
 from .controller.meeting import get_user_meetings, get_user_meetings_by_status
-from .controller.message import get_user_chats, send_message, check_exist_box, start_message
+from .controller.message import get_user_chats, send_message, check_exist_box, start_message, get_chatbox_details
 
 urlpatterns = [
     # Specific
@@ -142,5 +142,6 @@ urlpatterns = [
     path("chat", get_user_chats, name="get_user_chats"),
     path("send-message", send_message, name="send_message"),
     path("check-exist-box", check_exist_box, name="check_exist_box"),
-    path("start-message", start_message, name="start-message")
+    path("start-message", start_message, name="start-message"),
+    path('chatbox/details', get_chatbox_details, name='get_chatbox_details'),
 ]

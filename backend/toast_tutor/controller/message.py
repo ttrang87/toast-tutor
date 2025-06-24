@@ -167,6 +167,11 @@ def start_message(request):
     u1 = get_object_or_404(User, id=user1)
     u2 = get_object_or_404(User, id=user2)
 
+    other_user_id = u2.id
+    avatar = u2.tutor_profile.avatar
+    name = u2.username
+
+
     #make sure smaller id will go first to make chatbox unique
     if u1.id > u2.id:
         u1, u2 = u2, u1 
@@ -175,5 +180,47 @@ def start_message(request):
     chat_box = ChatBox.objects.create(user1 = u1, user2 = u2)
     first_message = Message.objects.create(chatbox=chat_box, content=content, sender=sender)
 
-    return JsonResponse({"chatbox_id": chat_box.id}, status=201)
+    data = {
+        "chat_box_id": chat_box.id,
+        "other_user_id": other_user_id,
+        "name": name,
+        "avatar": avatar,
+        "hot_messages": get_hot_message(chat_box.id)
+    }
 
+    return JsonResponse({"new_chat_box": data}, status=201)
+
+
+@api_view(["GET"])
+def get_chatbox_details(request):
+    try:
+        chatbox_id = request.query_params.get("chatbox_id")
+        user_id = request.query_params.get("user_id")
+        
+        if not chatbox_id or not user_id:
+            return JsonResponse({"error": "Missing chatbox_id or user_id"}, status=400)
+            
+        user = get_object_or_404(User, id=user_id)
+        chatbox = get_object_or_404(ChatBox, id=chatbox_id)
+        
+        if chatbox.user1.id != user.id and chatbox.user2.id != user.id:
+            return JsonResponse({"error": "User not authorized for this chatbox"}, status=403)
+        
+        # Determine the other user
+        other_user = chatbox.user2 if chatbox.user1.id == user.id else chatbox.user1
+        
+        # Prepare response data (same format as get_user_chats)
+        data = {
+            "chat_box_id": chatbox.id,
+            "other_user_id": other_user.id,
+            "name": other_user.username,
+            "avatar": other_user.tutor_profile.avatar,
+            "hot_messages": get_hot_message(chatbox.id)
+        }
+        
+        return Response({"chatbox": data}, status=200)
+        
+    except (TypeError, ValueError) as e:
+        return JsonResponse({"error": "Invalid parameters"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": "Internal server error"}, status=500)

@@ -5,6 +5,8 @@ import covers from "../CoverList";
 import { MessageCircleMore } from "lucide-react";
 import FirstMessageModal from "../../messenger/FirstMessageModal";
 import { useState } from "react";
+import { API_ROUTES } from "../../../constant/APIRoutes";
+import axios from "axios";
 
 const BasicInfor = ({ data }) => {
     const { id } = useParams();
@@ -26,6 +28,39 @@ const BasicInfor = ({ data }) => {
         }
         return [];
     };
+
+    const handleClickMessage = async () => {
+        try {
+            const user1 = localStorage.getItem("userId")
+            if (!user1 || !id) {
+                console.error("Missing input")
+                return
+            }
+
+            const data = {
+                user1: user1,
+                user2: id,
+            }
+
+            const response = await axios.get(API_ROUTES.CHECK_EXIST_BOX, {
+                params: data, 
+            })
+
+            if (response.status !== 200) throw new Error("Failed to check chat status")
+
+            const exist = response.data.exists
+
+            if (!exist) {
+                setMessageOpen(true)
+            } else {
+                const chatbox_id = response.data.chatbox_id
+                navigate(`/chat/${chatbox_id}`)
+            }
+
+        } catch (error) {
+            console.error("Failed to parse teaching_style:", error);
+        }
+    }
 
     const teachingStyle = parseTeachingStyle(teaching_style);
     const fetchAvatar = avatars.find((ava) => ava.id === avatar);
@@ -79,7 +114,7 @@ const BasicInfor = ({ data }) => {
                             <div>{email}</div>
                         </div>
                         <button
-                            onClick={() => setMessageOpen(true)}
+                            onClick={() => handleClickMessage()}
                             className="px-4 py-2 bg-gradient-to-r from-[#E9967A] to-[#cf4f1d] rounded-xl text-white flex gap-2 items-center hover:scale-105 transition duration-200">
                             <MessageCircleMore className="h-5 w-5" /> Message
                         </button>
@@ -100,7 +135,7 @@ const BasicInfor = ({ data }) => {
             </div>
 
             {messageOpen && (
-                <FirstMessageModal onClose={() => setMessageOpen(false)} tutorName={username}/>
+                <FirstMessageModal onClose={() => setMessageOpen(false)} tutorName={username} />
             )}
         </div>
     );

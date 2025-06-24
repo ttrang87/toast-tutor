@@ -60,5 +60,8 @@ export const API_ROUTES = {
 
     /*CHAT SECTION*/
     GET_CHATS: `${API_BASE_URL}/chat`,
-    POST_NEW_MESSAGE: `${API_BASE_URL}/send-message`
+    POST_NEW_MESSAGE: `${API_BASE_URL}/send-message`,
+    CHECK_EXIST_BOX: `${API_BASE_URL}/check-exist-box`,
+    START_MESSAGE: `${API_BASE_URL}/start-message`,
+    GET_SINGLE_CHAT: `${API_BASE_URL}/chatbox/details`
 }

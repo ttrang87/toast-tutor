@@ -3,8 +3,10 @@ import logo from "../../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../services/authService";
 import { MessageIcon } from "../../assets/icon";
+import { useChatContext } from "../messenger/ChatContext";
 const Header = (props) => {
   const navigate = useNavigate();
+  const { resetChatState } = useChatContext();
   const { setIsLoggedIn } = props; // Destructure the specific prop
 
   // Check login status
@@ -18,6 +20,7 @@ const Header = (props) => {
   const handleLogout = () => {
     props.setIsLoggedIn(false);
     logout();
+    resetChatState();
     navigate("/");
   };
 

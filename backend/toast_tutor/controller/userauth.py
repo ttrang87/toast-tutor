@@ -48,8 +48,12 @@ def register_user(request):
 def login_user(request):
     username = request.data.get("username")
     password = request.data.get("password")
-    user = authenticate(username=username, password=password)
-    if user:
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if user.check_password(password):
         user.last_login = timezone.now()  # Set last_login to the current timestamp
         user.save()  # Save the user to persist the change
 
