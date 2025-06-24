@@ -70,6 +70,7 @@ const TutorList = (presenceState) => {
         setLoading(true);
         const response = await axios.get(API_ROUTES.GET_ALL_TUTORS);
         // Set filter options from API response
+        console.log(response);
         setFilterOptions({
           available_courses: response.data.filter_options.available_courses,
           available_exams: response.data.filter_options.available_exams

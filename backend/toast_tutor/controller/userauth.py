@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status
@@ -79,3 +80,23 @@ def logout_user(request):
         )
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def update_user_active_status(request):
+    """
+    Update the is_active field for a user.
+    """
+    user_id = request.data.get("user_id")
+    is_active = request.data.get("is_active")
+
+    if user_id is None or is_active is None:
+        return Response({"error": "user_id and is_active are required."}, status=400)
+
+    try:
+        user = User.objects.get(id=user_id)
+        user.is_active = is_active
+        user.save()
+        return Response({"message": "User active status updated successfully."}, status=200)
+    except User.DoesNotExist:
+        return Response({"error": "User not found."}, status=404)

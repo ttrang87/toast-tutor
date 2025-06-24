@@ -11,11 +11,13 @@ export const login = async (userData) => {
   const response = await axios.post(`${API_URL}login/`, userData);
   if (response.data.access) {
     localStorage.setItem("userId", response.data.userId);
+    localStorage.setItem("user_name", response.data.username); // Assuming the API response contains the user's name
   }
   return response.data;
 };
 
 export const logout = () => {
-  // localStorage.removeItem("user");
   localStorage.clear();
 };
+
+

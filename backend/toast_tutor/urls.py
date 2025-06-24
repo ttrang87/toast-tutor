@@ -5,6 +5,7 @@ from .controller import matching, profile, auth, meeting, payment
 from .controller.userauth import login_user, logout_user, register_user
 from .controller import tutorlist
 from .controller.meeting import get_user_meetings, get_user_meetings_by_status
+from .controller import userauth
 
 urlpatterns = [
     # Specific
@@ -136,4 +137,6 @@ urlpatterns = [
         get_user_meetings_by_status,
         name="user_meetings_by_status",
     ),
+    # Update user active status
+    path("status/", userauth.update_user_active_status, name="update_user_active_status"),
 ]

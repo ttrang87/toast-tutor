@@ -38,6 +38,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { createClient } from "@supabase/supabase-js";
 
+import { updateUserStatus } from "./services/userService"; // Import your user status update function
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -45,65 +46,73 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userState, setPresenceState] = useState({});
   const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
-
-
+const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userState, setPresenceState] = useState({});
   const subscribeToPresence = useCallback(async (room) => {
     if (isLoggedIn) {
-      const userId = localStorage.getItem('userId') || 'anonymous';
+      const userId = localStorage.getItem("userId") || "anonymous";
       const userStatus = {
         user: userId,
         online_at: new Date().toISOString(),
       };
+
+      // Track the user's presence in the Supabase channel
       await room.track(userStatus);
+
+      // Send the user's status to the backend API
+      try {
+        await updateUserStatus(userId, true); // Set `is_active` to true
+        console.log("User status updated to active");
+      } catch (error) {
+        console.error("Failed to update user status:", error);
+      }
     }
   }, [isLoggedIn]);
-
 
   const handleSync = useCallback((room) => {
     const newState = room.presenceState();
     setPresenceState(newState);
-    console.log(userState);
+    console.log("Presence state updated:", newState);
   }, []);
 
-
   const handleJoin = useCallback(({ newPresences }) => {
-    newPresences.forEach(presence => {
+    newPresences.forEach((presence) => {
       console.log(`User ${presence.user} joined at ${presence.online_at}`);
     });
   }, []);
 
-
-  const handleLeave = useCallback(({ leftPresences }) => {
-    leftPresences.forEach(presence => {
+  const handleLeave = useCallback(async ({ leftPresences }) => {
+    leftPresences.forEach(async (presence) => {
       console.log(`User ${presence.user} left`);
+
+      // Update the user's status to inactive in the backend
+      try {
+        await updateUserStatus(presence.user, false); // Set `is_active` to false
+        console.log(`User ${presence.user} status updated to inactive`);
+      } catch (error) {
+        console.error(`Failed to update status for user ${presence.user}:`, error);
+      }
     });
   }, []);
 
-
   useEffect(() => {
-    const room = supabase.channel('tutors_presence');
+    const room = supabase.channel("tutors_presence");
 
-
-    room.on('presence', { event: 'sync' }, () => handleSync(room));
-    room.on('presence', { event: 'join' }, handleJoin);
-    room.on('presence', { event: 'leave' }, handleLeave);
-
+    room.on("presence", { event: "sync" }, () => handleSync(room));
+    room.on("presence", { event: "join" }, handleJoin);
+    room.on("presence", { event: "leave" }, handleLeave);
 
     room.subscribe(async (status) => {
-      if (status === 'SUBSCRIBED') {
+      if (status === "SUBSCRIBED") {
         await subscribeToPresence(room);
       }
     });
-
 
     return () => {
       room.unsubscribe();
     };
   }, [subscribeToPresence, handleSync, handleJoin, handleLeave]);
-
 
   return (
     <BrowserRouter>

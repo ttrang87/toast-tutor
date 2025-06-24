@@ -19,7 +19,7 @@ const ReviewPosting = ({ onAddReview }) => {
         const clientReview = {
             ...reviewData,
             date: new Date().toLocaleString(), // Changed to local time
-            user_name: 'You'
+            user_name: localStorage.getItem('user_name') || 'You',
         };
         if (onAddReview) onAddReview(clientReview);
         try {

@@ -68,7 +68,6 @@ def process_single_user(user):
             "exams": exam_list,
             "hourly_rate": hourly_rate,
             "avatar": avatar,
-            "status": user.status,
         }
     except Exception as e:
         print(f"Error processing user {user.username}: {str(e)}")

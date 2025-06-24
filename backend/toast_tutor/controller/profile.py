@@ -272,7 +272,7 @@ def get_review(request, tutorId):
                 for review in reviews
             ],
         }
-        cache.set(cache_key, response_data, timeout=3600)  # Cache for 1 hour
+        cache.set(cache_key, response_data, timeout=360)  # Cache for 1 hour
         return Response(response_data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
