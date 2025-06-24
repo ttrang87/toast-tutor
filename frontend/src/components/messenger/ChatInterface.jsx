@@ -1,15 +1,20 @@
 import { useState, useRef, useEffect } from "react"
-import { Send, MoreVertical, Phone, Video } from "lucide-react"
+import { Send, MoreVertical, Phone, Video, Sticker } from "lucide-react"
 import avatars from "../tutor_profile/AvatarList"
 import { API_ROUTES } from "../../constant/APIRoutes"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
+import StickerPicker from "./StickerPicker"
+
 export default function ChatInterface({ contact, conversation }) {
   const navigate = useNavigate()
   const [messages, setMessages] = useState(conversation.messages)
   const [newMessage, setNewMessage] = useState("")
   const messagesEndRef = useRef(null)
   const userId = localStorage.getItem("userId")
+
+  // Sticker picker toggle state
+  const [showStickerPicker, setShowStickerPicker] = useState(false)
 
   useEffect(() => {
     setMessages(conversation.messages)
@@ -24,42 +29,39 @@ export default function ChatInterface({ contact, conversation }) {
   }
 
   const getAvatarById = (avatarId) => {
-    const avatar = avatars.find(av => av.id === avatarId)
+    const avatar = avatars.find((av) => av.id === avatarId)
     return avatar ? avatar.src : null
   }
 
   const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
+    e.preventDefault()
+    if (!newMessage.trim()) return
 
     const newMsg = {
-      chat_box_id: contact.id, // or contact.id if that's your chat ID
+      chat_box_id: contact.id,
       content: newMessage,
       sender_id: parseInt(userId),
-    };
+    }
 
     try {
-      const response = await axios.post(API_ROUTES.POST_NEW_MESSAGE, newMsg);
+      const response = await axios.post(API_ROUTES.POST_NEW_MESSAGE, newMsg)
       if (response.status !== 201) throw new Error("Failed to send")
-      setNewMessage("");
+      setNewMessage("")
     } catch (error) {
-      console.error("Failed to send message:", error);
+      console.error("Failed to send message:", error)
     }
-  };
-
+  }
 
   const formatTime = (dateInput) => {
     let date
 
     if (typeof dateInput === "string") {
-      // Truncate microseconds to milliseconds
-      const cleaned = dateInput.replace(/\.(\d{3})\d*Z?$/, '.$1Z')
+      const cleaned = dateInput.replace(/\.(\d{3})\d*Z?$/, ".$1Z")
       date = new Date(cleaned)
     }
 
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
   }
-
 
   const contactAvatarSrc = getAvatarById(contact.avatar)
 
@@ -70,12 +72,22 @@ export default function ChatInterface({ contact, conversation }) {
         <div className="flex items-center space-x-3">
           <div className="relative">
             <div className="h-12 w-12 rounded-full border-3 border-white shadow-md bg-gradient-to-br from-yellow-800 to-yellow-600 flex items-center justify-center">
-              <button className="rounded-full" onClick={() => navigate(`/tutor/profile/${contact.other_user_id}`)}>
+              <button
+                className="rounded-full"
+                onClick={() => navigate(`/tutor/profile/${contact.other_user_id}`)}
+              >
                 {contactAvatarSrc ? (
-                  <img src={contactAvatarSrc} alt={contact.name} className="h-full w-full rounded-full object-cover" />
+                  <img
+                    src={contactAvatarSrc}
+                    alt={contact.name}
+                    className="h-full w-full rounded-full object-cover"
+                  />
                 ) : (
                   <span className="text-white font-bold">
-                    {contact.name.split(" ").map(n => n[0]).join("")}
+                    {contact.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
                   </span>
                 )}
               </button>
@@ -113,28 +125,48 @@ export default function ChatInterface({ contact, conversation }) {
 
             return (
               <div key={message.id} className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
-                <div className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${isUser ? "flex-row-reverse space-x-reverse" : ""}`}>
+                <div
+                  className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${
+                    isUser ? "flex-row-reverse space-x-reverse" : ""
+                  }`}
+                >
                   {!isUser && (
                     <div className="h-8 w-8 mb-1 rounded-full border-2 border-orange-300 bg-gradient-to-br from-orange-400 to-orange-300 flex items-center justify-center flex-shrink-0">
                       {messageAvatarSrc ? (
-                        <img src={messageAvatarSrc} alt={contact.name} className="h-full w-full rounded-full object-cover" />
+                        <img
+                          src={messageAvatarSrc}
+                          alt={contact.name}
+                          className="h-full w-full rounded-full object-cover"
+                        />
                       ) : (
                         <span className="text-white text-xs font-bold">
-                          {contact.name.split(" ").map(n => n[0]).join("")}
+                          {contact.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")}
                         </span>
                       )}
                     </div>
                   )}
                   <div className="flex flex-col">
                     <div
-                      className={`px-4 py-2 rounded-2xl shadow-sm ${isUser
-                        ? "bg-gradient-to-r from-orange-400 to-orange-300 text-white rounded-br-md font-medium"
-                        : "bg-white text-yellow-800 border-2 border-orange-200 rounded-bl-md font-medium shadow-sm"
-                        }`}
+                      className={`px-4 py-2 rounded-2xl shadow-sm ${
+                        isUser
+                          ? "bg-gradient-to-r from-orange-400 to-orange-300 text-white rounded-br-md font-medium"
+                          : "bg-white text-yellow-800 border-2 border-orange-200 rounded-bl-md font-medium shadow-sm"
+                      }`}
                     >
-                      <p className="text-sm leading-relaxed">{message.text}</p>
+                      {/^https?:\/\/.*\.(gif|png|jpg|jpeg)$/i.test(message.text) ? (
+                        <img src={message.text} alt="sticker" className="max-h-48 rounded" />
+                      ) : (
+                        <p className="text-sm leading-relaxed">{message.text}</p>
+                      )}
                     </div>
-                    <span className={`text-xs text-yellow-700 mt-1 font-medium ${isUser ? "text-right" : "text-left"}`}>
+                    <span
+                      className={`text-xs text-yellow-700 mt-1 font-medium ${
+                        isUser ? "text-right" : "text-left"
+                      }`}
+                    >
                       {formatTime(message.created_at)}
                     </span>
                   </div>
@@ -146,9 +178,19 @@ export default function ChatInterface({ contact, conversation }) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message Input */}
+      {/* Message Input and Sticker Picker */}
       <div className="border-t-2 border-orange-300 p-4 bg-gradient-to-r from-orange-100 to-orange-50">
         <div className="flex items-center space-x-3">
+          {/* Toggle Sticker Picker Button */}
+          <button
+            type="button"
+            onClick={() => setShowStickerPicker((v) => !v)}
+            className="bg-gradient-to-r from-orange-300 to-orange-200 hover:from-red-300 hover:to-orange-300 text-white rounded-full p-3 transition-all shadow-md font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Toggle Sticker Picker"
+          >
+            <Sticker className="w-4 h-4"/>
+          </button>
+
           <div className="flex-1 relative">
             <input
               type="text"
@@ -156,7 +198,7 @@ export default function ChatInterface({ contact, conversation }) {
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault()
                   handleSendMessage(e)
                 }
@@ -172,6 +214,15 @@ export default function ChatInterface({ contact, conversation }) {
             <Send className="h-4 w-4" />
           </button>
         </div>
+
+        {showStickerPicker && (
+          <StickerPicker
+            onSelect={(sticker) => {
+              setNewMessage(sticker.images.fixed_height.url)
+              setShowStickerPicker(false)
+            }}
+          />
+        )}
       </div>
     </div>
   )
