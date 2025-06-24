@@ -10,7 +10,7 @@ from django.utils import timezone
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    status = models.CharField(max_length=20, default="Offline")
+    status = models.CharField(max_length=50, default="active")  # Add this line
     groups = models.ManyToManyField(
         "auth.Group",
         related_name="toast_tutor_users",  # Custom related_name

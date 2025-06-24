@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@stripe/stripe-js": "^7.4.0",
     "axios": "^1.7.9",
     "react-router-dom": "^7.1.1"
   }

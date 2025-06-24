@@ -84,7 +84,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "toast_tutor",
     "django_celery_results",
-    "channels"
 ]
 
 MIDDLEWARE = [
@@ -204,10 +203,3 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 CELERY_RESULT_BACKEND = "django-db"
-
-# Define channel layers (using in-memory backend for simplicity)
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}

@@ -121,7 +121,6 @@ class UserSerializer(serializers.ModelSerializer):
             "course",
             "exam",
             "award",
-            "status"
         ]
 
 
