@@ -41,6 +41,12 @@ const TutorCard = ({ tutor, subjectName, isBestChoice }) => {
             alt="Avatar"
             className="w-full h-full object-cover rounded-full"
           />
+          {/* Status indicator */}
+          <span
+            className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-white ${
+              tutor.isOnline ? "bg-green-500" : "bg-gray-400"
+            }`}
+          ></span>
         </div>
         <div className="flex flex-col gap-2">
           <div className="text-xl font-bold">{tutor.username}</div>

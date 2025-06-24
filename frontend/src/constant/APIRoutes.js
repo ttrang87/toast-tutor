@@ -40,7 +40,8 @@ export const API_ROUTES = {
     DELETE_MEETING : (id) => `${API_BASE_URL}/meetings/${id}/delete/`,
     
      /*TUTOR SORTING*/
-    FIND_TUTORS: `${API_BASE_URL}/find_tutors/`,
+    FIND_CLASS_TUTORS: `${API_BASE_URL}/find_class_tutors/`,
+    FIND_SOS_TUTORS: `${API_BASE_URL}/find_sos_tutors/`,
     GET_ALL_TUTORS:`${API_BASE_URL}/get_all_tutor/`,
 
     /*FORGOT PASSWORD*/

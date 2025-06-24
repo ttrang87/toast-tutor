@@ -9,7 +9,8 @@ from .controller import userauth
 
 urlpatterns = [
     # Specific
-    path("find_tutors/", matching.find_tutors, name="find_tutors"),
+    path("find_class_tutors/", matching.find_class_tutors, name="find_tutors"),
+    path("find_sos_tutors/", matching.find_sos_tutors, name="find_sos_tutors"), 
     # AUTHENTICATION
     path("auth/register/", register_user, name="register"),
     path("auth/meeting/", meeting.get_meetings, name="meeting"),
