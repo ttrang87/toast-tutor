@@ -243,6 +243,8 @@ def add_review(request, tutorId):
 
         if serializer.is_valid():
             serializer.save()
+            cache_key = f"reviews_{tutorId}"
+            cache.delete(cache_key)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:

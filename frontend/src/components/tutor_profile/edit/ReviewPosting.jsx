@@ -3,12 +3,17 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { API_ROUTES } from '../../../constant/APIRoutes';
 import StarRating from './StarRating';
+import toast from 'react-hot-toast';
 
 const ReviewPosting = ({ onAddReview }) => {
     const { id } = useParams();
     const [rating, setRating] = useState(0);
+    const [isLoading, setIsLoading] = useState(false); // Loading state
+
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setIsLoading(true); // Start loading
+        const toastId = toast.loading('Submitting your review...'); // Show loading toast
         const formData = new FormData(event.target);
         const reviewData = {
             tutor: id, 
@@ -21,11 +26,23 @@ const ReviewPosting = ({ onAddReview }) => {
             date: new Date().toLocaleString(), // Changed to local time
             user_name: localStorage.getItem('user_name') || 'You',
         };
-        if (onAddReview) onAddReview(clientReview);
         try {
             await axios.post(API_ROUTES.REVIEW_POSTING(id), reviewData);
+            toast.success('Review submitted successfully!', { id: toastId }); // Show success toast
+            // Only add review to UI after successful backend submission
+            if (onAddReview) onAddReview(clientReview);
+            // Reset form after successful submission
+            event.target.reset();
+            setRating(0);
         } catch (error) {
             console.error('Error submitting review:', error);
+            toast.error('Failed to submit review. Please try again.', { id: toastId }); // Show error toast
+            // Remove the review from client state if backend failed
+            if (onAddReview) {
+                // You might want to implement a callback to remove the optimistic update
+            }
+        } finally {
+            setIsLoading(false); // End loading
         }
     };
 
@@ -35,7 +52,9 @@ const ReviewPosting = ({ onAddReview }) => {
             <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
                 <textarea name="comment" className="border rounded p-2" placeholder="Write your review..." required />
                 <h2 className="text-lg font-semibold text-yellow-800 mb-2">Your Rating<StarRating rating={rating} setRating={setRating} /> </h2>
-                <button type="submit" className="bg-yellow-700 text-white rounded px-4 py-2 w-fit">Submit</button>
+                <button type="submit" className="bg-yellow-700 text-white rounded px-4 py-2 w-fit" disabled={isLoading}>
+                    {isLoading ? 'Submitting...' : 'Submit'}
+                </button>
             </form>
         </div>
     );
