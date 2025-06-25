@@ -25,7 +25,7 @@ const updateUserStatus = async (userId, isActive) => {
 };
 
 export const usePresence = (userId, onPresenceChange) => {
-  const presenceMapRef = useRef({}); // No re-renders
+  const presenceMapRef = useRef({});
   const lastHeartbeatRef = useRef(Date.now());
   const heartbeatTimerRef = useRef(null);
   const presenceChannelRef = useRef(null);

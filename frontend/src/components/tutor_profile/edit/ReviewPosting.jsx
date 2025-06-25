@@ -8,12 +8,11 @@ import toast from 'react-hot-toast';
 const ReviewPosting = ({ onAddReview }) => {
     const { id } = useParams();
     const [rating, setRating] = useState(0);
-    const [isLoading, setIsLoading] = useState(false); // Loading state
-
+    const [isLoading, setIsLoading] = useState(false); 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setIsLoading(true); // Start loading
-        const toastId = toast.loading('Submitting your review...'); // Show loading toast
+        setIsLoading(true); 
+        const toastId = toast.loading('Submitting your review...');
         const formData = new FormData(event.target);
         const reviewData = {
             tutor: id, 
@@ -23,26 +22,20 @@ const ReviewPosting = ({ onAddReview }) => {
         };
         const clientReview = {
             ...reviewData,
-            date: new Date().toLocaleString(), // Changed to local time
+            date: new Date().toLocaleString(),
             user_name: localStorage.getItem('user_name') || 'You',
         };
         try {
             await axios.post(API_ROUTES.REVIEW_POSTING(id), reviewData);
-            toast.success('Review submitted successfully!', { id: toastId }); // Show success toast
-            // Only add review to UI after successful backend submission
+            toast.success('Review submitted successfully!', { id: toastId }); 
             if (onAddReview) onAddReview(clientReview);
-            // Reset form after successful submission
             event.target.reset();
             setRating(0);
         } catch (error) {
             console.error('Error submitting review:', error);
-            toast.error('Failed to submit review. Please try again.', { id: toastId }); // Show error toast
-            // Remove the review from client state if backend failed
-            if (onAddReview) {
-                // You might want to implement a callback to remove the optimistic update
-            }
+            toast.error('Failed to submit review. Please try again.', { id: toastId });  
         } finally {
-            setIsLoading(false); // End loading
+            setIsLoading(false); 
         }
     };
 
