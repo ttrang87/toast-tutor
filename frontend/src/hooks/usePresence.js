@@ -1,14 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-import { updateUserStatus } from "../services/userService"; // Corrected import path
 import { createClient } from "@supabase/supabase-js";
+import axios from "axios";
+import { API_ROUTES } from "../constant/APIRoutes";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 const CHANNEL_NAME = "online-users";
-const HEARTBEAT_INTERVAL = 10000; // 10 seconds
-const OFFLINE_TIMEOUT = 30000; // 30 seconds without heartbeat = offline
+const HEARTBEAT_INTERVAL = 10000; 
+const OFFLINE_TIMEOUT = 30000;
+
+const updateUserStatus = async (userId, isActive) => {
+    try {
+        const response = await axios.post(API_ROUTES.UPDATE_USER_STATUS, {
+            user_id: userId,
+            is_active: isActive,
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error updating user status:", error);
+        throw error;
+    }
+};
 
 export const usePresence = (userId, onPresenceChange) => {
   const presenceMapRef = useRef({}); // No re-renders

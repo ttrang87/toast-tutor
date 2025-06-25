@@ -28,13 +28,7 @@ import Cancel from "./pages/payment/cancel";
 import ScheduleDashboard from "./pages/Schedule/dashboard";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
-import { createClient } from "@supabase/supabase-js";
-import { usePresence } from "../hooks/usePresence.js";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
+import { usePresence } from "./hooks/usePresence.js";
 
 function App() {
   const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
