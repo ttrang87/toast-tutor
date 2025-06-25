@@ -7,12 +7,11 @@ import { TutorListHeader } from "./Listing/TutorListHeader";
 import { TutorListFilter } from "./Listing/TutorListFilter";
 import { TutorListTable } from "./Listing/TutorListTable";
 import { TutorListPagination } from "./Listing/TutorListPagination";
-
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const TutorList = (presenceState) => {
+const TutorList = (presenceRef) => {
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -47,22 +46,14 @@ const TutorList = (presenceState) => {
   };
   useEffect(() => {
     const updateOnlineUsers = () => {
-      const newOnlineUsers = [];
-      for (const [key, presences] of Object.entries(presenceState.presenceState)) {
-        if (Array.isArray(presences)) {
-          presences.forEach(presence => {
-            if (presence.online_at) {
-              newOnlineUsers.push(presence.user);
-            }
-          });
-        }
-      }
+      const presences = presenceRef.presenceRef['current'];
+      const newOnlineUsers = Object.keys(presences);
       setOnlineUsers(newOnlineUsers);
     };
 
     updateOnlineUsers();
-  }, [presenceState.presenceState]);
-
+  }, [presenceRef.presenceRef]);
+  console.log('Online Users:', onlineUsers);
   useEffect(() => {
     const fetchTutors = async () => {
       try {

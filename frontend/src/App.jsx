@@ -20,25 +20,16 @@ import Waiting from "./pages/auth/password/Waiting";
 import LogIn from "./pages/auth/LogIn";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-
 import TutorList from "./pages/TutorList";
-
-
 import Payment from "./pages/payment/payment";
 import Success from "./pages/payment/success.jsx";
 import Confirm from "./pages/payment/Confirm";
 import Cancel from "./pages/payment/cancel";
-
-
 import ScheduleDashboard from "./pages/Schedule/dashboard";
-
-
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { createClient } from "@supabase/supabase-js";
-
-import { updateUserStatus } from "./services/userService"; // Import your user status update function
+import { usePresence } from "../hooks/usePresence.js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -48,134 +39,8 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 function App() {
   const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userState, setPresenceState] = useState({});
-  const [leaveTimeouts, setLeaveTimeouts] = useState(new Map()); // Track leave timeouts
-  const [lastHeartbeat, setLastHeartbeat] = useState(null); // Track the last heartbeat timestamp
-
-  const subscribeToPresence = useCallback(async (room) => {
-    if (isLoggedIn) {
-      const userId = localStorage.getItem("userId") || "anonymous";
-
-      // Clear any pending leave timeout for this user
-      if (leaveTimeouts.has(userId)) {
-        clearTimeout(leaveTimeouts.get(userId));
-        leaveTimeouts.delete(userId);
-        setLeaveTimeouts(new Map(leaveTimeouts));
-      }
-
-      const userStatus = {
-        user: userId,
-        online_at: new Date().toISOString(),
-      };
-
-      // Track the user's presence in the Supabase channel
-      await room.track(userStatus);
-
-      // Send the user's status to the backend API
-      try {
-        await updateUserStatus(userId, true); // Set `is_active` to true
-        console.log("User status updated to active");
-      } catch (error) {
-        console.error("Failed to update user status:", error);
-      }
-    }
-  }, [isLoggedIn, leaveTimeouts]);
-
-  const handleSync = useCallback((room) => {
-    const newState = room.presenceState();
-    setPresenceState(newState);
-    console.log("Presence state updated:", newState);
-  }, []);
-
-  const handleJoin = useCallback(({ newPresences }) => {
-    newPresences.forEach((presence) => {
-      console.log(`User ${presence.user} joined at ${presence.online_at}`);
-    });
-  }, []);
-
-  const handleLeave = useCallback(async ({ leftPresences }) => {
-    leftPresences.forEach(async (presence) => {
-      console.log(`User ${presence.user} left`);
-
-      // Set a timeout to mark user as inactive after a delay
-      const timeoutId = setTimeout(async () => {
-        try {
-          await updateUserStatus(presence.user, false); // Set `is_active` to false
-          console.log(`User ${presence.user} status updated to inactive`);
-          // Remove from timeout tracking
-          setLeaveTimeouts((prev) => {
-            const newMap = new Map(prev);
-            newMap.delete(presence.user);
-            return newMap;
-          });
-        } catch (error) {
-          console.error(`Failed to update status for user ${presence.user}:`, error);
-        }
-      }, 10000); // 10-second delay
-
-      // Track the timeout
-      setLeaveTimeouts((prev) => {
-        const newMap = new Map(prev);
-        newMap.set(presence.user, timeoutId);
-        return newMap;
-      });
-    });
-  }, []);
-
-  useEffect(() => {
-    const room = supabase.channel("tutors_presence");
-
-    room.on("presence", { event: "sync" }, () => handleSync(room));
-    room.on("presence", { event: "join" }, handleJoin);
-    room.on("presence", { event: "leave" }, handleLeave);
-
-    room.subscribe(async (status) => {
-      if (status === "SUBSCRIBED") {
-        await subscribeToPresence(room);
-      }
-    });
-
-    return () => {
-      room.unsubscribe();
-    };
-  }, [subscribeToPresence, handleSync, handleJoin, handleLeave]);
-
-  const HEARTBEAT_INTERVAL = 30000; // 30 seconds
-
-useEffect(() => {
-  let heartbeatInterval;
-
-  const sendHeartbeat = async () => {
-    if (isLoggedIn) {
-      const userId = localStorage.getItem("userId") || "anonymous";
-      const now = new Date().getTime();
-
-      // Only send a heartbeat if enough time has passed since the last one
-      if (!lastHeartbeat || now - lastHeartbeat >= HEARTBEAT_INTERVAL) {
-        try {
-          await updateUserStatus(userId, true); // Keep `is_active` as true
-          console.log("Heartbeat sent: User is active");
-          setLastHeartbeat(now); // Update the last heartbeat timestamp
-        } catch (error) {
-          console.error("Failed to send heartbeat:", error);
-        }
-      }
-    }
-  };
-
-  if (isLoggedIn) {
-    // Start sending heartbeats
-    heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
-    sendHeartbeat(); // Send an initial heartbeat immediately
-  }
-
-  return () => {
-    if (heartbeatInterval) {
-      clearInterval(heartbeatInterval);
-    }
-  };
-}, [isLoggedIn, lastHeartbeat]);
-
+  const userId = localStorage.getItem("userId");
+  const presenceRef = usePresence(userId);  
   return (
     <BrowserRouter>
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
@@ -317,7 +182,7 @@ useEffect(() => {
         <Route path="/auth/redirect" element={<RedirectPage />} />
 
 
-        <Route path="/listing" element={<TutorList presenceState={userState} />} />
+        <Route path="/listing" element={<TutorList presenceRef={presenceRef} />} />
 
 
         <Route path="/payment/:meetingId/" element={ <Elements stripe={stripePromise}><Payment /></Elements>}/>
