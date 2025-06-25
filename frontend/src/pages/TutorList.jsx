@@ -32,7 +32,6 @@ const TutorList = (presenceState) => {
   const [minimumRating, setMinimumRating] = useState(0);
 
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const ws = useRef(null);
 
   const rowsPerPage = 5;
 

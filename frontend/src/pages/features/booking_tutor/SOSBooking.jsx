@@ -35,8 +35,6 @@ const SOSBooking = () => {
           subject_name: selectExam,
           date: "sos",
         };
-
-        // Store search parameters in localStorage for the matched tutors page
         localStorage.setItem("selectedSubject", selectExam);
 
         // Navigate to waiting page first

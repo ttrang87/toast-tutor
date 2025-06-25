@@ -157,109 +157,37 @@ def find_class_tutors(request):
 
 @api_view(["POST"])
 def find_sos_tutors(request):
-    # Get request data
     req = request.data
     userId = req.get("userId")
     request_type = req.get("request_type")
     subject_name = req.get("subject_name")
-    # date = req.get("date")  # Should be "sos"
+    # date = req.get("date")
 
     user = get_object_or_404(User, id=userId)
 
     try:
-        # Create new tutor request for SOS
-        TutorRequest.objects.create(user=user, description=f"SOS request for {subject_name}")
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Cache key for SOS tutors
-    cache_key = f"sos_tutors:{subject_name}"
-    
-    tutors = cache.get(cache_key)
-
-    if not tutors:
+        # Filter tutors based on the request type and subject
         if request_type == "exam":
-            # Find tutors who have the exam
             matching_items = Exam.objects.filter(name=subject_name)
         elif request_type == "subject":
-            # Find tutors who teach the subject
             matching_items = Course.objects.filter(name=subject_name)
-        else:
-            return Response({"error": "Invalid request type"}, status=status.HTTP_400_BAD_REQUEST)
 
         matching_user_ids = matching_items.values_list("user_id", flat=True).distinct()
 
         tutors = []
         for user_id in matching_user_ids:
             try:
-                tutor = User.objects.get(id=user_id)
-                # Check if tutor is active and has a tutor profile
-                if (hasattr(tutor, 'tutor_profile') and 
-                    tutor.is_active):
-                    tutors.append(tutor)
+                tutor = User.objects.get(id=user_id, is_active=True)  # Ensure tutor is active
+                tutors.append({
+                    "userId": tutor.id,
+                    "username": tutor.username,
+                    "avatar": tutor.tutor_profile.avatar,
+                    "hourlyRate": tutor.tutor_profile.hourly_rate,
+                })
             except (User.DoesNotExist, TutorProfile.DoesNotExist):
                 continue
 
-        # Cache the results for 60 seconds (shorter cache for SOS)
-        if tutors:
-            cache.set(cache_key, tutors, timeout=60)
-        else:
-            return Response([], status=status.HTTP_200_OK)
+        return Response(tutors, status=status.HTTP_200_OK)
 
-    # Prepare tutor list for SOS (simplified data)
-    sos_tutors = []
-
-    for tutor in tutors:
-        try:
-            first_school = None
-            education_records = tutor.education_records.all()
-            if education_records and len(education_records) > 0:
-                first_school = education_records.first().school_name
-
-            if request_type == "subject":
-                # Get the course info
-                matching_course = Course.objects.filter(
-                    user_id=tutor.id, name=subject_name
-                ).first()
-                
-                if matching_course:
-                    sos_tutors.append({
-                        "userId": tutor.id,
-                        "username": tutor.username,
-                        "avatar": tutor.tutor_profile.avatar,
-                        "school": first_school,
-                        "score": matching_course.level,
-                        "experience": matching_course.experience,
-                        "teachingStyles": tutor.tutor_profile.teaching_style,
-                        "hourlyRate": tutor.tutor_profile.hourly_rate,
-                        "isOnline": tutor.tutor_profile.status,  # Active status
-                        "requestType": "sos"
-                    })
-
-            else:  # exam type
-                matching_exam = Exam.objects.filter(
-                    user_id=tutor.id, name=subject_name
-                ).first()
-                
-                if matching_exam:
-                    sos_tutors.append({
-                        "userId": tutor.id,
-                        "username": tutor.username,
-                        "avatar": tutor.tutor_profile.avatar,
-                        "school": first_school,
-                        "score": matching_exam.score,
-                        "experience": matching_exam.experience,
-                        "teachingStyles": tutor.tutor_profile.teaching_style,
-                        "hourlyRate": tutor.tutor_profile.hourly_rate,
-                        "isOnline": tutor.tutor_profile.status,  # Active status
-                        "requestType": "sos"
-                    })
-
-        except Exception as e:
-            print(f"Error processing SOS tutor {tutor.id}: {str(e)}")
-            continue
-
-    # Sort by online status first (active tutors first), then by hourly rate
-    sos_tutors.sort(key=lambda x: (not x["isOnline"], x["hourlyRate"]))
-
-    return Response(sos_tutors, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

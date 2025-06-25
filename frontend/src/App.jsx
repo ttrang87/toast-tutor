@@ -47,11 +47,22 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 function App() {
   const stripePromise = loadStripe(import.meta.env.VITE_PUBLIC_KEY);
-const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userState, setPresenceState] = useState({});
+  const [leaveTimeouts, setLeaveTimeouts] = useState(new Map()); // Track leave timeouts
+  const [lastHeartbeat, setLastHeartbeat] = useState(null); // Track the last heartbeat timestamp
+
   const subscribeToPresence = useCallback(async (room) => {
     if (isLoggedIn) {
       const userId = localStorage.getItem("userId") || "anonymous";
+
+      // Clear any pending leave timeout for this user
+      if (leaveTimeouts.has(userId)) {
+        clearTimeout(leaveTimeouts.get(userId));
+        leaveTimeouts.delete(userId);
+        setLeaveTimeouts(new Map(leaveTimeouts));
+      }
+
       const userStatus = {
         user: userId,
         online_at: new Date().toISOString(),
@@ -68,7 +79,7 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
         console.error("Failed to update user status:", error);
       }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, leaveTimeouts]);
 
   const handleSync = useCallback((room) => {
     const newState = room.presenceState();
@@ -86,13 +97,28 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
     leftPresences.forEach(async (presence) => {
       console.log(`User ${presence.user} left`);
 
-      // Update the user's status to inactive in the backend
-      try {
-        await updateUserStatus(presence.user, false); // Set `is_active` to false
-        console.log(`User ${presence.user} status updated to inactive`);
-      } catch (error) {
-        console.error(`Failed to update status for user ${presence.user}:`, error);
-      }
+      // Set a timeout to mark user as inactive after a delay
+      const timeoutId = setTimeout(async () => {
+        try {
+          await updateUserStatus(presence.user, false); // Set `is_active` to false
+          console.log(`User ${presence.user} status updated to inactive`);
+          // Remove from timeout tracking
+          setLeaveTimeouts((prev) => {
+            const newMap = new Map(prev);
+            newMap.delete(presence.user);
+            return newMap;
+          });
+        } catch (error) {
+          console.error(`Failed to update status for user ${presence.user}:`, error);
+        }
+      }, 10000); // 10-second delay
+
+      // Track the timeout
+      setLeaveTimeouts((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(presence.user, timeoutId);
+        return newMap;
+      });
     });
   }, []);
 
@@ -113,6 +139,42 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
       room.unsubscribe();
     };
   }, [subscribeToPresence, handleSync, handleJoin, handleLeave]);
+
+  const HEARTBEAT_INTERVAL = 30000; // 30 seconds
+
+useEffect(() => {
+  let heartbeatInterval;
+
+  const sendHeartbeat = async () => {
+    if (isLoggedIn) {
+      const userId = localStorage.getItem("userId") || "anonymous";
+      const now = new Date().getTime();
+
+      // Only send a heartbeat if enough time has passed since the last one
+      if (!lastHeartbeat || now - lastHeartbeat >= HEARTBEAT_INTERVAL) {
+        try {
+          await updateUserStatus(userId, true); // Keep `is_active` as true
+          console.log("Heartbeat sent: User is active");
+          setLastHeartbeat(now); // Update the last heartbeat timestamp
+        } catch (error) {
+          console.error("Failed to send heartbeat:", error);
+        }
+      }
+    }
+  };
+
+  if (isLoggedIn) {
+    // Start sending heartbeats
+    heartbeatInterval = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
+    sendHeartbeat(); // Send an initial heartbeat immediately
+  }
+
+  return () => {
+    if (heartbeatInterval) {
+      clearInterval(heartbeatInterval);
+    }
+  };
+}, [isLoggedIn, lastHeartbeat]);
 
   return (
     <BrowserRouter>
